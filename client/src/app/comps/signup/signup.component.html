@@ -1,0 +1,96 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
+  <p>הרשמה</p>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="password" formControlName="userId" placeholder="תז משתמש" />
+      <div class="error" *ngIf="registerForm.get('userId')?.touched && registerForm.get('userId')?.invalid">
+        תעודת זהות נדרשת
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" formControlName="userName" placeholder="שם משתמש" />
+      <div class="error" *ngIf="registerForm.get('userName')?.touched && registerForm.get('userName')?.invalid">
+        שם משתמש נדרש
+      </div>
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="text" formControlName="firstName" placeholder="שם פרטי" />
+      <div class="error" *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
+        שם פרטי נדרש
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" formControlName="lastName" placeholder="שם משפחה" />
+      <div class="error" *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
+        שם משפחה נדרש
+      </div>
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="date" formControlName="dateOfBirth" />
+      <div class="error" *ngIf="registerForm.get('dateOfBirth')?.touched && registerForm.get('dateOfBirth')?.invalid">
+        תאריך לידה נדרש
+      </div>
+    </div>
+
+    <div class="input-group">
+      <select formControlName="gender">
+        <option value="" disabled selected>בחר מין</option>
+        <option value="זכר">זכר</option>
+        <option value="נקבה">נקבה</option>
+      </select>
+      <div class="error" *ngIf="registerForm.get('gender')?.touched && registerForm.get('gender')?.invalid">
+        מין נדרש
+      </div>
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="text" formControlName="phone" placeholder="טלפון" />
+      <div class="error" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+        טלפון נדרש
+      </div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" formControlName="email" placeholder="אימייל" />
+      <div class="error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors">
+        <div *ngIf="registerForm.get('email')?.errors?.['required']">אימייל נדרש</div>
+        <div *ngIf="registerForm.get('email')?.errors?.['pattern']">פורמט אימייל לא תקין</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <textarea formControlName="bio" placeholder="ביוגרפיה"></textarea>
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <input type="password" formControlName="password" placeholder="סיסמה" />
+      <div class="error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors">
+        <div *ngIf="registerForm.get('password')?.errors?.['required']">סיסמה נדרשת</div>
+        <div *ngIf="registerForm.get('password')?.errors?.['minlength']">סיסמה חייבת להיות לפחות 6 תווים</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    </div>
+  </div>
+
+  <button type="submit" class="submit-btn">הרשמה</button>
+</form>

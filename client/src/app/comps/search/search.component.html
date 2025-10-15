@@ -1,0 +1,24 @@
+<div class="search-container">
+  <input type="text" placeholder="חפש משתמשים" (input)="onSearch($event)" />
+
+  <button class="search-icon">
+    <lucide-icon class="material-icons" name="search"></lucide-icon> 
+  </button>
+
+ <div class="search-list">
+  <ng-container *ngIf="filteredUsers.length > 0; else noResults">
+       <div class="search-item" *ngFor="let user of filteredUsers">
+  <a (click)="GoToUser(user.userId)" class="search-link">
+    <img class="profile-pic" [src]="user.profilePicUrl" alt="Profile Picture" />
+    <div class="user-info">
+      <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
+      <div class="bio">{{ user.bio }}</div>
+    </div>
+  </a>
+</div>
+  </ng-container>
+
+  <ng-template #noResults>
+    <div class="no-results">לא נמצאו תוצאות עבור '{{searchTerm}}'</div>
+  </ng-template>
+</div>

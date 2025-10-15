@@ -1,0 +1,93 @@
+:root {
+  --color-bg-main: #ffffff;         /* לבן רקע */
+  --color-bg-secondary: #f5f7fa;    /* רקע אפור בהיר */
+  --color-primary: #a1cfff;         /* בועה נשלחת */
+  --color-secondary: #007aff;       /* כפתור שליחה וכו' */
+  --color-border: #dce1e6;          /* גבול אפור בהיר */
+  --color-text-main: #1f2937;       /* טקסט כהה */
+  --color-text-muted: #6b7280;      /* טקסט משני */
+}
+
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+  }
+  .context{
+    width: 650px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    direction: rtl;
+    border: 1px solid #ddd;
+    scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+  .feed {
+    flex: 1;
+  }
+  .container {
+    width: 100%;
+    max-width: 500px;
+    background-color: #fff;
+    min-height: 100vh;
+  }
+  
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+  }
+  
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .icons {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .icons lucide-icon {
+    cursor: pointer;
+    font-size: 22px;
+  }
+  
+  .bottom-nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    margin-bottom: 0px;
+  }
+  
+  .bottom-nav span {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  .bottom-nav lucide-icon {
+    cursor: pointer;
+  }
+  .icons lucide-icon {
+    cursor: pointer;
+  }
+  

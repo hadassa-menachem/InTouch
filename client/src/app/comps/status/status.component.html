@@ -1,0 +1,57 @@
+<div class="status-container" *ngIf="currentGroup">
+
+  <div class="status-progress-bars">
+    <div *ngFor="let s of currentGroup.statuses; let i = index" class="progress-segment">
+      <div class="progress-fill"
+           [style.width.%]="
+             i < currentStatusIndex ? 100 :
+             i === currentStatusIndex ? progress : 0
+           ">
+      </div>
+    </div>
+  </div>
+
+  <div class="status-header">
+<img class="profile-pic" [src]="this.user.profilePicUrl" alt="Profile">
+    <div class="user-info">
+      <div class="username">{{ this.user.firstName }} {{ this.user.lastName }}</div>
+      <div class="time-ago">{{ getTimeAgo(currentGroup.statuses[currentStatusIndex].createdAt) }}</div>
+    </div>
+  </div>
+
+  <img *ngIf="currentGroup.statuses[currentStatusIndex].imageUrl" 
+       [src]="currentGroup.statuses[currentStatusIndex].imageUrl" class="status-image" />
+  <video *ngIf="currentGroup.statuses[currentStatusIndex].videoUrl" 
+         [src]="currentGroup.statuses[currentStatusIndex].videoUrl" controls class="status-video"></video>
+  <div class="status-text">{{ currentGroup.statuses[currentStatusIndex].content }}</div>
+
+  <!-- אנימציית לייק -->
+  <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
+
+  <!-- כפתורי פעולה -->
+  <div class="status-bottom">
+    <div class="status-actions">
+      <button class="action-btn" (click)="toggleLike(currentGroup.statuses[currentStatusIndex].id)">
+        <lucide-icon name="heart"></lucide-icon>
+      </button>
+      <button class="action-btn" (click)="toggleCommentBox(currentGroup.statuses[currentStatusIndex].id)">
+        <lucide-icon name="message-circle"></lucide-icon>
+      </button>
+      <button class="action-btn" (click)="shareStatus(currentGroup.statuses[currentStatusIndex].id)">
+        <lucide-icon name="send"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- תיבת תגובה -->
+    <div class="comment-box" 
+         [class.active]="commentBoxOpenFor === currentGroup.statuses[currentStatusIndex].id">
+      <input type="text" class="comment-input" placeholder="כתוב תגובה..." [(ngModel)]="newComment"
+        (keydown.enter)="sendComment(currentGroup.statuses[currentStatusIndex].id)">
+      <button class="send-btn" (click)="sendComment(currentGroup.statuses[currentStatusIndex].id)">שלח</button>
+    </div>
+  </div>
+
+  <!-- אזורי טאפ למעבר סטטוסים -->
+  <div class="tap-area tap-left" (click)="prevStatus()"></div>
+  <div class="tap-area tap-right" (click)="nextStatus()"></div>
+</div>

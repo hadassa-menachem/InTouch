@@ -1,0 +1,482 @@
+.profile-page {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.profile-header h1 {
+  font-size: 28px;
+  color: #276228;
+  font-weight: bold;
+}
+
+.profile-image-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #fff;
+  border: 3px solid #a3d9a5;
+  margin-bottom: 15px;
+}
+
+.profile-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.profile-info {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #000000;
+}
+
+.profile-info h2 {
+  font-size: 24px;
+  color: #000000;
+}
+
+.edit-btn {
+  padding: 5px 12px;
+  font-size: 14px;
+  background-color: #ffffff;
+  border: 1.5px solid #a3d9a5;
+  border-radius: 25px;
+  cursor: pointer;
+  color: #276228;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 4px rgba(95, 196, 126, 0.4);
+}
+
+.edit-btn:hover {
+  background-color: #e6f3e8;
+}
+
+.profile-stats {
+  display: flex;
+  gap: 25px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.profile-stats .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-stats .stat-number {
+  font-weight: bold;
+  font-size: 20px;
+  color: #276228;
+}
+
+.profile-stats .stat-label {
+  font-size: 14px;
+  color: #4caf50;
+}
+
+.stories {
+  display: flex;
+  direction: rtl;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-right: 16px;
+  padding-left: 16px;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  background-color: #fff;
+  margin-top: 30px;
+
+}
+
+.stories::-webkit-scrollbar {
+  display: none;
+}
+
+.story {
+  display: inline-block;
+  flex-shrink: 0;
+  margin-inline: 8px;
+  width: 85px;
+  text-align: center;
+}
+
+.story:first-child {
+  margin-right: 8px;
+  padding-left: 4px;
+}
+
+.story:last-child {
+  margin-left: 8px;
+}
+
+.circle {
+  border-radius: 100%;
+  border: 1px solid #c4c4c4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 82px;
+  height: 82px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.circle img {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.nameStory {
+  margin-top: 5px;
+  font-size: 13px;
+  text-align: center;
+  max-width: 85px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-card {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: 10px;
+  border: 2px solid #fff;
+  object-fit: cover;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+  color: #4A3F35;
+  flex-grow: 1;
+}
+
+.more-options {
+  cursor: pointer;
+  color: #D62976;
+  font-size: 20px;
+}
+
+.post-media {
+  width: 100%;
+  background-color: #000;
+}
+
+.post-media img,
+.post-media video {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+.post-actions {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 12px;
+  gap: 8%; 
+}
+
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.action-button lucide-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.like-count,
+.action-label {
+  font-size: 12px;
+  color: #333;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.liked {
+  color: red !important;
+}
+
+.not-liked {
+  color: black !important;
+}
+
+
+.post-description {
+  padding: 0 12px;
+  margin-top: 6px;
+  font-size: 16px; 
+  color: #222;
+}
+
+.view-comments {
+  padding: 0 12px;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.view-comments-button {
+  background: none;
+  border: none;
+  color: #6B7280;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  font-size: 14px;
+}
+
+.add-comment {
+  display: flex;
+  border-top: 1px solid #dbdbdb;
+  padding: 10px 12px;
+  background-color: #fff;
+}
+
+.add-comment input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 8px;
+  background-color: #F7F7F7;
+  border-radius: 20px;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.add-comment button {
+  background: none;
+  border: none;
+  color: #0095f6;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.like-button lucide-icon {
+  font-size: 22px;
+  transition: color 0.3s ease;
+}
+
+.comment-line {
+  padding: 0 12px;
+  margin-top: 6px;
+  font-size: 14px;
+  color: #333;
+}
+
+.emoji-picker-popover {
+  position: fixed;
+  bottom: 80px; 
+  right: 20px;
+  z-index: 9999;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.emoji-button-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.post-card {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.5s forwards;
+  animation-delay: 0.1s;
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.story .circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(39, 98, 40, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-header .profile-pic:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 8px rgba(39, 98, 40, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.action-button:active {
+  transform: scale(0.9);
+  transition: transform 0.1s ease;
+}
+
+.liked {
+  color: red !important;
+  animation: likePulse 0.3s ease;
+}
+
+@keyframes likePulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.post-video {
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.post-video:hover {
+  opacity: 1;
+}
+
+.comments-list {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.comments-list.open {
+  max-height: 500px; 
+}
+
+html {
+  scroll-behavior: smooth;
+}
+.circle img, .profile-pic, .post-media img, .post-media video {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.circle img:hover, .profile-pic:hover, .post-media img:hover, .post-media video:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+  cursor: pointer;
+}
+
+.comment-line {
+  opacity: 0;
+  animation: fadeInText 0.5s forwards;
+}
+
+.comments-list.open .comment-line {
+  animation-delay: calc(var(--comment-index) * 0.1s);
+}
+
+@keyframes fadeInText {
+  to {
+    opacity: 1;
+  }
+}
+
+.post-card {
+  transition: box-shadow 0.3s ease;
+}
+
+.post-card.in-view {
+  box-shadow: 0 8px 20px rgba(39, 98, 40, 0.3);
+}
+
+.new-comment {
+  animation: commentAdd 0.5s ease forwards;
+}
+@keyframes commentAdd {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.action-button {
+  position: relative;
+}
+
+.action-button .tooltip {
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4caf50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.action-button:hover .tooltip {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stories::-webkit-scrollbar {
+  height: 6px;
+}
+
+.stories::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stories::-webkit-scrollbar-thumb {
+  background-color: #4caf50aa;
+  border-radius: 3px;
+}

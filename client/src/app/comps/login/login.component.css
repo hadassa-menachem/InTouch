@@ -1,0 +1,84 @@
+.form {
+  max-width: 400px; 
+  margin: 50px auto;
+  padding: 25px;
+  border: 1px solid #EADDC8;
+  border-radius: 8px;
+  background: #FFF9F4;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  color: #4A3F35;
+  font-family: 'Calibri', sans-serif;
+  font-size: 18px;
+}
+
+.form p {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #4A3F35;
+  font-size: 16px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background-color: #fff;
+  color: #276228;
+  font-weight: bold;
+  font-size: 18px;
+  border: 1.5px solid #a3d9a5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  box-shadow: 0 0 4px rgba(95, 196, 126, 0.4);
+}
+
+button:hover {
+  background-color: #e6f3e8;
+  box-shadow: 0 0 8px rgba(95, 196, 126, 0.7);
+}
+
+.error {
+  color: #D62976;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.signup {
+  max-width: 400px;
+  margin: 30px auto 0 auto;
+  text-align: center;
+  font-family: 'Calibri', sans-serif;
+  font-size: 18px;
+  color: #4A3F35;
+}
+
+.signup p {
+  margin: 0 0 8px 0;
+}
+
+.signup a {
+  color: #276228;
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.signup a:hover {
+  color: #1e451f;
+}

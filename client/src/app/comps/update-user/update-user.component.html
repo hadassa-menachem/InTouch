@@ -1,0 +1,63 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
+  <p>עדכון פרטי משתמש</p>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="text" formControlName="userName" placeholder="שם משתמש" />
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="text" formControlName="firstName" placeholder="שם פרטי" />
+    </div>
+
+    <div class="input-group">
+      <input type="text" formControlName="lastName" placeholder="שם משפחה" />
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="date" formControlName="dateOfBirth" />
+    </div>
+
+    <div class="input-group">
+      <select formControlName="gender">
+        <option value="" disabled selected>בחר מין</option>
+        <option value="זכר">זכר</option>
+        <option value="נקבה">נקבה</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="input-row">
+    <div class="input-group">
+      <input type="text" formControlName="phone" placeholder="טלפון" />
+    </div>
+
+    <div class="input-group">
+      <input type="text" formControlName="email" placeholder="אימייל" />
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <textarea formControlName="bio" placeholder="ביוגרפיה"></textarea>
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <input type="password" formControlName="password" placeholder="סיסמה" />
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    </div>
+  </div>
+
+  <button type="submit" class="submit-btn">עדכן</button>
+</form>

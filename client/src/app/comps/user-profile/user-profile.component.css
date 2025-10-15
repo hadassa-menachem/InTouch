@@ -1,0 +1,242 @@
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin: 10px 0 20px 0;
+}
+  
+.profile-image {
+ width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius:100%;
+    border: 1px solid #dbdbdb;
+    margin-right: 30px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-top: 10px;
+    box-shadow: 0 0 5px rgba(85, 21, 21, 0.1);
+
+  }
+  .profile-image img{
+    width: 143px;
+    height: 143px;
+    object-fit: cover;
+    border-radius:100%;
+    border: none;
+    border: 3px solid white; 
+  }
+  .profile-info {
+    margin: auto;
+    display: block;
+  }
+  
+  .profile-username {
+    align-items: center;
+    gap: 15px;
+    font-weight: bold;
+  }
+  
+  .edit-btn {
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .profile-stats {
+    display: flex;
+    gap: 25px;
+    margin: 15px 0;
+
+  }
+  
+  .profile-stats span {
+    font-size: 20px;
+  }
+  
+  .profile-bio  {
+    margin-right: 5%;
+  }
+
+  .post {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    width: 33.3%;
+    float: left;
+    height: 250px;
+  }
+  
+  .profile-stats {
+    display: flex;
+    gap: 40px;
+    margin: 15px 0;
+    text-align: center;
+  }
+  
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .stat-number {
+    font-weight: bold;
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 20px;
+    color: #555;
+  }
+  .edit-icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+  }
+  .profile-posts {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .profile-posts .post {
+    width: 33.3%;
+    height: 250px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+  }
+  
+  .profile-posts .post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+  }
+
+  .stories {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: #fff;
+    gap: 15px;
+  }
+  
+  .story {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 85px;
+    flex-shrink: 0;
+  }
+  
+  .circle {
+    border-radius:100%;
+    border: 1px solid #c4c4c4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 82px;
+    height: 82px;
+  }
+
+  .circle img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  
+  .nameStory {
+    margin-top: 5px;
+    font-size: 13px;
+    text-align: center;
+    max-width: 85px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .profile-tabs {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    margin-top: 10px;
+  }
+
+  .profile-tabs button {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .profile-tabs button.active {
+    border-bottom: 2px solid #000;
+    color: #000;
+  }
+  video {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+  }
+  .follow-btn-container {
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .follow-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #3897f0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 70%;
+  }
+  
+  .follow-btn:hover {
+    background-color: #2b85e4;
+  }
+
+  a{
+    cursor: pointer;
+  }
+  .no-posts-message {
+  text-align: center;
+  color: #999;
+  font-size: 18px;
+  margin-top: 40px;
+}
+.view-profile-pic-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-image {
+  position: relative; 
+}
