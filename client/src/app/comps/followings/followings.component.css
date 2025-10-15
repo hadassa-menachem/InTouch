@@ -1,0 +1,86 @@
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  top: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  justify-items: center;
+}
+
+.search-icon .material-icons {
+  font-size: 20px;
+  color: #555;
+}
+
+.search-list {
+  margin-top: 12px;
+}
+
+.search-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.profile-pic {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  margin-left: 12px; 
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 15px;
+  color: #333;
+}
+
+.bio {
+  font-size: 13px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.no-results {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-size: 14px;
+}
+
+.search-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}

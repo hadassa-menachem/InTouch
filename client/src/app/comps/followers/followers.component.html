@@ -1,0 +1,24 @@
+<div class="search-container">
+  <input type="text" placeholder="חפש משתמשים" (input)="onSearch($event)" />
+
+  <button class="search-icon">
+    <lucide-icon class="material-icons" name="search"></lucide-icon> 
+  </button>
+
+ <div class="search-list">
+  <ng-container *ngIf="filteredFollowers.length > 0; else noResults">
+       <div class="search-item" *ngFor="let f of filteredFollowers">
+  <a (click)="GoToUser(f.user?.userId)" class="search-link">
+    <img class="profile-pic" [src]="f.user.profilePicUrl" alt="Profile Picture" />
+    <div class="user-info">
+      <div class="username">{{ f.user.firstName }} {{ f.user.lastName }}</div>
+      <div class="bio">{{ f.user.bio }}</div>
+    </div>
+  </a>
+</div>
+  </ng-container>
+
+  <ng-template #noResults>
+    <div class="no-results">No followers</div>
+  </ng-template>
+</div>

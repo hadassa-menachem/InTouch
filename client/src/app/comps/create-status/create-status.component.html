@@ -1,0 +1,77 @@
+<div class="create-status-container">
+  <form [formGroup]="createStatusForm" (ngSubmit)="onSubmit()">
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>סוג מדיה:</label>
+        <select formControlName="mediaType" (change)="onMediaTypeChange()">
+          <option value="image">תמונה</option>
+          <option value="video">וידיאו</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>מקור מדיה:</label>
+        <select formControlName="imageSource" (change)="onImageSourceChange()">
+          <option value="upload">העלאה מהמחשב</option>
+          <option value="url">קישור</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-row single">
+      <div class="input-group" *ngIf="createStatusForm.value.imageSource === 'upload'">
+        <label>העלה קובץ:</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" />
+      </div>
+
+      <div class="input-group" *ngIf="createStatusForm.value.imageSource === 'url'">
+        <label>קישור לתמונה או וידיאו:</label>
+        <input type="text" formControlName="imageUrl" placeholder="הכנס קישור" />
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label>טקסט על התמונה:</label>
+        <input type="text" formControlName="customText" />
+      </div>
+
+      <div class="input-group">
+        <label>צבע טקסט:</label>
+        <input type="color" formControlName="textColor" />
+      </div>
+    </div>
+
+    <div class="input-row single">
+      <div class="input-group">
+        <label>גודל טקסט:</label>
+        <input type="range"
+               min="12"
+               max="60"
+               [(ngModel)]="textSize"
+               [ngModelOptions]="{standalone: true}"
+               name="textSize" />
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn">פרסם סטטוס</button>
+  </form>
+
+  <div class="preview-container" [style.backgroundColor]="createStatusForm.value.backgroundColor">
+    <div class="status-preview" cdkDropList>
+      <ng-container *ngIf="imagePreviewUrl">
+        <img *ngIf="createStatusForm.value.mediaType === 'image'" [src]="imagePreviewUrl" class="preview-image" />
+        <video *ngIf="createStatusForm.value.mediaType === 'video'" [src]="imagePreviewUrl" class="preview-video" controls></video>
+      </ng-container>
+
+      <!-- טקסט נגרר -->
+      <div class="draggable-text"
+           cdkDrag
+           (cdkDragEnded)="onDragEnded($event)"
+           [ngStyle]="{ color: createStatusForm.value.textColor, 'font-size.px': textSize }">
+        {{ createStatusForm.value.customText }}
+      </div>
+    </div>
+  </div>
+</div>

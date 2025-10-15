@@ -1,0 +1,22 @@
+<div class="context">
+  <div class="top-bar">
+    <div class="logo">InTouch</div>
+    <div class="icons">
+      <lucide-icon name="bell" *ngIf="!ifUser()" (click)="navigate('/notification')"></lucide-icon>
+      <lucide-icon name="message-square" *ngIf="!ifUser()" (click)="navigate('/messages')"></lucide-icon>
+      <lucide-icon name="log-in"  *ngIf="isProfilePage()" (click)="logout()"></lucide-icon>
+    </div>
+  </div>
+
+  <div class="feed">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div class="bottom-nav">
+    <lucide-icon name="home" (click)="navigate('/home')"></lucide-icon>
+    <lucide-icon name="search" (click)="navigate('/search')"></lucide-icon>
+    <lucide-icon name="plus-square" (click)="navigate('/createpost')"></lucide-icon>
+    <lucide-icon name="heart" (click)="navigate('/likes')"></lucide-icon>
+    <lucide-icon name="user" (click)="navigate('/profile')"></lucide-icon>
+  </div>
+</div>

@@ -1,0 +1,124 @@
+.messages-page {
+  padding: 16px;
+}
+
+.messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.messages-header h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #4A3F35; 
+}
+
+.new-message-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #D62976;
+}
+
+.new-message-btn:hover {
+  color: #EADDC8; 
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff; 
+}
+
+.chat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 16px;
+  color: #4A3F35;
+}
+
+.last-message {
+  font-size: 14px;
+  color: #6b7280; 
+}
+
+a {
+  cursor: pointer;
+}
+.plus{
+  width: 24px;
+  height: 24px;
+  stroke: #7B5E50;
+  stroke-width: 1.8;
+  border: none;
+  
+}
+button.plus{
+  background: none;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.user-popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin: 100px auto;
+}
+
+.user-popup ul {
+  list-style: none;
+  padding: 0;
+}
+
+.user-popup li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.user-popup li:hover {
+  background: #f0f0f0;
+}
+
+.popup-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}

@@ -1,0 +1,46 @@
+<div class="messages-page">
+  <div class="messages-header">
+    <h2>הודעות</h2>
+    <button class="plus" (click)="openUserPopup()">
+      <lucide-icon name="plus"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="messages-list">
+    <div 
+  class="message-item" 
+  *ngFor="let chat of chats" 
+  (click)="navigateToChat(chat.userId)">
+  <img class="profile-pic" [src]="chat.profilePic" alt="תמונה" />
+  <div class="message-info">
+    <span class="username">{{ chat.username }}</span>
+    <div class="last-message">
+      {{ chat.lastMessage || 'אין הודעות אחרונות' }}
+      <span *ngIf="chat.isSentByCurrentUser">
+        <span *ngIf="chat.isSeen" style="color: blue;">✔✔</span>
+        <span *ngIf="!chat.isSeen">✔</span>
+      </span>
+    </div>
+  </div>
+</div>
+  </div>
+
+  <!-- פופאפ לבחירת משתמשים חדשים -->
+  <div class="user-popup" *ngIf="showUserList">
+    <div class="popup-content">
+      <h3>התחל שיחה חדשה</h3>
+      <button class="close-btn" (click)="closePopup()">
+        <lucide-icon name="x"></lucide-icon>
+      </button>
+      <div class="user-list">
+        <div 
+          class="user-item" 
+          *ngFor="let user of allUsers" 
+          (click)="startNewChat(user)">
+          <img class="profile-pic" [src]="user.profilePicUrl" />
+          <span class="username">{{ user.firstName }} {{ user.lastName }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
