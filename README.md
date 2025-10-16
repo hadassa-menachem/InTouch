@@ -30,7 +30,7 @@ Followers and notifications
 Modern responsive UI and user experience
 
 📁 Project Structure
-backend/ – Server Side (API, BLL, DAL, Models)
-frontend/ – Client Side (Angular Components, Services, Pages)
+backend – Server Side (API, BLL, DAL, Models)
+frontend – Client Side (Angular Components, Services, Pages)
 
 👩‍💻 Created by: Hadassa Menachem.
