@@ -1,0 +1,19 @@
+# === Angular (client) ===
+/client/node_modules/
+/client/dist/
+/client/.angular/cache/
+
+# === .NET (server) ===
+/server/bin/
+/server/obj/
+/server/.vs/
+/server/wwwroot/lib/
+/server/Properties/PublishProfiles/
+
+# === Common ===
+.env
+*.log
+*.zip
+*.exe
+.DS_Store
+Thumbs.db
