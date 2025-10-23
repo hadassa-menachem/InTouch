@@ -98,8 +98,6 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   background-color: #fff;
-  margin-top: 30px;
-
 }
 
 .stories::-webkit-scrollbar {
@@ -112,6 +110,7 @@
   margin-inline: 8px;
   width: 85px;
   text-align: center;
+  margin-top: 15px;
 }
 
 .story:first-child {

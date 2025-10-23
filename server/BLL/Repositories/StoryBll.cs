@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class StoryBll : IStoryBll   // 👈 משנה ל־IStoryBll
+    public class StoryBll : IStoryBll   // 
     {
-        private readonly IStoryDal _storyDal;   // 👈 עובד מול StoryDal
+        private readonly IStoryDal _storyDal;   // 
         private readonly IMapper _mapper;
 
-        public StoryBll(IStoryDal storyDal, IMapper mapper)   // 👈 constructor מותאם
+        public StoryBll(IStoryDal storyDal, IMapper mapper)   // 
         {
             _storyDal = storyDal;
             _mapper = mapper;
         }
 
-        public async Task<List<Story>> GetAllStories()   // 👈 Story
+        public async Task<List<Story>> GetAllStories()   // 
         {
             await DeleteOldStories();
             return await _storyDal.GetAllStories();
