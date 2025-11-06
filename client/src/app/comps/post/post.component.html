@@ -32,7 +32,7 @@
 <div class="post-actions">
     <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
 
-  <div class="action-button" (click)="toggleLike(post.id!, this.user.userId!)">
+  <div class="action-button">
   <lucide-icon
   name="heart"
   class="heart-icon"
@@ -51,6 +51,9 @@
   <div class="action-button" (click)="sharePost()">
     <lucide-icon name="send"></lucide-icon>
   </div>
+   <div class="action-button" (click)="sharePost()">
+  <lucide-icon name="bookmark"></lucide-icon>
+  </div>
 </div>
 
       <div class="post-description">
@@ -62,15 +65,27 @@
  <!-- הצגת תגובות -->
 <div class="view-comments">
   <button class="view-comments-button" (click)="toggleCommentsList(post.id)">
-    הצג את כל {{ post.comments?.length || 0 }} התגובות
-  </button>
+  <ng-container *ngIf="post.comments?.length > 0; else noComments">
+    הצג את כל {{ post.comments.length }} התגובות
+  </ng-container>
+  <ng-template #noComments>
+אין תגובות עדיין  </ng-template>
+</button>
+
 </div>
 <!-- רשימת תגובות -->
 <div class="comments-list" *ngIf="commentsListPostId === post.id && post.comments?.length">
-  <div class="comment-line" *ngFor="let c of post.comments">
-    <strong class="comment-username">{{ c.userName }}</strong>
-    <span> {{ c.content }}</span>
+  <div class="comment-line"
+       *ngFor="let c of getVisibleComments(post)">
+    <strong>{{ c.userName }}</strong> {{ c.content }}
   </div>
+
+  <!-- כפתור קרא עוד -->
+  <button *ngIf="shouldShowReadMore(post)"
+          class="read-more-btn"
+          (click)="toggleReadMore(post.id)">
+    {{ expandedPostIds.includes(post.id) ? 'הצג פחות' : 'קרא עוד' }}
+  </button>
 </div>
 
 <!-- תיבת הוספת תגובה -->

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BLL.DTO;
+using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
 using System.Collections.Generic;
@@ -6,40 +8,44 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class MediaFileBll
+    public class MediaFileBll : IMediaFileBll
     {
-        private readonly IMediaFileDal idal;
-        private readonly IMapper imapper;
+        private readonly IMediaFileDal _idal;
+        private readonly IMapper _imapper;
 
-        public MediaFileBll(IMediaFileDal _idal, IMapper _imapper)
+        public MediaFileBll(IMediaFileDal idal, IMapper imapper)
         {
-            idal = _idal;
-            imapper = _imapper;
+            _idal = idal;
+            _imapper = imapper;
         }
 
-        public async Task<List<MediaFile>> GetAllMediaFiles()
+        public async Task<List<MediaFileDTO>> GetAllMediaFiles()
         {
-            return await idal.GetAllMediaFiles();
+            var mediaFiles = await _idal.GetAllMediaFiles();
+            return _imapper.Map<List<MediaFileDTO>>(mediaFiles);
         }
 
-        public async Task<MediaFile> GetMediaFileById(string id)
+        public async Task<MediaFileDTO> GetMediaFileById(string id)
         {
-            return await idal.GetMediaFileById(id);
+            var mediaFile = await _idal.GetMediaFileById(id);
+            return _imapper.Map<MediaFileDTO>(mediaFile);
         }
 
-        public async Task AddMediaFile(MediaFile mediaFile)
+        public async Task AddMediaFile(CreateMediaFileDTO dto)
         {
-            await idal.AddMediaFile(mediaFile);
+            var mediaFile = _imapper.Map<MediaFile>(dto);
+            await _idal.AddMediaFile(mediaFile);
         }
 
-        public async Task UpdateMediaFile(string id, MediaFile updatedMediaFile)
+        public async Task UpdateMediaFile(string id, MediaFileDTO dto)
         {
-            await idal.UpdateMediaFile(id, updatedMediaFile);
+            var updatedMediaFile = _imapper.Map<MediaFile>(dto);
+            await _idal.UpdateMediaFile(id, updatedMediaFile);
         }
 
         public async Task DeleteMediaFile(string id)
         {
-            await idal.DeleteMediaFile(id);
+            await _idal.DeleteMediaFile(id);
         }
     }
 }

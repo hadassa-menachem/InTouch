@@ -1,17 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Story } from '../../classes/Story';
-import { UserService } from '../../ser/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { LucideIconsModule } from '../../lucide.module';
-import { Location } from '@angular/common';
+import { Story } from '../../classes/Story';
 import { User } from '../../classes/User';
+import { UserService } from '../../ser/user.service';
 
 interface StoryGroup {
   userId: string;
   category: string;
-  storys: Story[];
+  stories: Story[];
 }
 
 @Component({
@@ -22,7 +21,8 @@ interface StoryGroup {
   imports: [CommonModule, FormsModule, LucideIconsModule]
 })
 export class StoryComponent implements OnInit, OnDestroy {
-  storyGroups: StoryGroup[] = [];
+  storyGroups: StoryGroup[] = [];        // רק סטוריז קבועות / Highlights
+  temporaryStories: Story[] = [];        // רק סטוריז זמניים
   commentBoxOpenFor: string | null = null;
   newComment: string = '';
   showLikeAnimation: boolean = false;
@@ -31,42 +31,70 @@ export class StoryComponent implements OnInit, OnDestroy {
   currentStoryIndex: number = 0;
   progress: number = 0;
   progressInterval: any;
-  storyDuration: number = 5000; // זמן לכל סטטוס
+  storyDuration: number = 5000;
 
   constructor(
     private userService: UserService,
-    private route: ActivatedRoute,
-    private location: Location
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    const userId = this.route.snapshot.paramMap.get('userId');
-    if (!userId) return;
+    const storyId = this.route.snapshot.paramMap.get('storyId');
+    if (!storyId) return;
 
-    this.userService.GetUserById(userId).subscribe({
-      next: (user: User) => {
-        this.user = user;
-      }
-    });
+    this.user = this.userService.getCurrentUser()!;
 
-    this.userService.getStoryByUserId(userId).subscribe({
-      next: (storys: Story[]) => {
-        storys.forEach(s => {
-          if (!s.user) {
-            s.user = {
-              userId: userId,
-              firstName: '',
-              lastName: '',
-              profilePicUrl: ''
-            };
-          }
+    // משיכת סטורי לפי ID
+    this.userService.getStoryById(storyId).subscribe({
+      next: (story: Story) => {
+        this.userService.getStoryByUserId(story.user.userId!).subscribe({
+          next: (stories: Story[]) => {
+            const now = new Date();
+
+            stories.forEach(s => {
+              if (!s.user) s.user = { userId: '', firstName: '', lastName: '', profilePicUrl: '' };
+              s.likes = s.likes || [];
+              s.comments = s.comments || [];
+              s.viewedByUserIds = s.viewedByUserIds || [];
+              s.viewedByCurrentUser = s.viewedByUserIds.includes(this.user.userId);
+
+              const created = new Date(s.createdAt);
+              const diffHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+
+              if (s.isTemporary) {
+                // סטורי זמני – לא נכנס ל-Highlights
+                s.isTemporary = true;
+                s.category = ''; 
+              } else {
+                // סטורי קבוע / Highlight
+                s.isTemporary = false;
+                s.category = s.category || 'default';
+              }
+            });
+
+            // הפרדה בין זמני לקבועים
+            this.temporaryStories = stories.filter(s => s.isTemporary);
+            const highlightStories = stories.filter(s => !s.isTemporary);
+
+            // חלוקה ל-Highlights בלבד
+            this.storyGroups = this.groupStoriesByCategory(highlightStories);
+
+            // מציאת הסטורי הנוכחי (Highlight בלבד)
+            const currentGroupFound = this.storyGroups.find((group, gIndex) => {
+              const storyIndex = group.stories.findIndex(s => s.id === storyId);
+              if (storyIndex >= 0) {
+                this.currentGroupIndex = gIndex;
+                this.currentStoryIndex = storyIndex;
+                this.markStoryAsViewed(group.stories[storyIndex]);
+                return true;
+              }
+              return false;
+            });
+
+            if (currentGroupFound) this.startProgress();
+          },
+          error: err => console.error(err)
         });
-
-        this.storyGroups = this.groupStorysByCategory(storys);
-
-        if (this.storyGroups.length > 0) {
-          this.startProgress();
-        }
       },
       error: err => console.error(err)
     });
@@ -80,41 +108,47 @@ export class StoryComponent implements OnInit, OnDestroy {
     return this.storyGroups[this.currentGroupIndex] || null;
   }
 
-  groupStorysByCategory(storys: Story[]): StoryGroup[] {
-    const groupsMap: { [key: string]: StoryGroup } = {};
+  get story(): Story | null {
+    return this.currentGroup?.stories[this.currentStoryIndex] || null;
+  }
 
-    storys.forEach(story => {
-      const key = story.user.userId + '-' + (story.category || 'default');
+  groupStoriesByCategory(stories: Story[]): StoryGroup[] {
+    const groupsMap: { [key: string]: StoryGroup } = {};
+    stories.forEach(story => {
+      const userId = story.user?.userId || 'unknown';
+      const key = userId + '-' + (story.category || 'default');
+
       if (!groupsMap[key]) {
         groupsMap[key] = {
-          userId: story.user.userId,
+          userId,
           category: story.category || 'default',
-          storys: []
+          stories: []
         };
       }
-      groupsMap[key].storys.push(story);
+      if (!groupsMap[key].stories.some(s => s.id === story.id)) {
+        groupsMap[key].stories.push(story);
+      }
     });
-
     return Object.values(groupsMap);
   }
 
   startProgress() {
     this.progress = 0;
     clearInterval(this.progressInterval);
-    const step = 100 / (this.storyDuration / 100);
 
+    if (this.story) this.markStoryAsViewed(this.story);
+
+    const step = 100 / (this.storyDuration / 100);
     this.progressInterval = setInterval(() => {
       this.progress += step;
-      if (this.progress >= 100) {
-        this.nextStatus();
-      }
+      if (this.progress >= 100) this.nextStatus();
     }, 100);
   }
 
   nextStatus() {
     if (!this.currentGroup) return;
 
-    if (this.currentStoryIndex < this.currentGroup.storys.length - 1) {
+    if (this.currentStoryIndex < this.currentGroup.stories.length - 1) {
       this.currentStoryIndex++;
       this.startProgress();
     } else if (this.currentGroupIndex < this.storyGroups.length - 1) {
@@ -123,7 +157,7 @@ export class StoryComponent implements OnInit, OnDestroy {
       this.startProgress();
     } else {
       clearInterval(this.progressInterval);
-      this.location.back();
+      window.history.back();
     }
   }
 
@@ -135,14 +169,21 @@ export class StoryComponent implements OnInit, OnDestroy {
       this.startProgress();
     } else if (this.currentGroupIndex > 0) {
       this.currentGroupIndex--;
-      this.currentStoryIndex = this.currentGroup!.storys.length - 1;
+      this.currentStoryIndex = this.currentGroup!.stories.length - 1;
       this.startProgress();
     }
   }
 
   toggleLike(id: string) {
+    if (!this.story) return;
     this.showLikeAnimation = true;
-    setTimeout(() => this.showLikeAnimation = false, 800);
+    setTimeout(() => (this.showLikeAnimation = false), 800);
+
+    if (this.story.likes!.includes(this.user.userId)) {
+      this.story.likes = this.story.likes!.filter(uid => uid !== this.user.userId);
+    } else {
+      this.story.likes!.push(this.user.userId);
+    }
   }
 
   toggleCommentBox(id: string) {
@@ -150,8 +191,8 @@ export class StoryComponent implements OnInit, OnDestroy {
   }
 
   sendComment(id: string) {
-    if (this.newComment.trim()) {
-      console.log('Comment', id, this.newComment);
+    if (this.newComment.trim() && this.story) {
+      this.story.comments!.push({ userName: this.user.userName || '', content: this.newComment });
       this.newComment = '';
       this.commentBoxOpenFor = null;
     }
@@ -167,13 +208,35 @@ export class StoryComponent implements OnInit, OnDestroy {
     if (!createdAt) return '';
     const now = new Date();
     const created = new Date(createdAt);
-    const diffInMs = now.getTime() - created.getTime();
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInHours / 24);
+    const diffMs = now.getTime() - created.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
 
-    if (diffInHours < 1) return 'עכשיו';
-    if (diffInHours < 24) return `לפני ${diffInHours} שעות`;
-    if (diffInDays < 7) return `לפני ${diffInDays} ימים`;
-    return `לפני ${Math.floor(diffInDays / 7)} שבועות`;
+    if (diffHours < 1) return 'עכשיו';
+    if (diffHours < 24) return `לפני ${diffHours} שעות`;
+    if (diffDays < 7) return `לפני ${diffDays} ימים`;
+    return `לפני ${Math.floor(diffDays / 7)} שבועות`;
+  }
+
+  markStoryAsViewed(story: Story) {
+    if (!story.viewedByCurrentUser) {
+      story.viewedByCurrentUser = true;
+      if (story.user.userId)
+        this.userService.markStoryAsViewed(story.id, this.user.userId).subscribe();
+    }
+  }
+
+  showTemporaryStories(userId: string) {
+    const userTempStories = this.temporaryStories.filter(s => s.user.userId === userId);
+    if (userTempStories.length > 0) {
+      this.storyGroups = [{
+        userId,
+        category: 'temporary',
+        stories: userTempStories
+      }];
+      this.currentGroupIndex = 0;
+      this.currentStoryIndex = 0;
+      this.startProgress();
+    }
   }
 }

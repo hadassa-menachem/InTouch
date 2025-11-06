@@ -15,16 +15,14 @@ import { AuthGuard } from './ser/auth.guard';
 import { UpdateUserComponent } from './comps/update-user/update-user.component';
 import { FollowersComponent } from './comps/followers/followers.component';
 import { FollowingsComponent } from './comps/followings/followings.component';
-import { StatusComponent } from './comps/status/status.component';
-import { CreateStatusComponent } from './comps/create-status/create-status.component';
 import { StoryComponent } from './comps/story/story.component';
+import { CreateStoryComponent } from './comps/create-story/create-story.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
 
-  // כל השאר מוגנים עם ה־Guard
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'post/:id', component: PostComponent, canActivate: [AuthGuard] },
@@ -38,9 +36,8 @@ export const routes: Routes = [
   { path: 'updateuser', component: UpdateUserComponent, canActivate: [AuthGuard] },
   { path: 'followers/:id', component: FollowersComponent},
 { path: 'followings/:id', component: FollowingsComponent },
-{ path: 'status/:userId', component: StatusComponent, canActivate: [AuthGuard] },
-  { path: 'create-status', component: CreateStatusComponent },
-{ path: 'story/:id', component: StoryComponent }
+  { path: 'create-story', component: CreateStoryComponent , canActivate: [AuthGuard] },
+{ path: 'story/:storyId', component: StoryComponent , canActivate: [AuthGuard] },
 
 ];
 

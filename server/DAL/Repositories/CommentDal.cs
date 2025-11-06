@@ -46,8 +46,6 @@ namespace DAL.Repositories
 			await _comments.InsertOneAsync(comment);
 		}
 
-
-
 		public async Task UpdateComment(string id, Comment updatedComment)
 		{
 			await _comments.ReplaceOneAsync(c => c.Id == id, updatedComment);
@@ -62,6 +60,5 @@ namespace DAL.Repositories
             var filter = Builders<User>.Filter.In(u => u.UserId, userIds);
             return await _users.Find(filter).ToListAsync();
         }
-
     }
 }

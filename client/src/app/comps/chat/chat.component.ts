@@ -219,6 +219,29 @@ onFileSelected(event: any): void {
     reader.readAsDataURL(file);
   }
 }
+// בודק אם זו ההודעה הראשונה של יום חדש
+isNewDay(index: number): boolean {
+  if (!this.messages || !this.messages[index]) return false;
+
+  const currentDate = new Date(this.messages[index].sentAt);
+
+  if (index === 0) return true; // תמיד true להודעה הראשונה
+
+  const prevDate = new Date(this.messages[index - 1].sentAt);
+
+  return currentDate.toDateString() !== prevDate.toDateString();
+}
+
+formatDay(dateStr: string | Date): string {
+  const date = new Date(dateStr);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) return 'היום';
+  if (date.toDateString() === yesterday.toDateString()) return 'אתמול';
+  return date.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+}
 
 removeSelectedFile(): void {
   this.selectedFile = null;

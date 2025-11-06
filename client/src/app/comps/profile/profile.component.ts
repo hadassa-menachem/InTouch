@@ -112,7 +112,7 @@ goToFollowings(userId: string) {
   this.router.navigate(['/followings', userId]);
 }
 
-goToCreateStatus() {
-  this.router.navigate(['/create-status']);
+goToCreateStory() {
+  this.router.navigate(['/create-story']);
 }
 }

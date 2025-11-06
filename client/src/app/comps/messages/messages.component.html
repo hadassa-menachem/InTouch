@@ -1,16 +1,13 @@
 <div class="messages-page">
   <div class="messages-header">
     <h2>הודעות</h2>
-    <button class="plus" (click)="openUserPopup()">
+    <!-- <button class="plus" (click)="openUserPopup()">
       <lucide-icon name="plus"></lucide-icon>
-    </button>
+    </button> -->
   </div>
 
   <div class="messages-list">
-    <div 
-  class="message-item" 
-  *ngFor="let chat of chats" 
-  (click)="navigateToChat(chat.userId)">
+    <div class="message-item" *ngFor="let chat of chats" (click)="navigateToChat(chat.userId)">
   <img class="profile-pic" [src]="chat.profilePic" alt="תמונה" />
   <div class="message-info">
     <span class="username">{{ chat.username }}</span>
@@ -26,7 +23,7 @@
   </div>
 
   <!-- פופאפ לבחירת משתמשים חדשים -->
-  <div class="user-popup" *ngIf="showUserList">
+  <!-- <div class="user-popup" *ngIf="showUserList">
     <div class="popup-content">
       <h3>התחל שיחה חדשה</h3>
       <button class="close-btn" (click)="closePopup()">
@@ -42,5 +39,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>

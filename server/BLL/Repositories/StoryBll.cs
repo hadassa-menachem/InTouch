@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class StoryBll : IStoryBll   // 
+    public class StoryBll : IStoryBll   // 👈 משנה ל־IStoryBll
     {
-        private readonly IStoryDal _storyDal;   // 
+        private readonly IStoryDal _storyDal;   // 👈 עובד מול StoryDal
         private readonly IMapper _mapper;
 
-        public StoryBll(IStoryDal storyDal, IMapper mapper)   // 
+        public StoryBll(IStoryDal storyDal, IMapper mapper)   // 👈 constructor מותאם
         {
             _storyDal = storyDal;
             _mapper = mapper;
         }
 
-        public async Task<List<Story>> GetAllStories()   // 
+        public async Task<List<Story>> GetAllStories()   // 👈 Story
         {
             await DeleteOldStories();
             return await _storyDal.GetAllStories();
@@ -53,6 +53,20 @@ namespace BLL.Repositories
         public async Task DeleteOldStories()
         {
             await _storyDal.DeleteOldStories();
+        }
+
+        public async Task<bool> MarkStoryAsViewed(string storyId, string viewerId)
+        {
+            var story = await _storyDal.GetStoryById(storyId);
+            if (story == null) return false;
+
+            if (!story.ViewedByUserIds.Contains(viewerId))
+            {
+                story.ViewedByUserIds.Add(viewerId);
+                await _storyDal.UpdateStory(story.Id, story);
+            }
+
+            return true;
         }
     }
 }

@@ -7,6 +7,8 @@ namespace BLL.DTO
     {
         public string UserId { get; set; }
         public string Content { get; set; }
+        public List<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
+
     }
 
 }

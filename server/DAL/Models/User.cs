@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using DAL.Models;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 public class User
@@ -20,5 +21,6 @@ public class User
     public List<string> FollowingsList { get; set; } = new List<string>();
     public List<string> FollowersList { get; set; } = new List<string>();
     public List<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
-
+    public List<string> Categories { get; set; } = new List<string>();
+    public List<Story> Stories { get; set; } = new List<Story>();
 }

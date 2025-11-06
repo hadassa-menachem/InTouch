@@ -1,17 +1,15 @@
-﻿using DAL.Models;
-using System;
+﻿using BLL.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
     public interface IMediaFileBll
     {
-        Task CreateMediaFile(MediaFile mediaFile);
-        Task<MediaFile?> GetMediaFileById(string id);
-        Task<List<MediaFile>> GetMediaFilesByUserId(string userId);
+        Task<List<MediaFileDTO>> GetAllMediaFiles();
+        Task<MediaFileDTO> GetMediaFileById(string id);
+        Task AddMediaFile(CreateMediaFileDTO dto);
+        Task UpdateMediaFile(string id, MediaFileDTO dto);
         Task DeleteMediaFile(string id);
     }
 }

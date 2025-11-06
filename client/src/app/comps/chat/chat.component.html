@@ -8,61 +8,64 @@
 
   <!-- הודעות -->
   <div class="chat-messages">
-    <div
-      *ngFor="let message of messages"
-      [ngClass]="{ 'sent': message.senderId === currentUserId, 'received': message.senderId !== currentUserId }"
-      class="message-bubble"
-    >
-      <div class="message-content">
-        <div *ngIf="message.content">{{ message.content }}</div>
-        <img *ngIf="message.imageUrl" [src]="message.imageUrl" class="sent-image" alt="תמונה בהודעה" />
+    <ng-container *ngFor="let message of messages; let i = index">
+
+      <!-- תאריך רק בתחילת כל יום -->
+      <div *ngIf="isNewDay(i)" class="day-separator">
+        {{ formatDay(message.sentAt) }}
       </div>
 
-      <a *ngIf="message.imageUrl" [href]="message.imageUrl" target="_blank" class="download-link">
-        <lucide-icon name="download"></lucide-icon>
-      </a>
+      <div [ngClass]="{ 'sent': message.senderId === currentUserId, 'received': message.senderId !== currentUserId }"
+           class="message-bubble">
 
-      <div class="timestamp">
-        {{ message.sentAt | date: 'shortTime' }}
+        <div class="message-content">
+          <div *ngIf="message.content">{{ message.content }}</div>
+          <img *ngIf="message.imageUrl" [src]="message.imageUrl" class="sent-image" alt="תמונה בהודעה" />
+        </div>
+
+        <a *ngIf="message.imageUrl" [href]="message.imageUrl" target="_blank" class="download-link">
+          <lucide-icon name="download"></lucide-icon>
+        </a>
+
+        <div class="timestamp">
+          {{ message.sentAt | date: 'shortTime' }}
+        </div>
+
+        <!-- סטטוס הודעה -->
+        <div *ngIf="message.senderId === currentUserId" class="status-checks">
+          <ng-container *ngIf="!message.isDelivered && !message.isRead">
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 7 5 11 15 1" />
+            </svg>
+          </ng-container>
+
+          <ng-container *ngIf="message.isDelivered && !message.isRead">
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 7 5 11 15 1" />
+            </svg>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 7 5 11 15 1" />
+            </svg>
+          </ng-container>
+
+          <ng-container *ngIf="message.isRead">
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 7 5 11 15 1" />
+            </svg>
+            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 7 5 11 15 1" />
+            </svg>
+          </ng-container>
+        </div>
+
       </div>
-
-      <!-- סטטוס הודעה -->
-      <div *ngIf="message.senderId === currentUserId" class="status-checks">
-
-        <!-- וי אחד אפור - נשלח אך לא נמסר -->
-        <ng-container *ngIf="!message.isDelivered && !message.isRead">
-          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 7 5 11 15 1" />
-          </svg>
-        </ng-container>
-
-        <!-- שני וים אפורים - נמסר אך לא נקרא -->
-        <ng-container *ngIf="message.isDelivered && !message.isRead">
-          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 7 5 11 15 1" />
-          </svg>
-          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 7 5 11 15 1" />
-          </svg>
-        </ng-container>
-
-        <!-- שני וים כחולים - נקרא -->
-        <ng-container *ngIf="message.isRead">
-          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 7 5 11 15 1" />
-          </svg>
-          <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 7 5 11 15 1" />
-          </svg>
-        </ng-container>
-
-      </div>
-    </div>
+    </ng-container>
   </div>
 
   <!-- קלט הודעה -->
   <div class="chat-input">
     <div class="input-wrapper">
+
       <!-- כפתור אימוג'ים -->
       <div class="emoji-button-wrapper" style="position: relative;">
         <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="אימוג'י">

@@ -24,12 +24,12 @@ namespace DAL.Repositories
         {
             return await _follows.Find(f => f.Id == id).FirstOrDefaultAsync();
         }
-        //מחזיר את רשימת כל העוקבים של המשתמש הזה 
+
         public async Task<List<Follow>> GetFollowersByUserId(string userId)
         {
             return await _follows.Find(f => f.FolloweeId == userId).ToListAsync();
         }
-        //מחזיר את רשימת כל המשתמשים שהמשתמש הזה עוקב אחריהם 
+
         public async Task<List<Follow>> GetFolloweesByUserId(string userId)
         {
             return await _follows.Find(f => f.FollowerId == userId).ToListAsync();

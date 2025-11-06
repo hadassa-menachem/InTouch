@@ -1,4 +1,3 @@
-// src/app/lucide.module.ts
 import { NgModule } from '@angular/core';
 import { LucideAngularModule, MessageCircle, Share, X } from 'lucide-angular';
 import {
@@ -19,7 +18,10 @@ import {
   MessageCircle as MessageCircleIcon,
   Share as ShareIcon,
   X as XIcon,
-  Check // ✅ ייבוא האייקון ✔
+  Check,
+  Bookmark,
+  ZoomIn,
+  Eye
 } from 'lucide';
 
 @NgModule({
@@ -43,6 +45,9 @@ import {
       Share,
       X,
       Check,
+      Bookmark,
+      ZoomIn,
+      Eye
     })
   ],
   exports: [LucideAngularModule]

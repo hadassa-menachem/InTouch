@@ -28,9 +28,8 @@ namespace BLL.Mappings
                 .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Content));
 
             // Like
-            CreateMap<Like, LikeDTO>()
-                .ForMember(dest => dest.FullName,
-                    opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : ""));
+            CreateMap<LikeDTO, Like>().ForMember(dest => dest.FullName, opt => opt.Ignore());
+            CreateMap<Like, LikeDTO>();
 
             // Post
             CreateMap<Post, PostDTO>()

@@ -64,9 +64,21 @@ namespace DAL.Repositories
 
         public async Task DeleteOldStories()
         {
-            var cutoff = DateTime.UtcNow.AddHours(-24); // מוחק סיפורים ישנים מ-24 שעות אחורה
-            var filter = Builders<Story>.Filter.Lt(s => s.CreatedAt, cutoff);
+            var cutoff = DateTime.UtcNow.AddHours(-24);
+            var filter = Builders<Story>.Filter.And(
+                Builders<Story>.Filter.Lt(s => s.CreatedAt, cutoff),
+                Builders<Story>.Filter.Eq(s => s.IsTemporary, true) // מוחק רק סטוריז זמניים
+            );
             await _storyCollection.DeleteManyAsync(filter);
+        }
+        public async Task MarkStoryAsViewed(string storyId, string viewerId)
+        {
+            var story = await _storyCollection.Find(s => s.Id == storyId).FirstOrDefaultAsync();
+            if (story != null && !story.ViewedByUserIds.Contains(viewerId))
+            {
+                story.ViewedByUserIds.Add(viewerId);
+                await _storyCollection.ReplaceOneAsync(s => s.Id == storyId, story);
+            }
         }
     }
 }

@@ -1,54 +1,57 @@
 ﻿using AutoMapper;
-using DAL;
+using BLL.DTO;
+using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
-using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Functions
 {
-    public class UserBll
+    public class UserBll:IUserBll
     {
-        private readonly IUserDal idal;
-        private readonly IMapper imapper;
+        private readonly IUserDal _idal;
+        private readonly IMapper _imapper;
 
-        public UserBll(IUserDal _idal, IMapper _imapper)
+        public UserBll(IUserDal idal, IMapper imapper)
         {
-            idal = _idal;
-            imapper = _imapper;
-        }
-        public async Task<List<User>> GetAllUsers()
-        {
-            return await idal.GetAllUsers();
+            _idal = idal;
+            _imapper = imapper;
         }
 
-        public async Task<User> GetUserById(string id)
+        public async Task<List<UserDTO>> GetAllUsers()
         {
-            return await idal.GetUserById(id);
+            var users = await _idal.GetAllUsers();
+            return _imapper.Map<List<UserDTO>>(users);
         }
 
-        public async Task<User> GetUserByUserName(string userName)
+        public async Task<UserDTO> GetUserById(string id)
         {
-            return await idal.GetUserByUserName(userName);
+            var user = await _idal.GetUserById(id);
+            return _imapper.Map<UserDTO>(user);
+        }
+      
+        public async Task<UserDTO> GetUserByUsername(string userName)
+        {
+            var user = await _idal.GetUserByUserName(userName);
+            return _imapper.Map<UserDTO>(user);
         }
 
-        public async Task AddUser(User user)
+        public async Task AddUser(UserDTO dto)
         {
-            await idal.AddUser(user);
+            var user = _imapper.Map<User>(dto);
+            await _idal.AddUser(user);
         }
 
-        public async Task UpdateUser(string id, User updatedUser)
+        public async Task UpdateUser(string id, UpdateUserDTO dto)
         {
-            await idal.UpdateUser(id, updatedUser);
+            var updatedUser = _imapper.Map<User>(dto);
+            await _idal.UpdateUser(id, updatedUser);
         }
 
         public async Task DeleteUser(string id)
         {
-            await idal.DeleteUser(id);
+            await _idal.DeleteUser(id);
         }
     }
 }

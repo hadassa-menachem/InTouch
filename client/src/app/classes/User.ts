@@ -1,4 +1,5 @@
 import { MediaFile } from "./MediaFile";
+import { Story } from "./Story";
 
 export class User {
   userId!: string;
@@ -16,6 +17,8 @@ export class User {
   followersList?: User[] = [];
   followingsList?: User[] = [];
   profilePicUrl?: string; 
+  stories?: Story[] = [];
+
 
 constructor(init?: Partial<User>) {
   Object.assign(this, init);

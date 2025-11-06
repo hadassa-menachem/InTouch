@@ -5,10 +5,11 @@ using BLL.DTO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BLL.Interfaces;
 
 namespace BLL.Repositories
 {
-    public class CommentBll
+    public class CommentBll:ICommentBll
     {
         private readonly ICommentDal _commentDal;
         private readonly IMapper _mapper;
@@ -19,23 +20,23 @@ namespace BLL.Repositories
             _mapper = mapper;
         }
 
-        public async Task<List<Comment>> GetAllComments()
+        public async Task<List<CommentDTO>> GetAllComments()
         {
-            return await _commentDal.GetAllComments();
+            var comments = await _commentDal.GetAllComments();
+            return _mapper.Map<List<CommentDTO>>(comments);
         }
 
-        public async Task<Comment> GetCommentById(string id)
+        public async Task<CommentDTO> GetCommentById(string id)
         {
-            return await _commentDal.GetCommentById(id);
+            var comment = await _commentDal.GetCommentById(id);
+            return _mapper.Map<CommentDTO>(comment);
         }
 
-        // כאן מחזירים DTO עם שם משתמש
         public async Task<List<CommentDTO>> GetCommentsByPostId(string postId)
         {
             var comments = await _commentDal.GetCommentsByPostId(postId);
             var userIds = comments.Select(c => c.UserId).Distinct().ToList();
 
-            // שולפים את המשתמשים לפי מזהים
             var users = await _commentDal.GetUsersByIds(userIds);
 
             var commentDtos = comments.Select(c =>
@@ -49,13 +50,15 @@ namespace BLL.Repositories
             return commentDtos;
         }
 
-        public async Task AddComment(Comment comment)
+        public async Task AddComment(CommentDTO commentDto)
         {
+            var comment = _mapper.Map<Comment>(commentDto);
             await _commentDal.AddComment(comment);
         }
 
-        public async Task UpdateComment(string id, Comment updatedComment)
+        public async Task UpdateComment(string id, CommentDTO updatedCommentDto)
         {
+            var updatedComment = _mapper.Map<Comment>(updatedCommentDto);
             await _commentDal.UpdateComment(id, updatedComment);
         }
 

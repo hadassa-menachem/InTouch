@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
+using BLL.DTO;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
-using DAL.Repositories;
-using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,45 +10,52 @@ namespace BLL.Repositories
 {
     public class MessageBll : IMessageBll
     {
-        private readonly IMessageDal _idal;
-        private readonly IMapper _imapper;
+        private readonly IMessageDal _dal;
+        private readonly IMapper _mapper;
 
-        public MessageBll(IMessageDal idal, IMapper imapper)
+        public MessageBll(IMessageDal dal, IMapper mapper)
         {
-            _idal = idal;
-            _imapper = imapper;
-        }
-
-        public async Task AddMessage(Message message)
-        {
-            await _idal.AddMessage(message);
-        }
-        public async Task UpdateMessage(Message message)
-        {
-            await _idal.UpdateMessage(message);
+            _dal = dal;
+            _mapper = mapper;
         }
 
-        public async Task<List<Message>> GetMessagesBetweenUsers(string user1Id, string user2Id)
+        public async Task AddMessage(MessageDTO dto)
         {
-            return await _idal.GetMessagesBetweenUsers(user1Id, user2Id);
+            var message = _mapper.Map<Message>(dto);
+            await _dal.AddMessage(message);
         }
 
-        public async Task<List<Message>> GetMessagesForUser(string userId)
+        public async Task UpdateMessage(MessageDTO dto)
         {
-            return await _idal.GetMessagesForUser(userId);
+            var message = _mapper.Map<Message>(dto);
+            await _dal.UpdateMessage(message);
         }
+
+        public async Task<List<MessageDTO>> GetMessagesBetweenUsers(string user1Id, string user2Id)
+        {
+            var messages = await _dal.GetMessagesBetweenUsers(user1Id, user2Id);
+            return _mapper.Map<List<MessageDTO>>(messages);
+        }
+
+        public async Task<List<MessageDTO>> GetMessagesForUser(string userId)
+        {
+            var messages = await _dal.GetMessagesForUser(userId);
+            return _mapper.Map<List<MessageDTO>>(messages);
+        }
+
         public async Task MarkMessagesAsRead(string messageId)
         {
-            await _idal.MarkMessagesAsRead(messageId);
-        }
-        public async Task MarkMessagesAsDelivered(string receiverId, string senderId)
-        {
-            await _idal.MarkMessagesAsDelivered(receiverId, senderId);
-        }
-        public async Task MarkAllMessagesAsDelivered(string receiverId)
-        {
-            await _idal.MarkAllMessagesAsDelivered(receiverId);
+            await _dal.MarkMessagesAsRead(messageId);
         }
 
+        public async Task MarkMessagesAsDelivered(string receiverId, string senderId)
+        {
+            await _dal.MarkMessagesAsDelivered(receiverId, senderId);
+        }
+
+        public async Task MarkAllMessagesAsDelivered(string receiverId)
+        {
+            await _dal.MarkAllMessagesAsDelivered(receiverId);
+        }
     }
 }

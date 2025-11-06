@@ -1,17 +1,16 @@
-﻿using DAL.Models;
-using System;
+﻿using BLL.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
     public interface ILikeBll
     {
-        Task AddLike(Like like);
-        Task RemoveLike(string likeId);
-        Task<List<Like>> GetLikesByPostId(string postId);
+        Task<List<LikeDTO>> GetAllLikes();
+        Task<LikeDTO> AddLike(LikeDTO likeDto);
+        Task<List<LikeDTO>> GetLikesByUserId(string userId);
+        Task DeleteLikeByUserAndPost(string postId, string userId);
+        Task<List<LikeDTO>> GetLikesByPostId(string postId);
         Task<bool> IsPostLikedByUser(string postId, string userId);
     }
 }

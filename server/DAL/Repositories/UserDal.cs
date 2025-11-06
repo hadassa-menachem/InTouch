@@ -43,7 +43,6 @@ namespace DAL.Repositories
             if (existingUser == null)
                 throw new Exception("User not found");
 
-            // עדכון רק של השדות שמגיעים מהטופס
             existingUser.UserName = updatedData.UserName;
             existingUser.FirstName = updatedData.FirstName;
             existingUser.LastName = updatedData.LastName;
@@ -58,22 +57,17 @@ namespace DAL.Repositories
             await _users.ReplaceOneAsync(u => u.UserId == id, existingUser);
         }
 
-
         public async Task DeleteUser(string id)
         {
             await _users.DeleteOneAsync(u => u.UserId == id);
         }
         public async Task AddFollower(User user, User follower)
         {
-            // הוספת ה-follower לרשימת העוקבים של המשתמש
             var updateUser = Builders<User>.Update.AddToSet(u => u.FollowersList, follower.UserId);
             await _users.UpdateOneAsync(u => u.UserId == user.UserId, updateUser);
 
-            // הוספת המשתמש לרשימת ה-following של העוקב
             var updateFollower = Builders<User>.Update.AddToSet(u => u.FollowingsList, user.UserId);
             await _users.UpdateOneAsync(u => u.UserId == follower.UserId, updateFollower);
         }
-
-
     }
 }

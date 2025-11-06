@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.DTO;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class FollowBll: IFollowBll
+    public class FollowBll : IFollowBll
     {
         private readonly IFollowDal idal;
         private readonly IMapper imapper;
@@ -18,33 +19,39 @@ namespace BLL.Repositories
             imapper = _imapper;
         }
 
-        public async Task<List<Follow>> GetAllFollows()
+        public async Task<List<FollowDTO>> GetAllFollows()
         {
-            return await idal.GetAllFollows();
+            var follows = await idal.GetAllFollows();
+            return imapper.Map<List<FollowDTO>>(follows);
         }
 
-        public async Task<Follow> GetFollowById(string id)
+        public async Task<FollowDTO> GetFollowById(string id)
         {
-            return await idal.GetFollowById(id);
+            var follow = await idal.GetFollowById(id);
+            return imapper.Map<FollowDTO>(follow);
         }
 
-        public async Task<List<Follow>> GetFollowersByUserId(string userId)
+        public async Task<List<FollowDTO>> GetFollowersByUserId(string userId)
         {
-            return await idal.GetFollowersByUserId(userId);
+            var followers = await idal.GetFollowersByUserId(userId);
+            return imapper.Map<List<FollowDTO>>(followers);
         }
 
-        public async Task<List<Follow>> GetFolloweesByUserId(string userId)
+        public async Task<List<FollowDTO>> GetFolloweesByUserId(string userId)
         {
-            return await idal.GetFolloweesByUserId(userId);
+            var followees = await idal.GetFolloweesByUserId(userId);
+            return imapper.Map<List<FollowDTO>>(followees);
         }
 
-        public async Task AddFollow(Follow follow)
+        public async Task AddFollow(FollowDTO followDto)
         {
+            var follow = imapper.Map<Follow>(followDto);
             await idal.AddFollow(follow);
         }
 
-        public async Task UpdateFollow(string id, Follow updatedFollow)
+        public async Task UpdateFollow(string id, FollowDTO updatedFollowDto)
         {
+            var updatedFollow = imapper.Map<Follow>(updatedFollowDto);
             await idal.UpdateFollow(id, updatedFollow);
         }
 
