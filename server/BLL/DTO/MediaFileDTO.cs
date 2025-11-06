@@ -11,5 +11,4 @@ namespace BLL.DTO
         public string Url { get; set; }
         public string MediaType { get; set; }
     }
-
 }

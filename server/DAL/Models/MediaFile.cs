@@ -1,8 +1,19 @@
-﻿public class MediaFile
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DAL.Models
 {
-    public string Id { get; set; }
-    public string Url { get; set; }
-    public string MediaType { get; set; }
-    public DateTime UploadedAt { get; set; }
-    public string? PostId { get; set; }
+    public class MediaFile
+    {
+        public string Id { get; set; }
+        public string Url { get; set; }
+        public string MediaType { get; set; }
+        public DateTime UploadedAt { get; set; }
+        public string? PostId { get; set; }
+    }
 }

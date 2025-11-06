@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BLL.DTO
 {
-    
-        public class LikeDTO
-        {
+    public class LikeDTO
+    {
         [JsonPropertyName("id")]
         public string? Id { get; set; }
 
@@ -19,5 +18,4 @@ namespace BLL.DTO
         [JsonPropertyName("userId")]
         public string UserId { get; set; } = string.Empty;
     }
-    
 }

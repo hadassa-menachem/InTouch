@@ -69,7 +69,6 @@ public class PostController : ControllerBase
         return Ok(dto);
     }
 
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetPostById(string id)
     {
@@ -89,6 +88,7 @@ public class PostController : ControllerBase
             return "video";
         return "unknown";
     }
+
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetPostsByUserId(string userId)
     {
@@ -98,5 +98,4 @@ public class PostController : ControllerBase
 
         return Ok(posts);
     }
-
 }

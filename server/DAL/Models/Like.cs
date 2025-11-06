@@ -1,15 +1,21 @@
-﻿using DAL.Models;
+﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Like
+namespace DAL.Models
 {
-    public string Id { get; set; }
-    public string PostId { get; set; }
-    public string UserId { get; set; }
+    public class Like
+    {
+        public string Id { get; set; }
+        public string PostId { get; set; }
+        public string UserId { get; set; }
 
-    [BsonIgnoreIfNull]
-    public User? User { get; set; }
-    public string FullName { get; set; } = "";
-
+        [BsonIgnoreIfNull]
+        public User? User { get; set; }
+        public string FullName { get; set; } = "";
+    }
 }

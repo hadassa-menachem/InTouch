@@ -34,12 +34,10 @@ public class StoryController : ControllerBase
 
         try
         {
-            // מציאת המשתמש
             var user = await _userCollection.Find(u => u.UserId == dto.UserId).FirstOrDefaultAsync();
             if (user == null)
                 return BadRequest("User not found");
 
-            // יצירת סטורי חדש
             var story = new Story
             {
                 Id = ObjectId.GenerateNewId().ToString(),
@@ -52,7 +50,6 @@ public class StoryController : ControllerBase
                 ImageUrl = dto.ImageUrl  
             };
 
-            // טיפול בקובץ אם קיים (עדיף להעדיף קובץ על URL)
             if (file != null && file.Length > 0)
             {
                 var uploadsPath = Path.Combine(_env.WebRootPath ?? "wwwroot", "uploads");
@@ -70,10 +67,8 @@ public class StoryController : ControllerBase
                 story.ImageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
             }
 
-            // שמירת סטורי במסד
             await _storyBll.AddStory(story);
 
-            // עדכון רשימת הסטוריז והקטגוריות של המשתמש
             var update = Builders<User>.Update
                 .Push(u => u.Stories, story)
                 .AddToSet(u => u.Categories, story.Category);
@@ -88,7 +83,6 @@ public class StoryController : ControllerBase
         }
     }
 
-
     [HttpGet("{id}")]
     public async Task<ActionResult<Story>> GetStoryById(string id)
     {
@@ -96,12 +90,14 @@ public class StoryController : ControllerBase
         if (story == null) return NotFound();
         return Ok(story);
     }
+
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<List<Story>>> GetStoriesByUserId(string userId)
     {
         var stories = await _storyBll.GetStoriesByUserId(userId);
         return Ok(stories);
     }
+
     [HttpGet("categories/{userId}")]
     public async Task<IActionResult> GetUserCategories(string userId)
     {
@@ -129,6 +125,7 @@ public class StoryController : ControllerBase
 
         return Ok("Story marked as viewed.");
     }
+
     [HttpGet]
     public async Task<ActionResult<List<Story>>> GetAllStories()
     {
@@ -140,7 +137,6 @@ public class StoryController : ControllerBase
     {
         var now = DateTime.UtcNow;
 
-        // סטוריז זמניים בלבד (שעדיין לא עברו 24 שעות)
         var temporaryStories = await _storiesCollection.Find(s =>
             s.UserId == userId &&
             s.IsTemporary == true &&
@@ -154,7 +150,6 @@ public class StoryController : ControllerBase
     [HttpGet("highlights/{userId}")]
     public async Task<IActionResult> GetUserHighlights(string userId)
     {
-        // סטוריז קבועים בלבד (לא זמניים)
         var highlights = await _storiesCollection.Find(s =>
             s.UserId == userId &&
             (s.IsTemporary == false || s.IsTemporary == null)

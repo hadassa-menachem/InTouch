@@ -43,7 +43,6 @@ namespace BLL.Mappings
 
             // Follow 
             CreateMap<Follow, FollowDTO>().ReverseMap();
-            CreateMap<Follow, FollowRequestDTO>().ReverseMap();
 
             // Status
             CreateMap<Status, CreateStatusDTO>().ReverseMap();
@@ -52,6 +51,5 @@ namespace BLL.Mappings
             CreateMap<Story, CreateStoryDTO>().ReverseMap();
             CreateMap<CreateStoryDTO, Story>().ReverseMap();
         }
-
     }
 }

@@ -12,24 +12,24 @@ namespace BLL.Repositories
     public class CommentBll:ICommentBll
     {
         private readonly ICommentDal _commentDal;
-        private readonly IMapper _mapper;
+        private readonly IMapper imapper;
 
         public CommentBll(ICommentDal commentDal, IMapper mapper)
         {
             _commentDal = commentDal;
-            _mapper = mapper;
+            this.imapper = mapper; 
         }
 
         public async Task<List<CommentDTO>> GetAllComments()
         {
             var comments = await _commentDal.GetAllComments();
-            return _mapper.Map<List<CommentDTO>>(comments);
+            return imapper.Map<List<CommentDTO>>(comments);
         }
 
         public async Task<CommentDTO> GetCommentById(string id)
         {
             var comment = await _commentDal.GetCommentById(id);
-            return _mapper.Map<CommentDTO>(comment);
+            return imapper.Map<CommentDTO>(comment);
         }
 
         public async Task<List<CommentDTO>> GetCommentsByPostId(string postId)
@@ -42,7 +42,7 @@ namespace BLL.Repositories
             var commentDtos = comments.Select(c =>
             {
                 var user = users.FirstOrDefault(u => u.UserId == c.UserId);
-                var dto = _mapper.Map<CommentDTO>(c);
+                var dto = imapper.Map<CommentDTO>(c);
                 dto.UserName = user != null ? $"{user.FirstName} {user.LastName}" : "Unknown User";
                 return dto;
             }).ToList();
@@ -52,13 +52,13 @@ namespace BLL.Repositories
 
         public async Task AddComment(CommentDTO commentDto)
         {
-            var comment = _mapper.Map<Comment>(commentDto);
+            var comment = imapper.Map<Comment>(commentDto);
             await _commentDal.AddComment(comment);
         }
 
         public async Task UpdateComment(string id, CommentDTO updatedCommentDto)
         {
-            var updatedComment = _mapper.Map<Comment>(updatedCommentDto);
+            var updatedComment = imapper.Map<Comment>(updatedCommentDto);
             await _commentDal.UpdateComment(id, updatedComment);
         }
 

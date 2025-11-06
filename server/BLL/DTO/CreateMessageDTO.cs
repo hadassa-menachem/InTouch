@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace BLL.DTO
 {
-        public class CreateMessageDTO
-        {
-            public string SenderId { get; set; } = string.Empty;
-            public string ReceiverId { get; set; } = string.Empty;
-            public string Content { get; set; } = string.Empty;
-        }
+    public class CreateMessageDTO
+    {
+        public string SenderId { get; set; } = string.Empty;
+        public string ReceiverId { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
     }
+}
 

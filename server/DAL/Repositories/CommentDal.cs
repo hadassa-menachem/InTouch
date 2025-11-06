@@ -10,14 +10,12 @@ namespace DAL.Repositories
 	public class CommentDal : ICommentDal
 	{
 		private readonly IMongoCollection<Comment> _comments;
-
         private readonly IMongoCollection<User> _users;
 
         public CommentDal(MongoContext context)
 		{
 			_comments = context.Comments;
             _users = context.Users; 
-
         }
 
         public async Task<List<Comment>> GetAllComments()
@@ -45,7 +43,6 @@ namespace DAL.Repositories
 
 			await _comments.InsertOneAsync(comment);
 		}
-
 		public async Task UpdateComment(string id, Comment updatedComment)
 		{
 			await _comments.ReplaceOneAsync(c => c.Id == id, updatedComment);

@@ -18,5 +18,4 @@ namespace BLL.DTO
         public bool IsRead { get; set; } 
         public bool IsDelivered { get; set; }
     }
-
 }

@@ -13,10 +13,10 @@ namespace BLL.Repositories
         private readonly IFollowDal idal;
         private readonly IMapper imapper;
 
-        public FollowBll(IFollowDal _idal, IMapper _imapper)
+        public FollowBll(IFollowDal _idal, IMapper mapper)
         {
             idal = _idal;
-            imapper = _imapper;
+            this.imapper = mapper;
         }
 
         public async Task<List<FollowDTO>> GetAllFollows()

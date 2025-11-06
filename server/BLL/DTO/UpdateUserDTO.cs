@@ -18,5 +18,4 @@ namespace BLL.DTO
         public string Password { get; set; } = null!;
         public string? Bio { get; set; }
     }
-
 }

@@ -11,35 +11,35 @@ namespace BLL.Repositories
     public class MediaFileBll : IMediaFileBll
     {
         private readonly IMediaFileDal _idal;
-        private readonly IMapper _imapper;
+        private readonly IMapper imapper;
 
-        public MediaFileBll(IMediaFileDal idal, IMapper imapper)
+        public MediaFileBll(IMediaFileDal idal, IMapper mapper)
         {
             _idal = idal;
-            _imapper = imapper;
+            this.imapper = mapper;
         }
 
         public async Task<List<MediaFileDTO>> GetAllMediaFiles()
         {
             var mediaFiles = await _idal.GetAllMediaFiles();
-            return _imapper.Map<List<MediaFileDTO>>(mediaFiles);
+            return imapper.Map<List<MediaFileDTO>>(mediaFiles);
         }
 
         public async Task<MediaFileDTO> GetMediaFileById(string id)
         {
             var mediaFile = await _idal.GetMediaFileById(id);
-            return _imapper.Map<MediaFileDTO>(mediaFile);
+            return imapper.Map<MediaFileDTO>(mediaFile);
         }
 
         public async Task AddMediaFile(CreateMediaFileDTO dto)
         {
-            var mediaFile = _imapper.Map<MediaFile>(dto);
+            var mediaFile = imapper.Map<MediaFile>(dto);
             await _idal.AddMediaFile(mediaFile);
         }
 
         public async Task UpdateMediaFile(string id, MediaFileDTO dto)
         {
-            var updatedMediaFile = _imapper.Map<MediaFile>(dto);
+            var updatedMediaFile = imapper.Map<MediaFile>(dto);
             await _idal.UpdateMediaFile(id, updatedMediaFile);
         }
 
