@@ -14,9 +14,9 @@ namespace BLL.DTO
         public string Content { get; set; } = string.Empty;
         public DateTime SentAt { get; set; }
         public string? SenderName { get; set; }
-
-        public bool IsRead { get; set; } // אם אתה רוצה להעביר ללקוח
-        public bool IsDelivered { get; set; } // אם אתה רוצה להעביר ללקוח
+        public string? ImageUrl { get; set; } 
+        public bool IsRead { get; set; } 
+        public bool IsDelivered { get; set; }
     }
 
 }

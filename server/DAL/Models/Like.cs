@@ -9,5 +9,7 @@ public class Like
     public string UserId { get; set; }
 
     [BsonIgnoreIfNull]
-    public User? User { get; set; } 
+    public User? User { get; set; }
+    public string FullName { get; set; } = "";
+
 }

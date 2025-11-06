@@ -29,7 +29,45 @@ namespace DAL.Repositories
             foreach (var post in posts)
             {
                 post.User = await _userCollection.Find(u => u.UserId == post.UserId).FirstOrDefaultAsync();
-             
+
+                post.Comments = await _commentCollection.Find(c => c.PostId == post.Id).ToListAsync();
+
+                post.Likes = await _likeCollection.Find(l => l.PostId == post.Id).ToListAsync();
+
+                foreach (var comment in post.Comments)
+                {
+                    comment.User = await _userCollection.Find(u => u.UserId == comment.UserId).FirstOrDefaultAsync();
+                }
+
+                foreach (var like in post.Likes)
+                {
+                    like.User = await _userCollection.Find(u => u.UserId == like.UserId).FirstOrDefaultAsync();
+                }
+            }
+
+            return posts;
+        }
+
+
+        public async Task<List<Post>> GetPostsByUserId(string userId)
+        {
+            var posts = await _postCollection.Find(p => p.UserId == userId).ToListAsync();
+
+            foreach (var post in posts)
+            {
+                post.User = await _userCollection.Find(u => u.UserId == post.UserId).FirstOrDefaultAsync();
+                post.Comments = await _commentCollection.Find(c => c.PostId == post.Id).ToListAsync();
+                post.Likes = await _likeCollection.Find(l => l.PostId == post.Id).ToListAsync();
+
+                foreach (var comment in post.Comments)
+                {
+                    comment.User = await _userCollection.Find(u => u.UserId == comment.UserId).FirstOrDefaultAsync();
+                }
+
+                foreach (var like in post.Likes)
+                {
+                    like.User = await _userCollection.Find(u => u.UserId == like.UserId).FirstOrDefaultAsync();
+                }
             }
 
             return posts;
@@ -41,13 +79,20 @@ namespace DAL.Repositories
             if (post == null) return null;
 
             post.User = await _userCollection.Find(u => u.UserId == post.UserId).FirstOrDefaultAsync();
+            post.Comments = await _commentCollection.Find(c => c.PostId == post.Id).ToListAsync();
+            post.Likes = await _likeCollection.Find(l => l.PostId == post.Id).ToListAsync();
+
+            foreach (var comment in post.Comments)
+            {
+                comment.User = await _userCollection.Find(u => u.UserId == comment.UserId).FirstOrDefaultAsync();
+            }
+
+            foreach (var like in post.Likes)
+            {
+                like.User = await _userCollection.Find(u => u.UserId == like.UserId).FirstOrDefaultAsync();
+            }
+
             return post;
-        }
-
-
-        public async Task<List<Post>> GetPostsByUserId(string userId)
-        {
-            return await _postCollection.Find(p => p.UserId == userId).ToListAsync();
         }
 
         public async Task AddPost(Post post)

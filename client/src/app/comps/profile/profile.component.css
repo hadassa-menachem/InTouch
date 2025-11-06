@@ -255,13 +255,13 @@ a{
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background-color: #0f1b4c;
   color: white;
-  font-size: 24px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -271,4 +271,17 @@ a{
 
 .add-status-btn:hover {
   background-color: #1a2a5c;
+}
+.add-status-btn .icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-status-btn {
+  display: inline;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }

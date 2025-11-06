@@ -239,3 +239,20 @@
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
 }
 
+a{
+  text-decoration: none;
+}
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  padding: 0;
+  direction: ltr;
+}
+
+.read-more-btn:hover {
+  text-decoration: underline;
+}

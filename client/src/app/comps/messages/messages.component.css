@@ -39,6 +39,7 @@
   gap: 12px;
   padding: 8px;
   border-bottom: 1px solid #dbdbdb;
+  cursor: pointer;
 }
 
 .profile-pic {

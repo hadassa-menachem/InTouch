@@ -1,18 +1,17 @@
-﻿using DAL.Models;
-using System;
+﻿using BLL.DTO;
+using DAL.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
     public interface IPostBll
     {
-        Task CreatePost(Post post);
-        Task<Post?> GetPostById(string id);
-        Task<List<Post>> GetPostsByUserId(string userId);
-        Task UpdatePost(Post post);
-        Task DeletePost(string id);
+        Task<PostDTO> AddPost(CreatePostDTO dto);
+        Task<PostDTO?> GetPostById(string id);
+        Task<List<PostDTO>> GetPostsByUserId(string userId);
+        Task<PostDTO> UpdatePost(string id, PostDTO dto);
+        Task<bool> DeletePost(string id);
+        Task<List<PostDTO>> GetAllPosts();
     }
 }

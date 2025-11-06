@@ -2,15 +2,12 @@
   <div class="profile-header">
     <div class="profile-image-name">
       <div class="profile-image">
-  <img 
-    [src]="profileUser.profilePicUrl" 
-    (click)="openStatus()"
-  />
+        <img [src]="profileUser.profilePicUrl" (click)="openProfileStory()" />
+        <button class="view-profile-pic-btn" (click)="openProfileImage(profileUser!.profilePicUrl!)">
+          <lucide-icon name="ZoomIn" (click)="openProfileImage()"></lucide-icon>
+        </button>
+      </div>
 
-  <button class="view-profile-pic-btn" (click)="openProfileImage(profileUser!.profilePicUrl!)">
-    🔍
-  </button>
-</div>
     </div>
 
     <div class="profile-info">
@@ -28,62 +25,73 @@
           <div class="stat-label">Following</div>
         </div>
       </div>
-    
+
       <div class="follow-btn-container">
         <button class="follow-btn" (click)="toggleFollow()">
-{{ isFollowing ? 'Unfollow' : 'Follow' }}
+          {{ isFollowing ? 'Unfollow' : 'Follow' }}
         </button>
+          <button class="follow-btn"  (click)="openChat()">
+    Message
+  </button>
       </div>
+      
     </div>
-    
   </div>
-      <div class="profile-bio">
-        <strong>{{profileUser.firstName}} {{profileUser.lastName}}</strong>
-        <p>{{profileUser.userName}}</p>
-        <p>{{profileUser.bio}}</p>
-      </div>
 
+  <div class="profile-bio">
+    <strong>{{profileUser.firstName}} {{profileUser.lastName}}</strong>
+    <p>{{profileUser.userName}}</p>
+    <p>{{profileUser.bio}}</p>
+  </div>
+
+  <!-- ⚡ היילייטים בלבד (לא זמניים) -->
   <div class="stories">
-  <div class="story" *ngFor="let s of storys">
-    <div class="circle">
-      <a (click)="openStory(s.id)">
-        <img [src]="s.imageUrl" alt="story" *ngIf="s.imageUrl"/>
-      </a>
+    <div class="story" *ngFor="let s of highlights">
+      <div class="circle">
+        <a (click)="openStory(s.id)">
+          <img [src]="s.imageUrl" alt="story" *ngIf="s.imageUrl"/>
+        </a>
+      </div>
+      <p class="nameStory">{{ s.category! }}</p>
     </div>
-    <p class="nameStory">{{ s.content }}</p>
   </div>
-</div>
-
 
   <!-- טאבים -->
   <div class="profile-tabs">
     <button [class.active]="selectedTab === 'images'" (click)="selectedTab = 'images'">תמונות</button>
     <button [class.active]="selectedTab === 'videos'" (click)="selectedTab = 'videos'">וידאו</button>
   </div>
-<div class="no-posts-message" *ngIf="selectedTab === 'images' && imagePosts.length === 0">
-  <p>אין פוסטים של תמונות להצגה.</p>
-</div>
 
-<div class="no-posts-message" *ngIf="selectedTab === 'videos' && videoPosts.length === 0">
-  <p>אין פוסטים של וידאו להצגה.</p>
-</div>
+  <div class="no-posts-message" *ngIf="selectedTab === 'images' && imagePosts.length === 0">
+    <p>אין פוסטים של תמונות להצגה.</p>
+  </div>
 
-<!-- תמונות -->
-<div class="profile-posts" *ngIf="selectedTab === 'images'">
-  <div class="post" *ngFor="let post of imagePosts">
-    <ng-container *ngFor="let media of post.mediaFiles">
-      <a><img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" /></a>
-    </ng-container>
+  <div class="no-posts-message" *ngIf="selectedTab === 'videos' && videoPosts.length === 0">
+    <p>אין פוסטים של וידאו להצגה.</p>
+  </div>
+
+  <!-- תמונות -->
+  <div class="profile-posts" *ngIf="selectedTab === 'images'">
+    <div class="post" *ngFor="let post of imagePosts">
+      <ng-container *ngFor="let media of post.mediaFiles">
+        <a><img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" /></a>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- וידאו -->
+  <div class="profile-posts" *ngIf="selectedTab === 'videos'">
+    <div class="post" *ngFor="let post of videoPosts">
+      <ng-container *ngFor="let media of post.mediaFiles">
+        <video *ngIf="media.mediaType === 'video'" controls [src]="media.url" (click)="goToPostPage(post)"></video>
+      </ng-container>
+    </div>
   </div>
 </div>
-
-<!-- וידאו -->
-<div class="profile-posts" *ngIf="selectedTab === 'videos'">
-  <div class="post" *ngFor="let post of videoPosts">
-    <ng-container *ngFor="let media of post.mediaFiles">
-      <video *ngIf="media.mediaType === 'video'" controls [src]="media.url" (click)="goToPostPage(post)"></video>
-    </ng-container>
+      <!-- תצוגת תמונה מוגדלת (Modal) -->
+<div *ngIf="selectedImageUrl" class="image-modal" (click)="closeImageView()">
+  <div class="image-container" (click)="$event.stopPropagation()">
+    <lucide-icon name="X" class="close-btn" (click)="closeImageView()"></lucide-icon>
+    <img [src]="selectedImageUrl" alt="Profile Image" />
   </div>
-</div>
-
 </div>

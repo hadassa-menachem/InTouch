@@ -193,10 +193,14 @@
   .follow-btn-container {
     text-align: center;
     margin-top: 40px;
+    display: flex;
+    justify-content: center; 
+    gap: 10px; 
+
   }
   
   .follow-btn {
-    padding: 8px 16px;
+    padding: 8px 12px;
     font-size: 14px;
     font-weight: bold;
     color: #fff;
@@ -206,6 +210,8 @@
     cursor: pointer;
     transition: background-color 0.2s ease;
     width: 70%;
+    margin-top: 5px;
+    float: right;
   }
   
   .follow-btn:hover {
@@ -239,4 +245,38 @@
 
 .profile-image {
   position: relative; 
+}
+.image-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* מרכז את המודאל באמצע המסך */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7); /* רקע חצי שקוף */
+  padding: 10px; 
+  z-index: 10000;
+  height: 350vh;
+}
+
+
+.image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  margin: auto;
+  /* position: relative; */
+}
+
+.close-btn {
+  /* position: absolute; */
+  /* top: -250px; */
+  right: 10px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 20;
 }

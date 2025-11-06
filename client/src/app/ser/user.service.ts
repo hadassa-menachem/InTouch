@@ -1,12 +1,12 @@
 import { Injectable, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../classes/User';
 import { map, Observable } from 'rxjs';
 import { Post } from '../classes/Post';
 import { Message } from '../classes/Message';
 import { PostComment } from '../classes/PostComment';
 import { Follow } from '../classes/Follow';
-import { Status } from '../classes/Status';
+// import { Status } from '../classes/Status';
 import { Like } from '../classes/Like';
 import { Story } from '../classes/Story';
 
@@ -56,12 +56,23 @@ getAllPosts(): Observable<Post[]> {
  return this.http.get<Post[]>(`https://localhost:7058/api/Post`);
 }
 
-addLike(postId: string, userId: string): Observable<void> {
+// ב-user.service.ts
+addLike(postId: string, userId: string): Observable<Like> {
   const body = { postId, userId };
-  return this.http.post<void>('https://localhost:7058/api/Like', body);
+  console.log('=== DEBUG addLike ===');
+  console.log('postId:', postId);
+  console.log('userId:', userId);
+  console.log('body being sent:', JSON.stringify(body));
+  console.log('====================');
+  return this.http.post<Like>('https://localhost:7058/api/Like', body);
 }
-deleteLike(postId: string, userId: string) {
-  return this.http.delete<void>(`https://localhost:7058/api/Like/${postId}/${userId}`);
+deleteLike(postId: string, userId: string): Observable<void> {
+  const params = new HttpParams()
+    .set('postId', postId)
+    .set('userId', userId);
+  
+  console.log('DELETE params:', params.toString());
+  return this.http.delete<void>('https://localhost:7058/api/Like', { params });
 }
 getLikesByPostId(postId:string): Observable<Like[]>{
   return this.http.get<Like[]>(`https://localhost:7058/api/Like/post/${postId}`);
@@ -142,19 +153,36 @@ markMessagesAsRead(message: Message): Observable<any> {
       receiverId
     });
   }
-getStatusById(statusId: string): Observable<Status> {
-    return this.http.get<Status>(`https://localhost:7058/api/Status/${statusId}`);
+// getStatusById(statusId: string): Observable<Status> {
+//     return this.http.get<Status>(`https://localhost:7058/api/Status/${statusId}`);
+// }
+addStory(formData: FormData): Observable<void> {
+  return this.http.post<void>('https://localhost:7058/api/Story/', formData);
 }
-addStatus(formData: FormData): Observable<void> {
-  return this.http.post<void>('https://localhost:7058/api/Status/', formData);
-}
-getStatusByUserId(userId: string): Observable<Status[]> {
-    return this.http.get<Status[]>(`https://localhost:7058/api/Status/user/${userId}`);
-}
+
 getStoryByUserId(userId: string): Observable<Story[]> {
     return this.http.get<Story[]>(`https://localhost:7058/api/Story/user/${userId}`);
 }
-getAllStatuses():Observable<Status[]> {
-  return this.http.get<Status[]>('https://localhost:7058/api/Status');
+getStoryById(storyId: string): Observable<Story> {
+    return this.http.get<Story>(`https://localhost:7058/api/Story/${storyId}`);
 }
+getAllStories():Observable<Story[]> {
+  return this.http.get<Story[]>('https://localhost:7058/api/Story');
+}
+getUserCategories(userId: string): Observable<string[]> {
+  return this.http.get<string[]>(`https://localhost:7058/api/Story/categories/${userId}`);
+}
+
+markStoryAsViewed(storyId: string, userId: string): Observable<any> {
+    const body = { StoryId: storyId, ViewerId: userId };
+  return this.http.post('https://localhost:7058/api/Story/mark-viewed', body, { responseType: 'text' });
+}
+getTemporaryStories(userId: string): Observable<any[]> {
+  return this.http.get<any[]>(`https://localhost:7058/api/Story/temporary/${userId}`);
+}
+
+getUserHighlights(userId: string): Observable<any[]> {
+  return this.http.get<any[]>(`https://localhost:7058/api/Story/highlights/${userId}`);
+}
+
 }

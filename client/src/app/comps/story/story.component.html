@@ -1,3 +1,4 @@
+<!-- כפתור ללחיצה על פרופיל להצגת סטוריז זמניים -->
 <div *ngIf="storyGroups.length > 0" class="category-tabs">
   <button *ngFor="let group of storyGroups; let i = index"
           [class.active]="i === currentGroupIndex"
@@ -6,55 +7,71 @@
   </button>
 </div>
 
-<div class="status-container" *ngIf="currentGroup">
+<div *ngIf="story" class="status-container">
+
+  <!-- פסי פרוגרס -->
   <div class="status-progress-bars">
-    <div *ngFor="let s of currentGroup.storys; let i = index" class="progress-segment">
+    <div *ngFor="let s of currentGroup?.stories; let i = index" class="progress-segment">
       <div class="progress-fill"
            [style.width.%]="i < currentStoryIndex ? 100 : i === currentStoryIndex ? progress : 0">
       </div>
     </div>
   </div>
 
+  <!-- כותרת סטורי -->
   <div class="status-header">
-    <img class="profile-pic" [src]="user.profilePicUrl" alt="Profile">
+    <img class="profile-pic" 
+         [src]="story.user?.profilePicUrl" 
+         alt="Profile"
+         (click)="showTemporaryStories(story.user?.userId)">
     <div class="user-info">
-      <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
-      <div class="time-ago">{{ getTimeAgo(currentGroup.storys[currentStoryIndex].createdAt) }}</div>
+      <div class="username">{{ story.user?.firstName }} {{ story.user?.lastName }}</div>
+      <div class="time-ago">{{ getTimeAgo(story.createdAt) }}</div>
     </div>
   </div>
 
-  <img *ngIf="currentGroup.storys[currentStoryIndex].imageUrl"
-       [src]="currentGroup.storys[currentStoryIndex].imageUrl"
+  <!-- תוכן סטורי -->
+  <img *ngIf="story.imageUrl"
+       [src]="story.imageUrl"
        class="status-image" />
-  <video *ngIf="currentGroup.storys[currentStoryIndex].videoUrl"
-         [src]="currentGroup.storys[currentStoryIndex].videoUrl"
+  <video *ngIf="story.videoUrl"
+         [src]="story.videoUrl"
          controls class="status-video"></video>
 
-  <div class="status-text">{{ currentGroup.storys[currentStoryIndex].content }}</div>
+  <div class="status-text">{{ story.content }}</div>
 
+  <!-- אנימציית לייק -->
   <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
 
+  <!-- חלק תחתון עם פעולות ותגובות -->
   <div class="status-bottom">
     <div class="status-actions">
-      <button class="action-btn" (click)="toggleLike(currentGroup.storys[currentStoryIndex].id)">
+      <button class="action-btn" [class.liked]="story.likes?.includes(user.userId)"
+              (click)="toggleLike(story.id)">
         <lucide-icon name="heart"></lucide-icon>
       </button>
-      <button class="action-btn" (click)="toggleCommentBox(currentGroup.storys[currentStoryIndex].id)">
+      <button class="action-btn" (click)="toggleCommentBox(story.id)">
         <lucide-icon name="message-circle"></lucide-icon>
       </button>
-      <button class="action-btn" (click)="shareStatus(currentGroup.storys[currentStoryIndex].id)">
+      <button class="action-btn" (click)="shareStatus(story.id)">
         <lucide-icon name="send"></lucide-icon>
       </button>
     </div>
 
     <div class="comment-box"
-         [class.active]="commentBoxOpenFor === currentGroup.storys[currentStoryIndex].id">
+         [class.active]="commentBoxOpenFor === story.id">
       <input type="text" class="comment-input" placeholder="כתוב תגובה..." [(ngModel)]="newComment"
-             (keydown.enter)="sendComment(currentGroup.storys[currentStoryIndex].id)">
-      <button class="send-btn" (click)="sendComment(currentGroup.storys[currentStoryIndex].id)">שלח</button>
+             (keydown.enter)="sendComment(story.id)">
+      <button class="send-btn" (click)="sendComment(story.id)">שלח</button>
     </div>
   </div>
 
+  <!-- אזורי טאץ' למעבר בין סטוריז -->
   <div class="tap-area tap-left" (click)="prevStatus()"></div>
   <div class="tap-area tap-right" (click)="nextStatus()"></div>
+</div>
+
+<!-- הודעה אם אין סטוריז -->
+<div *ngIf="storyGroups.length === 0" class="no-stories">
+  אין סטוריז להצגה
 </div>

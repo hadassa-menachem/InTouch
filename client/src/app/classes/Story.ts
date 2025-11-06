@@ -15,5 +15,13 @@ export class Story {
     content: string;
   }[];
   createdAt!: Date;
-  category!:string
+  category!: string;
+  viewedByUserIds?: string[];
+  viewedByCurrentUser: boolean = false;
+  isTemporary?: boolean; 
+  constructor(init?: Partial<Story>) {
+    Object.assign(this, init);
+    this.viewedByUserIds = this.viewedByUserIds || [];
+    this.viewedByCurrentUser = false;
+  }
 }

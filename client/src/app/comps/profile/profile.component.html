@@ -6,12 +6,11 @@
   <button 
     class="add-status-btn"
     *ngIf="userService.currentUser?.userId === user.userId"
-    (click)="goToCreateStatus()"
-    title="הוסף סטטוס">
-    +
+    (click)="goToCreateStory()"
+    title="הוסף סטורי">
+<lucide-icon name="plus" class="icon"></lucide-icon>
   </button>
 </div>
-
 
     <div class="profile-stats">
       <div class="stat">

@@ -121,10 +121,10 @@
 .story:last-child {
   margin-left: 8px;
 }
-
+/* ברירת מחדל */
 .circle {
   border-radius: 100%;
-  border: 1px solid #c4c4c4;
+  border: 2px solid #c4c4c4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -132,14 +132,37 @@
   height: 82px;
   background-color: white;
   box-sizing: border-box;
+  transition: border 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.unseen-story {
+  border: 3px solid transparent;
+  background: linear-gradient(45deg, #ff006e, #ffcc00, #33cc33, #0099ff);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
+}
+
+.seen-story {
+  border: 2px solid #d1d1d1;
+  filter: brightness(0.9);
+  opacity: 0.9;
+}
+
+/* תמונת הפרופיל בתוך העיגול */
 .circle img {
   width: 75px;
   height: 75px;
   border-radius: 50%;
   object-fit: cover;
   object-position: top center;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* אפקט hover */
+.circle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 8px rgba(39, 98, 40, 0.4);
 }
 
 .nameStory {
@@ -188,13 +211,14 @@
 
 .more-options {
   cursor: pointer;
-  color: #D62976;
-  font-size: 20px;
+  color: #000000;
+  font-size: 15px;
 }
 
 .post-media {
   width: 100%;
   background-color: #000;
+  
 }
 
 .post-media img,
@@ -478,4 +502,18 @@ html {
 .stories::-webkit-scrollbar-thumb {
   background-color: #4caf50aa;
   border-radius: 3px;
+}
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  padding: 0;
+  direction: ltr;
+}
+
+.read-more-btn:hover {
+  text-decoration: underline;
 }

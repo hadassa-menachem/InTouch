@@ -1,15 +1,21 @@
 <div class="context">
 
-  <div class="stories">
-    <div class="story" *ngFor="let user of allUsers">
-<a (click)="GoToUser(user.userId)">
-        <div class="circle">
-          <img [src]="user.profilePicUrl" alt="story" />
-        </div>
-      </a>
-      <p class="nameStory">{{ user.firstName }} {{ user.lastName }}</p>
-    </div>
+ <div class="stories">
+  <div class="story" *ngFor="let user of allUsers">
+    <a (click)="GoToUser(user.userId)">
+     <div
+  class="circle"
+  [ngClass]="{
+    'unseen-story': !hasViewedStory(user) && user.stories?.length,
+    'seen-story': hasViewedStory(user)
+  }"
+  (click)="markStoriesAsViewed(user)">
+  <img [src]="user.profilePicUrl" alt="story" />
+</div>
+    </a>
+    <p class="nameStory">{{ user.firstName }} {{ user.lastName }}</p>
   </div>
+</div>
 
  <div class="feed">
   <div class="post-card" *ngFor="let post of allPosts" [id]="post.id" #postElement>
@@ -20,7 +26,7 @@
         <img class="profile-pic" [src]="post.user!.profilePicUrl" alt="תמונת פרופיל" />
         <span class="username">{{ post.user?.firstName }} {{ post.user?.lastName }}</span>
       </a>
-      <span class="more-options">...</span>
+      <span class="more-options"> ...</span>
     </div>
 
     <!-- מדיה -->
@@ -56,9 +62,13 @@
     <lucide-icon name="MessageCircle"></lucide-icon>
   </div>
 
-  <div class="action-button" (click)="sharePost()">
+  <div class="action-button" (click)="sharePost(post.id)">
     <lucide-icon name="send"></lucide-icon>
   </div>
+  <div class="action-button" (click)="sharePost()">
+  <lucide-icon name="bookmark"></lucide-icon>
+  </div>
+
 </div>
 
     <!-- תיאור -->
@@ -69,15 +79,29 @@
  <!-- הצגת תגובות -->
 <div class="view-comments">
   <button class="view-comments-button" (click)="toggleCommentsList(post.id)">
-    הצג את כל {{ post.comments?.length || 0 }} התגובות
-  </button>
+  <ng-container *ngIf="post.comments?.length > 0; else noComments">
+    הצג את כל {{ post.comments.length }} התגובות
+  </ng-container>
+  <ng-template #noComments>
+אין תגובות עדיין  </ng-template>
+</button>
+
 </div>
 <!-- רשימת תגובות -->
 <div class="comments-list" *ngIf="commentsListPostId === post.id && post.comments?.length">
-  <div class="comment-line" *ngFor="let c of post.comments">
+  <div class="comment-line"
+       *ngFor="let c of getVisibleComments(post)">
     <strong>{{ c.userName }}</strong> {{ c.content }}
   </div>
+
+  <!-- כפתור קרא עוד -->
+  <button *ngIf="shouldShowReadMore(post)"
+          class="read-more-btn"
+          (click)="toggleReadMore(post.id)">
+    {{ expandedPostIds.includes(post.id) ? 'הצג פחות' : 'קרא עוד' }}
+  </button>
 </div>
+
 
 <!-- תיבת הוספת תגובה -->
 <div class="add-comment" *ngIf="commentBoxPostId === post.id" style="display: flex; align-items: center; gap: 0.5rem;">

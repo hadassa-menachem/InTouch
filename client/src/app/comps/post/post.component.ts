@@ -40,12 +40,12 @@ export class PostComponent implements OnInit, AfterViewInit {
   comment: PostComment = new PostComment();
   showLikeAnimation: boolean = false;
 
-commentBoxPostId: string | null = null; // להוספת תגובה
-commentsListPostId: string | null = null; // לרשימת תגובות
-@ViewChildren('postElement') postElements!: QueryList<ElementRef>;
-@ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
-@ViewChild('messageInputRef') messageInputRef!: ElementRef;
-showEmojiPicker: boolean = false;
+  commentBoxPostId: string | null = null;
+  commentsListPostId: string | null = null;
+  @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
+  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
+  @ViewChild('messageInputRef') messageInputRef!: ElementRef;
+  showEmojiPicker: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,59 +54,65 @@ showEmojiPicker: boolean = false;
     public http: HttpClient
   ) {}
 
-ngOnInit(): void {
-  const userFromStorage = localStorage.getItem('currentUser');
-  if (userFromStorage) {
-    this.user = JSON.parse(userFromStorage);
-    this.userService.currentUser = this.user;
-  } else {
-    this.router.navigate(['/login']);
-    return;
+  ngOnInit(): void {
+    const userFromStorage = localStorage.getItem('currentUser');
+    if (userFromStorage) {
+      this.user = JSON.parse(userFromStorage);
+      this.userService.currentUser = this.user;
+    } else {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const postId = this.route.snapshot.paramMap.get('id');
+    if (!postId) return;
+
+    this.postIdToFocus = postId;
+
+    this.userService.getPostByPostId(postId).subscribe({
+      next: post => {
+        this.post = post;
+        const postUserId = post.user?.userId;
+        if (!postUserId) return;
+
+    this.userService.getPostsByUserId(postUserId).subscribe({
+          next: posts => {
+            this.allPosts = posts;
+
+            this.allPosts.forEach(p => {
+              if (!p.id) return;
+
+              this.userService.getCommentsByPostId(p.id).subscribe({
+                next: comments => {
+                  p.comments = comments;
+                  this.allPosts = [...this.allPosts]; // ✅ עדכון רפרנס
+                },
+                error: err => console.error('שגיאה בטעינת תגובות:', err)
+              });
+
+              this.userService.getLikesByPostId(p.id).subscribe({
+                next: likes => {
+                  p.likes = likes;
+                  this.allPosts = [...this.allPosts]; // ✅ עדכון רפרנס
+                },
+                error: err => console.error('שגיאה בטעינת לייקים:', err)
+              });
+            });
+          },
+          error: err => console.error('שגיאה בטעינת פוסטים של המשתמש:', err)
+        });
+      },
+      error: err => console.error('שגיאה בטעינת הפוסט:', err)
+    });
   }
 
-  const postId = this.route.snapshot.paramMap.get('id');
-  if (!postId) return;
-
-  this.postIdToFocus = postId;
-
-  this.userService.getPostByPostId(postId).subscribe({
-    next: post => {
-      this.post = post;
-      const postUserId = post.user?.userId;
-      if (!postUserId) return;
-
-      this.userService.getPostsByUserId(postUserId).subscribe({
-        next: posts => {
-          this.allPosts = posts;
-
-          // לכל פוסט – הבאת תגובות ולייקים
-          this.allPosts.forEach(p => {
-            if (!p.id) return;
-
-            this.userService.getCommentsByPostId(p.id).subscribe({
-              next: comments => p.comments = comments,
-              error: err => console.error('שגיאה בטעינת תגובות:', err)
-            });
-
-            this.userService.getLikesByPostId(p.id).subscribe({
-              next: likes => p.likes = likes,
-              error: err => console.error('שגיאה בטעינת לייקים:', err)
-            });
-          });
-        },
-        error: err => console.error('שגיאה בטעינת פוסטים של המשתמש:', err)
-      });
-    },
-    error: err => console.error('שגיאה בטעינת הפוסט:', err)
-  });
-}
-
-   getAllUsers() {
+  getAllUsers() {
     this.userService.GetAllUsers().subscribe({
       next: users => this.allUsers = users,
       error: err => console.error('שגיאה בטעינת משתמשים:', err)
     });
   }
+
   ngAfterViewInit(): void {
     setTimeout(() => {
       if (!this.hasScrolled && this.postIdToFocus) {
@@ -147,115 +153,185 @@ ngOnInit(): void {
     const video = event.target as HTMLVideoElement;
     video.pause();
   }
- commentPostId: string | null = null;
 
- toggleLike(postId: string, userId: string) {
+  commentPostId: string | null = null;
+
+toggleLike(postId: string, userId: string) {
   const post = this.allPosts.find(p => p.id === postId);
-  if (!post) return;
-
-  const alreadyLiked = post.likes?.some(like => like.userId === userId);
-
-  if (alreadyLiked) {
-    this.userService.deleteLike(postId, userId).subscribe({
-      next: () => {
-        post.likes = post.likes?.filter(like => like.userId !== userId) || [];
-        this.allPosts = [...this.allPosts]; 
-      },
-      error: err => console.error('שגיאה בהסרת לייק:', err)
-    });
-  } else {
-    // אם עוד לא עשה לייק - נוסיף
-    this.userService.addLike(postId, userId).subscribe({
-      next: () => {
-        post.likes = [...(post.likes || []), { postId, userId } as Like];
-        this.allPosts = [...this.allPosts];
-        this.showLikeAnimation = true;
-  setTimeout(() => this.showLikeAnimation = false, 800);
-      },
-      error: err => console.error('שגיאה בהוספת לייק:', err)
-    });
-  }
-}
-
- toggleCommentBox(postId: string): void {
-  this.commentBoxPostId = this.commentBoxPostId === postId ? null : postId;
-}
-
-toggleCommentsList(postId: string): void {
-  if (this.commentsListPostId === postId) {
-    this.commentsListPostId = null;
-  } else {
-    this.commentsListPostId = postId;
-
-    this.userService.getCommentsByPostId(postId).subscribe({
-      next: comments => {
-        const index = this.allPosts.findIndex(p => p.id === postId);
-        if (index !== -1) {
-          this.allPosts[index].comments = comments;
-        }
-      },
-      error: err => {
-        console.error('שגיאה בטעינת תגובות:', err);
-      }
-    });
-  }
-}
-
-  isPostLiked(post: Post): boolean {
-    return post.likes?.some(like => like.userId === this.user.userId);
-  }
-  
-sendComment(postId: string) {
-  if (!this.newCommentContent.trim()){    alert("לא מזההה יוזר")
-return} ;
-  if (!this.user?.userId) {
+  if (!post) {
+    console.error('Post not found!');
     return;
   }
 
-  this.comment.postId = postId;
-  this.comment.userId = this.user.userId;
-  this.comment.content = this.newCommentContent.trim();
+  const alreadyLiked = post.likes?.some(like => like.userId === userId);
+  console.log(`Post ${postId} - Already liked: ${alreadyLiked}`);
 
-  this.userService.addComment(this.comment).subscribe({
-    next: () => {
-      const index = this.allPosts.findIndex(p => p.id === postId);
-      if (index !== -1) {
-        const newComment = {
-          userName: this.user.firstName + ' ' + this.user.lastName,
-          content: this.comment.content
-        };
-        this.allPosts[index].comments?.push(newComment as PostComment);
+  if (alreadyLiked) {
+    // 🔴 מחיקת לייק
+    console.log('Removing like...');
+    
+    // ✅ 1. עדכן מיד את ה-UI (אופטימיסטי)
+    post.likes = post.likes?.filter(like => like.userId !== userId) || [];
+    this.allPosts = [...this.allPosts];
+    
+    // ✅ 2. שלח לשרת
+    this.userService.deleteLike(postId, userId).subscribe({
+      next: () => {
+        console.log('✅ Like removed from server');
+        // ✅ 3. רענן מהשרת לוודא סנכרון
+        this.refreshPostLikes(postId);
+      },
+      error: err => {
+        console.error('❌ Error removing like:', err);
+        // ✅ 4. אם נכשל, החזר את הלייק
+        if (!post.likes) post.likes = [];
+        post.likes.push({ postId, userId } as Like);
         this.allPosts = [...this.allPosts];
       }
+    });
+  } else {
+    // 🟢 הוספת לייק
+    console.log('Adding like...');
+    
+    // ✅ 1. עדכן מיד את ה-UI (אופטימיסטי)
+    if (!post.likes) post.likes = [];
+    post.likes.push({ postId, userId } as Like);
+    this.allPosts = [...this.allPosts];
+    
+    // ✅ 2. שלח לשרת
+    this.userService.addLike(postId, userId).subscribe({
+      next: (returnedLike) => {
+        console.log('✅ Like added to server', returnedLike);
+        // ✅ 3. רענן מהשרת לוודא סנכרון
+        this.refreshPostLikes(postId);
+      },
+      error: err => {
+        console.error('❌ Error adding like:', err);
+        // ✅ 4. אם נכשל, הסר את הלייק
+        post.likes = post.likes?.filter(like => like.userId !== userId) || [];
+        this.allPosts = [...this.allPosts];
+      }
+    });
+  }
+}
 
-      // איפוס השדות וסגירת תיבות
-      this.newCommentContent = '';
-      this.commentBoxPostId = null;
-      this.commentsListPostId = null;
-      this.showEmojiPicker = false;
+// ✅ פונקציה לרענון לייקים
+refreshPostLikes(postId: string) {
+  this.userService.getLikesByPostId(postId).subscribe({
+    next: (likes) => {
+      const post = this.allPosts.find(p => p.id === postId);
+      if (post) {
+        post.likes = likes;
+        console.log(`✅ Refreshed: ${likes.length} likes`);
+        this.allPosts = [...this.allPosts];
+      }
     },
     error: err => {
-      console.error('שגיאה בשליחת תגובה:', err);
+      console.error('❌ Error refreshing likes:', err);
+      // ✅ אם הרענון נכשל, זה לא קריטי - ה-UI כבר מעודכן
     }
   });
 }
 
-
-toggleEmojiPicker(): void {
-  this.showEmojiPicker = !this.showEmojiPicker;
-  console.log('Emoji Picker toggled! סטטוס:', this.showEmojiPicker);
-}
-
-
-addEmoji(event: any): void {
-  const emoji = event?.emoji?.native || event?.native;
-  if (emoji) {
-    this.newCommentContent += emoji;
-    setTimeout(() => {
-      this.messageInputRef?.nativeElement?.focus();
-    }, 0);
+  toggleCommentBox(postId: string): void {
+    this.commentBoxPostId = this.commentBoxPostId === postId ? null : postId;
   }
-}
 
+  toggleCommentsList(postId: string): void {
+    if (this.commentsListPostId === postId) {
+      this.commentsListPostId = null;
+    } else {
+      this.commentsListPostId = postId;
 
+      this.userService.getCommentsByPostId(postId).subscribe({
+        next: comments => {
+          const index = this.allPosts.findIndex(p => p.id === postId);
+          if (index !== -1) {
+            this.allPosts[index].comments = comments;
+          }
+        },
+        error: err => {
+          console.error('שגיאה בטעינת תגובות:', err);
+        }
+      });
+    }
+  }
+
+  isPostLiked(post: Post): boolean {
+    return post.likes?.some(like => like.userId === this.user.userId);
+  }
+
+  sendComment(postId: string) {
+    if (!this.newCommentContent.trim()) {
+      alert("לא מזההה יוזר");
+      return;
+    }
+    if (!this.user?.userId) {
+      return;
+    }
+
+    this.comment.postId = postId;
+    this.comment.userId = this.user.userId;
+    this.comment.content = this.newCommentContent.trim();
+
+    this.userService.addComment(this.comment).subscribe({
+      next: () => {
+        const index = this.allPosts.findIndex(p => p.id === postId);
+        if (index !== -1) {
+          const newComment = {
+            userName: this.user.firstName + ' ' + this.user.lastName,
+            content: this.comment.content
+          };
+          this.allPosts[index].comments?.push(newComment as PostComment);
+          this.allPosts = [...this.allPosts];
+        }
+
+        this.newCommentContent = '';
+        this.commentBoxPostId = null;
+        this.commentsListPostId = null;
+        this.showEmojiPicker = false;
+      },
+      error: err => {
+        console.error('שגיאה בשליחת תגובה:', err);
+      }
+    });
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+    console.log('Emoji Picker toggled! סטטוס:', this.showEmojiPicker);
+  }
+
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      this.newCommentContent += emoji;
+      setTimeout(() => {
+        this.messageInputRef?.nativeElement?.focus();
+      }, 0);
+    }
+  }
+
+  expandedPostIds: string[] = [];
+
+  getVisibleComments(post: Post) {
+    if (!post.comments) return [];
+    if (this.expandedPostIds.includes(post.id!)) {
+      return post.comments;
+    }
+    return post.comments.slice(0, 5);
+  }
+
+  shouldShowReadMore(post: Post): boolean {
+    return post.comments && post.comments.length > 5;
+  }
+
+  toggleReadMore(postId: string) {
+    const index = this.expandedPostIds.indexOf(postId);
+    if (index > -1) {
+      this.expandedPostIds.splice(index, 1);
+    } else {
+      this.expandedPostIds.push(postId);
+    }
+  }
 }

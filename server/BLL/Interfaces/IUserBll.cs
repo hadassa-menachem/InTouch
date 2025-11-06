@@ -1,18 +1,16 @@
-﻿using DAL.Models;
-using System;
+﻿using BLL.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
     public interface IUserBll
     {
-        Task CreateUser(User user);
-        Task<User?> GetUserByUsername(string username);
-        Task<User?> GetUserById(string id);
-        Task UpdateUser(User user);
+        Task AddUser(UserDTO dto);
+        Task<UserDTO> GetUserByUsername(string userName);
+        Task<UserDTO?> GetUserById(string id);
+        Task UpdateUser(string id, UpdateUserDTO dto);
         Task DeleteUser(string id);
+        Task<List<UserDTO>> GetAllUsers();
     }
 }

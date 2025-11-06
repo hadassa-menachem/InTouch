@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BLL.DTO;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
@@ -7,45 +8,57 @@ using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class PostBll
+    public class PostBll : IPostBll
     {
-        private readonly IPostDal idal;
-        private readonly IMapper imapper;
+        private readonly IPostDal _idal;
+        private readonly IMapper _mapper;
 
-        public PostBll(IPostDal _idal, IMapper _imapper)
+        public PostBll(IPostDal idal, IMapper mapper)
         {
-            idal = _idal;
-            imapper = _imapper;
+            _idal = idal;
+            _mapper = mapper;
         }
 
-        public async Task<List<Post>> GetAllPosts()
+        public async Task<List<PostDTO>> GetAllPosts()
         {
-            return await idal.GetAllPosts();
+            var posts = await _idal.GetAllPosts();
+            return _mapper.Map<List<PostDTO>>(posts);
         }
 
-        public async Task<Post> GetPostById(string id)
+        public async Task<PostDTO> GetPostById(string id)
         {
-            return await idal.GetPostById(id);
+            var post = await _idal.GetPostById(id);
+            return _mapper.Map<PostDTO>(post);
         }
 
-        public async Task<List<Post>> GetPostsByUserId(string userId)
+        public async Task<List<PostDTO>> GetPostsByUserId(string userId)
         {
-            return await idal.GetPostsByUserId(userId);
+            var posts = await _idal.GetPostsByUserId(userId);
+            return _mapper.Map<List<PostDTO>>(posts);
         }
 
-        public async Task AddPost(Post post)
+        public async Task<PostDTO> AddPost(CreatePostDTO dto)
         {
-            await idal.AddPost(post);
+            var post = _mapper.Map<Post>(dto);
+            await _idal.AddPost(post);
+            return _mapper.Map<PostDTO>(post);
         }
 
-        public async Task UpdatePost(string id, Post updatedPost)
+        public async Task<PostDTO> UpdatePost(string id, PostDTO dto)
         {
-            await idal.UpdatePost(id, updatedPost);
+            var post = _mapper.Map<Post>(dto);
+            await _idal.UpdatePost(id, post);
+            var updatedPost = await _idal.GetPostById(id);
+            return _mapper.Map<PostDTO>(updatedPost);
         }
 
-        public async Task DeletePost(string id)
+        public async Task<bool> DeletePost(string id)
         {
-            await idal.DeletePost(id);
+            var post = await _idal.GetPostById(id);
+            if (post == null) return false;
+
+            await _idal.DeletePost(id);
+            return true;
         }
     }
 }

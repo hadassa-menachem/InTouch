@@ -17,6 +17,8 @@ namespace BLL.DTO
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? Bio { get; set; }
+        public string? FollowerId { get; set; }
+        public string? FolloweeId { get; set; }
         public int FollowingCount { get; set; }
         public int FollowersCount { get; set; }
         public int PostsCount { get; set; }
