@@ -87,7 +87,7 @@ public class UserController : ControllerBase
         if (existingUser == null)
             return NotFound();
 
-        _mapper.Map(dto, existingUser); // עדכון השדות מה-DTO למודל הקיים
+        _mapper.Map(dto, existingUser); 
 
         if (profileImage != null && profileImage.Length > 0)
         {

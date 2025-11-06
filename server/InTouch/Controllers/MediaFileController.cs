@@ -42,7 +42,6 @@ public class MediaFileController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddMediaFile(MediaFile mediaFile)
     {
-        // המרה ל-CreateMediaFileDTO לפני קריאה ל-BLL
         var dto = _mapper.Map<CreateMediaFileDTO>(mediaFile);
         await _mediaFileBll.AddMediaFile(dto);
 
@@ -57,14 +56,12 @@ public class MediaFileController : ControllerBase
         if (existing == null)
             return NotFound();
 
-        // המרה ל-MediaFileDTO לפני קריאה ל-BLL
         var dto = _mapper.Map<MediaFileDTO>(updatedMediaFile);
         await _mediaFileBll.UpdateMediaFile(id, dto);
 
         return NoContent();
     }
 
-    // DELETE api/mediafile/{id}
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMediaFile(string id)
     {

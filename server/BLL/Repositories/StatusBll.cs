@@ -14,12 +14,12 @@ namespace BLL.Repositories
     public class StatusBll : IStatusBll
     {
         private readonly IStatusDal _statusDal;
-        private readonly IMapper _mapper;
+        private readonly IMapper imapper;
 
         public StatusBll(IStatusDal statusDal, IMapper mapper)
         {
             _statusDal = statusDal;
-            _mapper = mapper;
+            this.imapper = mapper;
         }
 
         public async Task<List<Status>> GetAllStatuses()
@@ -56,6 +56,5 @@ namespace BLL.Repositories
         {
             await _statusDal.DeleteOldStatuses();
         }
-
-        }
+    }
 }

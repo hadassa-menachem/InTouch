@@ -21,7 +21,6 @@ namespace DAL.Repositories
             _likeCollection = context.Likes;
         }
 
-
         public async Task<List<Post>> GetAllPosts()
         {
             var posts = await _postCollection.Find(_ => true).ToListAsync();
@@ -47,7 +46,6 @@ namespace DAL.Repositories
 
             return posts;
         }
-
 
         public async Task<List<Post>> GetPostsByUserId(string userId)
         {

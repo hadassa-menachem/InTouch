@@ -55,14 +55,14 @@ public class FollowController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> AddFollow([FromBody] FollowDTO followDto)
     {
-        // בדיקה אם המעקב כבר קיים
         var existingFollows = await _followBll.GetFollowersByUserId(followDto.FolloweeId);
         if (existingFollows.Any(f => f.FollowerId == followDto.FollowerId && f.FolloweeId == followDto.FolloweeId))
             return BadRequest("המעקב כבר קיים");
 
         await _followBll.AddFollow(followDto);
-        return CreatedAtAction(nameof(GetFollowById), new { id = followDto.CodeUser }, followDto);
+        return Ok(followDto); // Id יתעדכן אוטומטית אחרי הוספה
     }
+
 
     // PUT: api/follow/{id}
     [HttpPut("{id}")]
@@ -98,7 +98,7 @@ public class FollowController : ControllerBase
         if (follow == null)
             return NotFound("המעקב לא קיים");
 
-        await _followBll.DeleteFollow(follow.CodeUser);
+        await _followBll.DeleteFollow(follow.Id);
         return NoContent();
     }
 

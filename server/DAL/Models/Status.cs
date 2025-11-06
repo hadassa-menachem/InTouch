@@ -12,12 +12,14 @@ namespace DAL.Models
          [BsonId]
          [BsonRepresentation(BsonType.ObjectId)]
          public string? Id { get; set; }
-         [BsonRepresentation(BsonType.String)]
+         
+        [BsonRepresentation(BsonType.String)]
          public string UserId { get; set; }
          public string Content { get; set; }
          public DateTime CreatedAt { get; set; }
          public string? ImageUrl { get; set; } 
-         [BsonIgnore]
+         
+        [BsonIgnore]
          public User? User { get; set; }
         
     }

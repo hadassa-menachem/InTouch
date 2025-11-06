@@ -11,41 +11,41 @@ namespace BLL.Functions
     public class UserBll:IUserBll
     {
         private readonly IUserDal _idal;
-        private readonly IMapper _imapper;
+        private readonly IMapper imapper;
 
         public UserBll(IUserDal idal, IMapper imapper)
         {
             _idal = idal;
-            _imapper = imapper;
+            this.imapper = imapper; 
         }
 
         public async Task<List<UserDTO>> GetAllUsers()
         {
             var users = await _idal.GetAllUsers();
-            return _imapper.Map<List<UserDTO>>(users);
+            return imapper.Map<List<UserDTO>>(users);
         }
 
         public async Task<UserDTO> GetUserById(string id)
         {
             var user = await _idal.GetUserById(id);
-            return _imapper.Map<UserDTO>(user);
+            return imapper.Map<UserDTO>(user);
         }
       
         public async Task<UserDTO> GetUserByUsername(string userName)
         {
             var user = await _idal.GetUserByUserName(userName);
-            return _imapper.Map<UserDTO>(user);
+            return imapper.Map<UserDTO>(user);
         }
 
         public async Task AddUser(UserDTO dto)
         {
-            var user = _imapper.Map<User>(dto);
+            var user = imapper.Map<User>(dto);
             await _idal.AddUser(user);
         }
 
         public async Task UpdateUser(string id, UpdateUserDTO dto)
         {
-            var updatedUser = _imapper.Map<User>(dto);
+            var updatedUser = imapper.Map<User>(dto);
             await _idal.UpdateUser(id, updatedUser);
         }
 

@@ -1,0 +1,22 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Uploads / media
+wwwroot/uploads/
+# Build folders
+server/InTouch/bin/
+server/InTouch/obj/
+
+# User-specific files
+server/InTouch/*.csproj.user
+
+# Uploads
+server/InTouch/wwwroot/uploads/

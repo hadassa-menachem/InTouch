@@ -13,7 +13,6 @@ public class MongoContext
         var client = new MongoClient(mongoSettings.Value.ConnectionString);
         _database = client.GetDatabase(mongoSettings.Value.DatabaseName);
     }
-
     public IMongoCollection<User> Users => _database.GetCollection<User>("User");
     public IMongoCollection<Post> Posts => _database.GetCollection<Post>("Post");
     public IMongoCollection<Comment> Comments => _database.GetCollection<Comment>("Comment");
@@ -22,5 +21,4 @@ public class MongoContext
     public IMongoCollection<Follow> Follows => _database.GetCollection<Follow>("Follow");
     public IMongoCollection<Status> Statuses => _database.GetCollection<Status>("Status");
     public IMongoCollection<Story> Stories => _database.GetCollection<Story>("Story");
-
 }

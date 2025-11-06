@@ -88,7 +88,6 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetStatusById), new { id = status.Id }, status);
         }
 
-
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateStatus(string id, [FromBody] Status updatedStatus)
         {

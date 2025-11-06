@@ -16,37 +16,11 @@ public class LikeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddLike([FromBody] LikeDTO likeDto)
     {
-        // בדיקה אם ה-DTO הגיע
         if (likeDto == null)
         {
             return BadRequest(new { message = "Request body is null or empty" });
         }
 
-        // בדיקת ModelState
-        if (!ModelState.IsValid)
-        {
-            Console.WriteLine("❌ ModelState is INVALID:");
-            foreach (var error in ModelState)
-            {
-                Console.WriteLine($"   Key: {error.Key}");
-                foreach (var err in error.Value.Errors)
-                {
-                    Console.WriteLine($"      Error: {err.ErrorMessage}");
-                    if (err.Exception != null)
-                        Console.WriteLine($"      Exception: {err.Exception.Message}");
-                }
-            }
-
-            return BadRequest(new
-            {
-                message = "Invalid model state",
-                errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-            });
-        }
-
-        // בדיקת נתונים ריקים
         if (string.IsNullOrWhiteSpace(likeDto.PostId))
         {
             return BadRequest(new { message = "PostId is required" });
@@ -96,6 +70,7 @@ public class LikeController : ControllerBase
         var isLiked = await _likeBll.IsPostLikedByUser(postId, userId);
         return Ok(isLiked);
     }
+
     [HttpGet("post/{postId}")]
     public async Task<ActionResult<List<LikeDTO>>> GetLikesByPostId(string postId)
     {
@@ -112,5 +87,4 @@ public class LikeController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
-
 }

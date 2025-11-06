@@ -17,13 +17,12 @@ namespace DAL.Models
          public string Content { get; set; }
          public DateTime CreatedAt { get; set; }
          public string? ImageUrl { get; set; } 
+          
          [BsonIgnore]
          public User? User { get; set; }
-        public string? Category { get; set; }
-        public int? DurationInHours { get; set; }
-        public bool IsTemporary { get; set; }
-
-        public List<string> ViewedByUserIds { get; set; } = new List<string>();
-
+         public string? Category { get; set; }
+         public int? DurationInHours { get; set; }
+         public bool IsTemporary { get; set; }
+         public List<string> ViewedByUserIds { get; set; } = new List<string>();
     }
 }

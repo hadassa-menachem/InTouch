@@ -59,13 +59,13 @@
             {
                 await _statusCollection.DeleteOneAsync(s => s.Id == id);
             }
-        public async Task DeleteOldStatuses()
-        {
-            var cutoff = DateTime.UtcNow.AddHours(-24); // כל הסטטוסים שיצאו לפני 24 שעות
-            var filter = Builders<Status>.Filter.Lt(s => s.CreatedAt, cutoff);
-            await _statusCollection.DeleteManyAsync(filter);
-        }
 
+            public async Task DeleteOldStatuses()
+            {
+               var cutoff = DateTime.UtcNow.AddHours(-24); // כל הסטטוסים שיצאו לפני 24 שעות
+               var filter = Builders<Status>.Filter.Lt(s => s.CreatedAt, cutoff);
+               await _statusCollection.DeleteManyAsync(filter);
+            }
     }
 }
 

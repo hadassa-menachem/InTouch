@@ -14,6 +14,5 @@ namespace DAL.Interfaces
         Task DeleteStory(string id);
         Task DeleteOldStories();
         Task MarkStoryAsViewed(string storyId, string viewerId);
-
     }
 }

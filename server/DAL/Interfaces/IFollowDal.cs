@@ -11,8 +11,8 @@ namespace DAL.Interfaces
     {
         Task<List<Follow>> GetAllFollows();
         Task<Follow> GetFollowById(string id);
-        Task<List<Follow>> GetFollowersByUserId(string userId); // מי עוקבים אחרי משתמש מסוים
-        Task<List<Follow>> GetFolloweesByUserId(string userId); // אחרי מי משתמש עוקב
+        Task<List<Follow>> GetFollowersByUserId(string userId); // רשימת העוקבים אחרי המשתמש
+        Task<List<Follow>> GetFolloweesByUserId(string userId); // רשימת הנעקבים על ידי המשתמש
         Task AddFollow(Follow follow);
         Task UpdateFollow(string id, Follow updatedFollow);
         Task DeleteFollow(string id);

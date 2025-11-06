@@ -17,7 +17,5 @@ namespace DAL.Models
             public User? User { get; set; } // המשתמש שהגיב
             public string Text { get; set; } = "";
             public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
     }
-
 }
