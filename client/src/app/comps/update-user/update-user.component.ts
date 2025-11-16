@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../classes/User';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../ser/user.service';
 import { HttpClient } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-update-user',
@@ -45,7 +44,6 @@ export class UpdateUserComponent implements OnInit {
     const currentUser = this.usersService.getCurrentUser();
     if (currentUser) {
       this.user = currentUser;
-
       this.registerForm.patchValue({
         userName: this.user.userName,
         firstName: this.user.firstName,
@@ -74,7 +72,6 @@ export class UpdateUserComponent implements OnInit {
     }
 
     const updatedUser = { ...this.user, ...this.registerForm.value };
-
     const formData = new FormData();
 
     for (const key in updatedUser) {
@@ -91,10 +88,10 @@ export class UpdateUserComponent implements OnInit {
     const dob = new Date(updatedUser.dateOfBirth!);
     formData.set('dateOfBirth', dob.toISOString());
 
-    this.usersService.updateUser(this.user.userId,formData).subscribe({
+    this.usersService.updateUser(this.user.userId, formData).subscribe({
       next: () => {
         this.usersService.setCurrentUser(updatedUser);
-            localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
         alert('המשתמש עודכן בהצלחה');
         this.router.navigate(['/profile']);
       },

@@ -1,7 +1,12 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
   <p>התחברות באמצעות קוד משתמש</p>
 
-  <input type="text" id="codeUser" formControlName="codeUser" placeholder="הכנס קוד משתמש" />
+  <input
+    type="text"
+    id="codeUser"
+    formControlName="codeUser"
+    placeholder="הכנס קוד משתמש"
+  />
 
   <div class="error" *ngIf="codeUser?.touched && codeUser?.invalid">
     <div *ngIf="codeUser?.errors?.['required']">שדה קוד משתמש חובה</div>

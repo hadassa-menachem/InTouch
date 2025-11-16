@@ -6,69 +6,133 @@
     </a>
   </div>
 
-  <!-- הודעות -->
-  <div class="chat-messages">
+  <div class="chat-messages" (scroll)="onUserScroll($event)">
     <ng-container *ngFor="let message of messages; let i = index">
-
-      <!-- תאריך רק בתחילת כל יום -->
       <div *ngIf="isNewDay(i)" class="day-separator">
         {{ formatDay(message.sentAt) }}
       </div>
 
-      <div [ngClass]="{ 'sent': message.senderId === currentUserId, 'received': message.senderId !== currentUserId }"
-           class="message-bubble">
-
+      <div
+        [ngClass]="{
+          'sent': message.senderId === currentUserId,
+          'received': message.senderId !== currentUserId
+        }"
+        class="message-bubble"
+      >
         <div class="message-content">
           <div *ngIf="message.content">{{ message.content }}</div>
-          <img *ngIf="message.imageUrl" [src]="message.imageUrl" class="sent-image" alt="תמונה בהודעה" />
+
+          <img
+            *ngIf="message.imageUrl"
+            [src]="message.imageUrl"
+            class="sent-image"
+            alt="תמונה בהודעה"
+          />
+
+          <a
+            *ngIf="message.imageUrl"
+            [href]="message.imageUrl"
+            target="_blank"
+            class="download-link"
+          >
+            <lucide-icon name="download" size="15"></lucide-icon>
+          </a>
         </div>
 
-        <a *ngIf="message.imageUrl" [href]="message.imageUrl" target="_blank" class="download-link">
-          <lucide-icon name="download"></lucide-icon>
-        </a>
+        <div class="message-footer">
+          <div class="timestamp">
+            {{ message.sentAt | date: 'shortTime' }}
+          </div>
 
-        <div class="timestamp">
-          {{ message.sentAt | date: 'shortTime' }}
+          <div *ngIf="message.senderId === currentUserId" class="status-checks">
+            <ng-container *ngIf="!message.isDelivered && !message.isRead">
+              <svg
+                class="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+                stroke="#7a7a7a"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="1 7 5 11 15 1" />
+              </svg>
+            </ng-container>
+
+            <ng-container *ngIf="message.isDelivered && !message.isRead">
+              <svg
+                class="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+                stroke="#7a7a7a"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="1 7 5 11 15 1" />
+              </svg>
+              <svg
+                class="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+                stroke="#7a7a7a"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="1 7 5 11 15 1" />
+              </svg>
+            </ng-container>
+
+            <ng-container *ngIf="message.isRead">
+              <svg
+                class="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+                stroke="#34B7F1"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="1 7 5 11 15 1" />
+              </svg>
+              <svg
+                class="check-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="12"
+                viewBox="0 0 16 12"
+                fill="none"
+                stroke="#34B7F1"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="1 7 5 11 15 1" />
+              </svg>
+            </ng-container>
+          </div>
         </div>
-
-        <!-- סטטוס הודעה -->
-        <div *ngIf="message.senderId === currentUserId" class="status-checks">
-          <ng-container *ngIf="!message.isDelivered && !message.isRead">
-            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 7 5 11 15 1" />
-            </svg>
-          </ng-container>
-
-          <ng-container *ngIf="message.isDelivered && !message.isRead">
-            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 7 5 11 15 1" />
-            </svg>
-            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#7a7a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 7 5 11 15 1" />
-            </svg>
-          </ng-container>
-
-          <ng-container *ngIf="message.isRead">
-            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 7 5 11 15 1" />
-            </svg>
-            <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="#34B7F1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 7 5 11 15 1" />
-            </svg>
-          </ng-container>
-        </div>
-
       </div>
     </ng-container>
   </div>
 
-  <!-- קלט הודעה -->
   <div class="chat-input">
     <div class="input-wrapper">
-
-      <!-- כפתור אימוג'ים -->
       <div class="emoji-button-wrapper" style="position: relative;">
-        <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="אימוג'י">
+        <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
           <lucide-icon name="smile"></lucide-icon>
         </button>
         <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
@@ -76,23 +140,20 @@
         </div>
       </div>
 
-      <!-- כפתור קובץ -->
       <button class="icon-btn left" (click)="fileInput.click()" aria-label="צרף קובץ">
         <lucide-icon name="paperclip"></lucide-icon>
       </button>
       <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" hidden />
 
-      <!-- שדה טקסט -->
       <input
         #messageInputRef
         type="text"
         class="message-input"
-        placeholder="הקלד הודעה..."
+        placeholder="Type a message..."
         [(ngModel)]="newMessage"
         (keydown)="handleKeyDown($event)"
       />
 
-      <!-- תצוגה מקדימה לקובץ -->
       <div *ngIf="selectedFilePreview" class="file-preview">
         <div class="preview-wrapper">
           <img [src]="selectedFilePreview" alt="תצוגה מקדימה" />
@@ -102,8 +163,12 @@
         </div>
       </div>
 
-      <!-- כפתור שליחה -->
-      <button class="send-btn" (click)="sendMessage()" style="border: none;" [disabled]="!newMessage.trim() && !selectedFile">
+      <button
+        class="send-btn"
+        (click)="sendMessage()"
+        style="border: none;"
+        [disabled]="!newMessage.trim() && !selectedFile"
+      >
         <lucide-icon name="send"></lucide-icon>
       </button>
     </div>

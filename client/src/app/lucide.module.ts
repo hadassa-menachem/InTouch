@@ -21,7 +21,8 @@ import {
   Check,
   Bookmark,
   ZoomIn,
-  Eye
+  Eye,
+  Trash2
 } from 'lucide';
 
 @NgModule({
@@ -47,7 +48,8 @@ import {
       Check,
       Bookmark,
       ZoomIn,
-      Eye
+      Eye,
+      Trash2
     })
   ],
   exports: [LucideAngularModule]

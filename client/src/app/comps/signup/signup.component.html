@@ -1,34 +1,32 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
-  <p>הרשמה</p>
+  <p>Register</p>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="password" formControlName="userId" placeholder="תז משתמש" />
+      <input type="password" formControlName="userId" placeholder="User ID" />
       <div class="error" *ngIf="registerForm.get('userId')?.touched && registerForm.get('userId')?.invalid">
-        תעודת זהות נדרשת
+        User ID is required
       </div>
     </div>
-
     <div class="input-group">
-      <input type="text" formControlName="userName" placeholder="שם משתמש" />
+      <input type="text" formControlName="userName" placeholder="Username" />
       <div class="error" *ngIf="registerForm.get('userName')?.touched && registerForm.get('userName')?.invalid">
-        שם משתמש נדרש
+        Username is required
       </div>
     </div>
   </div>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="text" formControlName="firstName" placeholder="שם פרטי" />
+      <input type="text" formControlName="firstName" placeholder="First Name" />
       <div class="error" *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid">
-        שם פרטי נדרש
+        First name is required
       </div>
     </div>
-
     <div class="input-group">
-      <input type="text" formControlName="lastName" placeholder="שם משפחה" />
+      <input type="text" formControlName="lastName" placeholder="Last Name" />
       <div class="error" *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.invalid">
-        שם משפחה נדרש
+        Last name is required
       </div>
     </div>
   </div>
@@ -37,51 +35,49 @@
     <div class="input-group">
       <input type="date" formControlName="dateOfBirth" />
       <div class="error" *ngIf="registerForm.get('dateOfBirth')?.touched && registerForm.get('dateOfBirth')?.invalid">
-        תאריך לידה נדרש
+        Date of birth is required
       </div>
     </div>
-
     <div class="input-group">
       <select formControlName="gender">
-        <option value="" disabled selected>בחר מין</option>
-        <option value="זכר">זכר</option>
-        <option value="נקבה">נקבה</option>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
       </select>
       <div class="error" *ngIf="registerForm.get('gender')?.touched && registerForm.get('gender')?.invalid">
-        מין נדרש
+        Gender is required
       </div>
     </div>
   </div>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="text" formControlName="phone" placeholder="טלפון" />
+      <input type="text" formControlName="phone" placeholder="Phone" />
       <div class="error" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
-        טלפון נדרש
+        Phone number is required
       </div>
     </div>
-
     <div class="input-group">
-      <input type="text" formControlName="email" placeholder="אימייל" />
+      <input type="text" formControlName="email" placeholder="Email" />
       <div class="error" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors">
-        <div *ngIf="registerForm.get('email')?.errors?.['required']">אימייל נדרש</div>
-        <div *ngIf="registerForm.get('email')?.errors?.['pattern']">פורמט אימייל לא תקין</div>
+        <div *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</div>
+        <div *ngIf="registerForm.get('email')?.errors?.['pattern']">Invalid email format</div>
       </div>
     </div>
   </div>
 
   <div class="input-row single">
     <div class="input-group">
-      <textarea formControlName="bio" placeholder="ביוגרפיה"></textarea>
+      <textarea formControlName="bio" placeholder="Biography"></textarea>
     </div>
   </div>
 
   <div class="input-row single">
     <div class="input-group">
-      <input type="password" formControlName="password" placeholder="סיסמה" />
+      <input type="password" formControlName="password" placeholder="Password" />
       <div class="error" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors">
-        <div *ngIf="registerForm.get('password')?.errors?.['required']">סיסמה נדרשת</div>
-        <div *ngIf="registerForm.get('password')?.errors?.['minlength']">סיסמה חייבת להיות לפחות 6 תווים</div>
+        <div *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+        <div *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</div>
       </div>
     </div>
   </div>
@@ -92,5 +88,5 @@
     </div>
   </div>
 
-  <button type="submit" class="submit-btn">הרשמה</button>
+  <button type="submit" class="submit-btn">Register</button>
 </form>

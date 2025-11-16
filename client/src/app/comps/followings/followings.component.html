@@ -5,20 +5,21 @@
     <lucide-icon class="material-icons" name="search"></lucide-icon> 
   </button>
 
- <div class="search-list">
-  <ng-container *ngIf="filteredFollowings.length > 0; else noResults">
-       <div class="search-item" *ngFor="let f of filteredFollowings">
-  <a (click)="GoToUser(f.user.userId)" class="search-link">
-    <img class="profile-pic" [src]="f.user.profilePicUrl" alt="Profile Picture" />
-    <div class="user-info">
-      <div class="username">{{ f.user.firstName }} {{ f.user.lastName }}</div>
-      <div class="bio">{{ f.user.bio }}</div>
-    </div>
-  </a>
-</div>
-  </ng-container>
+  <div class="search-list">
+    <ng-container *ngIf="filteredFollowings.length > 0; else noResults">
+      <div class="search-item" *ngFor="let f of filteredFollowings">
+        <a (click)="GoToUser(f.user.userId)" class="search-link">
+          <img class="profile-pic" [src]="f.user.profilePicUrl" alt="Profile Picture" />
+          <div class="user-info">
+            <div class="username">{{ f.user.firstName }} {{ f.user.lastName }}</div>
+            <div class="bio">{{ f.user.bio }}</div>
+          </div>
+        </a>
+      </div>
+    </ng-container>
 
-  <ng-template #noResults>
-    <div class="no-results">No following</div>
-  </ng-template>
+    <ng-template #noResults>
+      <div class="no-results">No following</div>
+    </ng-template>
+  </div>
 </div>

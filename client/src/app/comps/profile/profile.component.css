@@ -3,36 +3,34 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 10px 0px;
+  padding: 10px 0;
 }
 
 .profile-image {
   width: 150px;
   height: 150px;
   object-fit: cover;
-  border-radius:100%;
+  border-radius: 100%;
   border: 1px solid #dbdbdb;
-  margin-right: 30px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  display: flex;
   margin-top: 10px;
 }
 
-.profile-image img{
+.profile-image img {
   width: 143px;
   height: 143px;
   object-fit: cover;
-  border-radius:100%;
-  border: none;
-  border: 3px solid white; 
+  border-radius: 100%;
+  border: 3px solid white;
 }
 
 .profile-info {
   margin: auto;
   display: inline;
 }
-  
+
 .profile-username-wrapper {
   display: flex;
   flex-direction: column;
@@ -57,6 +55,7 @@
   padding: 0;
   display: flex;
   align-items: center;
+  font-size: 18px;
 }
 
 .bio-text {
@@ -64,73 +63,47 @@
   color: #555;
   margin-top: 6px;
 }
-  
-.profile-stats {
-  display: flex;
-  gap: 25px;
-  margin: 15px 0;
-}
-  
-.profile-stats span {
-  font-size: 20px;
-}
-  
-.post {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  overflow: hidden;
-  width: 33.3%;
-  float: left;
-  height: 250px;
-}
-  
+
 .profile-stats {
   display: flex;
   gap: 40px;
   margin: 15px 0;
   text-align: center;
 }
-  
+
 .stat {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-  
+
 .stat-number {
   font-weight: bold;
   font-size: 20px;
 }
-  
+
 .stat-label {
   font-size: 20px;
   color: #555;
-}
-
-.edit-icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  padding: 4px;
 }
 
 .profile-posts {
   display: flex;
   flex-wrap: wrap;
 }
- 
+
 .profile-posts .post {
   width: 33.3%;
   height: 250px;
   border: 1px solid #ddd;
   overflow: hidden;
 }
-  
-.profile-posts .post img {
+
+.profile-posts .post img,
+.profile-posts .post video {
   width: 100%;
   height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
   display: block;
 }
 
@@ -142,7 +115,7 @@
   background-color: #fff;
   gap: 15px;
 }
- 
+
 .story {
   display: flex;
   flex-direction: column;
@@ -150,9 +123,9 @@
   width: 85px;
   flex-shrink: 0;
 }
-  
+
 .circle {
-  border-radius:100%;
+  border-radius: 100%;
   border: 1px solid #c4c4c4;
   display: flex;
   align-items: center;
@@ -168,7 +141,7 @@
   object-fit: cover;
   object-position: top center;
 }
-  
+
 .nameStory {
   margin-top: 5px;
   font-size: 13px;
@@ -178,7 +151,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-  
+
 .profile-tabs {
   display: flex;
   justify-content: space-around;
@@ -196,18 +169,16 @@
   font-weight: bold;
   color: #555;
 }
-  
+
 .profile-tabs button.active {
-  border-bottom: 2px solid #000;
-  color: #000;
+  border-bottom: 2px solid #3c3f2d;
+  color: #3c3f2d;
 }
 
 video {
   background-color: #fff;
   border: 1px solid #ddd;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
+  object-fit: cover;
   display: block;
 }
 
@@ -215,33 +186,26 @@ video {
   text-align: center;
   margin-top: 40px;
 }
-  
+
 .follow-btn {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: bold;
   color: #fff;
-  background-color: #3897f0;
+  background-color: #3c3f2d;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   width: 70%;
 }
-  
+
 .follow-btn:hover {
-  background-color: #2b85e4;
+  background-color: #3c3f2d;
 }
 
-a{
+a {
   cursor: pointer;
-}
-
-.no-posts-message {
-  text-align: center;
-  color: #999;
-  font-size: 18px;
-  margin-top: 40px;
 }
 
 .no-posts-message {
@@ -259,7 +223,7 @@ a{
   height: 30px;
   border-radius: 50%;
   border: none;
-  background-color: #0f1b4c;
+  background-color: #3c3f2d;
   color: white;
   font-size: 15px;
   font-weight: bold;
@@ -269,19 +233,25 @@ a{
   justify-content: center;
 }
 
-.add-status-btn:hover {
-  background-color: #1a2a5c;
-}
 .add-status-btn .icon {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.add-status-btn {
-  display: inline;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+.post-wrapper {
+  position: relative;
+}
+
+lucide-icon.delete-post-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: red;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+lucide-icon.delete-post-btn:hover {
+  transform: scale(1.1);
 }

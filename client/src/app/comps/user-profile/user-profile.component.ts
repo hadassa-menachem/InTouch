@@ -7,15 +7,15 @@ import { Post } from '../../classes/Post';
 import { User } from '../../classes/User';
 import { Follow } from '../../classes/Follow';
 import { LucideIconsModule } from '../../lucide.module';
+
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [CommonModule,LucideIconsModule],
+  imports: [CommonModule, LucideIconsModule],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
-
   profileUser: User = new User();
   user: User | null = null;
   userPosts: Post[] = [];
@@ -28,7 +28,8 @@ export class UserProfileComponent implements OnInit {
   follow!: Follow;
   storys: any[] = [];
   selectedTab: string = 'images';
-highlights: any[] = [];
+  highlights: any[] = [];
+  selectedImageUrl: string | null = null;
 
   constructor(
     private router: Router,
@@ -40,10 +41,8 @@ highlights: any[] = [];
   ngOnInit(): void {
     this.user = this.userService.currentUser;
     const userId = this.route.snapshot.paramMap.get('id');
-
     if (!userId) return;
 
-    // ✅ שליפה של המשתמש הנצפה
     this.userService.GetUserById(userId).subscribe({
       next: userData => {
         this.profileUser = userData;
@@ -51,11 +50,10 @@ highlights: any[] = [];
         this.loadHighlights();
         this.checkIfFollowing();
       },
-      error: err => console.error('שגיאה בטעינת משתמש:', err)
+      error: err => console.error('Error loading user:', err)
     });
   }
 
-  // ✅ טוען את הפוסטים והסטטיסטיקות
   loadCountsAndPosts() {
     this.userService.getFollowers(this.profileUser.userId).subscribe(arr => this.FollowersCount = arr.length);
     this.userService.getFollowings(this.profileUser.userId).subscribe(arr => this.FollowingCount = arr.length);
@@ -65,65 +63,48 @@ highlights: any[] = [];
     });
   }
 
-  // ✅ טוען רק היילייטס (סטוריז קבועים)
   loadHighlights() {
-  this.userService.getUserHighlights(this.profileUser.userId).subscribe({
-    next: highlights => {
-      this.highlights = Array.isArray(highlights)
-        ? highlights
-        : Object.values(highlights || {}).flat();
-      console.log('Highlights loaded:', this.highlights);
-    },
-    error: err => console.error('שגיאה בטעינת Highlights:', err)
-  });
-}
-// ✅ פתיחת סטורי זמני (שמוצג רק ל-24 שעות)
-openProfileStory() {
-  this.userService.getTemporaryStories(this.profileUser.userId).subscribe({
-    next: stories => {
-      if (stories && stories.length > 0) {
-        this.router.navigate(['/story', this.profileUser.userId]);
-      } else {
-        alert('אין סטוריז זמניים להצגה.');
-      }
-    },
-    error: err => console.error('שגיאה בטעינת סטוריז זמניים:', err)
-  });
-}
-
-
-  // ✅ בדיקה אם המשתמש הנוכחי כבר עוקב
-  checkIfFollowing() {
-    if (!this.user?.userId || !this.profileUser?.userId) return;
-
-    this.userService.getFollowers(this.profileUser.userId).subscribe(followers => {
-      this.isFollowing = followers.some(f => f.followerId === this.user!.userId);
+    this.userService.getUserHighlights(this.profileUser.userId).subscribe({
+      next: highlights => {
+        this.highlights = Array.isArray(highlights)
+          ? highlights
+          : Object.values(highlights || {}).flat();
+      },
+      error: err => console.error('Error loading highlights:', err)
     });
   }
 
-selectedImageUrl: string | null = null;
-
-openProfileImage(imageUrl?: string | null) {
-  if (imageUrl) {
-    this.selectedImageUrl = imageUrl;
+  openProfileStory() {
+    this.userService.getTemporaryStories(this.profileUser.userId).subscribe({
+      next: stories => {
+        if (stories && stories.length > 0) {
+          this.router.navigate(['/story', this.profileUser.userId]);
+        } else {
+          alert('No temporary stories available.');
+        }
+      },
+      error: err => console.error('Error loading temporary stories:', err)
+    });
   }
-}
 
-closeImageView() {
-  this.selectedImageUrl = null;
-}
+  openProfileImage(imageUrl?: string | null) {
+    if (imageUrl) {
+      this.selectedImageUrl = imageUrl;
+    }
+  }
 
-  // ✅ פתיחת סטורי לפי מזהה
+  closeImageView() {
+    this.selectedImageUrl = null;
+  }
+
   openStory(storyId: string) {
     if (storyId) this.router.navigate(['/story', storyId]);
   }
 
-  // ✅ ניתוב לעמוד פוסט
   goToPostPage(id: string) {
     this.router.navigate(['/post', id]);
   }
 
-  // ✅ מעבר לעמוד עוקבים / נעקבים
   goToFollowers(userId: string) {
     this.router.navigate(['/followers', userId]);
   }
@@ -132,7 +113,17 @@ closeImageView() {
     this.router.navigate(['/followings', userId]);
   }
 
-  // ✅ ניהול מעקב
+  checkIfFollowing() {
+    if (!this.user?.userId || !this.profileUser?.userId) return;
+
+    this.userService.getFollowers(this.profileUser.userId).subscribe({
+      next: followers => {
+        this.isFollowing = followers.some(f => f.followerId === this.user!.userId);
+      },
+      error: err => console.error('Error checking follow status:', err)
+    });
+  }
+
   toggleFollow() {
     if (!this.user?.userId || !this.profileUser?.userId) return;
 
@@ -142,25 +133,39 @@ closeImageView() {
           this.isFollowing = false;
           this.FollowersCount--;
         },
-        error: err => console.error('שגיאה בביטול מעקב:', err)
+        error: err => console.error('Error unfollowing:', err)
       });
     } else {
-      const newFollow = new Follow({
-        followerId: this.user.userId,
-        followeeId: this.profileUser.userId
-      });
+      this.userService.getFollowers(this.profileUser.userId).subscribe({
+        next: followers => {
+          const alreadyFollowing = followers.some(f => f.followerId === this.user!.userId);
+          if (alreadyFollowing) {
+            this.isFollowing = true;
+            return;
+          }
 
-      this.userService.followUser(newFollow).subscribe({
-        next: () => {
-          this.isFollowing = true;
-          this.FollowersCount++;
+          const newFollow = new Follow({
+            followerId: this.user!.userId,
+            followeeId: this.profileUser.userId
+          });
+
+          this.userService.followUser(newFollow).subscribe({
+            next: () => {
+              this.isFollowing = true;
+              this.FollowersCount++;
+            },
+            error: err => {
+              if (err.status === 400) {
+                this.checkIfFollowing();
+              }
+            }
+          });
         },
-        error: err => console.error('שגיאה במעקב:', err)
+        error: err => console.error('Error checking followers before follow:', err)
       });
     }
   }
 
-  // ✅ סינון תמונות ווידאו
   get imagePosts(): Post[] {
     return this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType === 'image'));
   }
@@ -168,10 +173,8 @@ closeImageView() {
   get videoPosts(): Post[] {
     return this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType === 'video'));
   }
-  openChat(){
-  
-      // אם אין הודעות, ניצור "צאט חדש"
-        this.router.navigate(['/chat', this.profileUser.userId]);
-    
+
+  openChat() {
+    this.router.navigate(['/chat', this.profileUser.userId]);
   }
 }

@@ -21,8 +21,8 @@ interface StoryGroup {
   imports: [CommonModule, FormsModule, LucideIconsModule]
 })
 export class StoryComponent implements OnInit, OnDestroy {
-  storyGroups: StoryGroup[] = [];        // רק סטוריז קבועות / Highlights
-  temporaryStories: Story[] = [];        // רק סטוריז זמניים
+  storyGroups: StoryGroup[] = [];      
+  temporaryStories: Story[] = [];      
   commentBoxOpenFor: string | null = null;
   newComment: string = '';
   showLikeAnimation: boolean = false;
@@ -44,7 +44,6 @@ export class StoryComponent implements OnInit, OnDestroy {
 
     this.user = this.userService.getCurrentUser()!;
 
-    // משיכת סטורי לפי ID
     this.userService.getStoryById(storyId).subscribe({
       next: (story: Story) => {
         this.userService.getStoryByUserId(story.user.userId!).subscribe({
@@ -62,24 +61,19 @@ export class StoryComponent implements OnInit, OnDestroy {
               const diffHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
 
               if (s.isTemporary) {
-                // סטורי זמני – לא נכנס ל-Highlights
                 s.isTemporary = true;
                 s.category = ''; 
               } else {
-                // סטורי קבוע / Highlight
                 s.isTemporary = false;
                 s.category = s.category || 'default';
               }
             });
 
-            // הפרדה בין זמני לקבועים
             this.temporaryStories = stories.filter(s => s.isTemporary);
             const highlightStories = stories.filter(s => !s.isTemporary);
 
-            // חלוקה ל-Highlights בלבד
             this.storyGroups = this.groupStoriesByCategory(highlightStories);
 
-            // מציאת הסטורי הנוכחי (Highlight בלבד)
             const currentGroupFound = this.storyGroups.find((group, gIndex) => {
               const storyIndex = group.stories.findIndex(s => s.id === storyId);
               if (storyIndex >= 0) {
@@ -114,6 +108,7 @@ export class StoryComponent implements OnInit, OnDestroy {
 
   groupStoriesByCategory(stories: Story[]): StoryGroup[] {
     const groupsMap: { [key: string]: StoryGroup } = {};
+
     stories.forEach(story => {
       const userId = story.user?.userId || 'unknown';
       const key = userId + '-' + (story.category || 'default');
@@ -125,10 +120,12 @@ export class StoryComponent implements OnInit, OnDestroy {
           stories: []
         };
       }
+
       if (!groupsMap[key].stories.some(s => s.id === story.id)) {
         groupsMap[key].stories.push(story);
       }
     });
+
     return Object.values(groupsMap);
   }
 
@@ -176,6 +173,7 @@ export class StoryComponent implements OnInit, OnDestroy {
 
   toggleLike(id: string) {
     if (!this.story) return;
+
     this.showLikeAnimation = true;
     setTimeout(() => (this.showLikeAnimation = false), 800);
 
@@ -206,6 +204,7 @@ export class StoryComponent implements OnInit, OnDestroy {
 
   getTimeAgo(createdAt: Date | string): string {
     if (!createdAt) return '';
+
     const now = new Date();
     const created = new Date(createdAt);
     const diffMs = now.getTime() - created.getTime();
@@ -228,6 +227,7 @@ export class StoryComponent implements OnInit, OnDestroy {
 
   showTemporaryStories(userId: string) {
     const userTempStories = this.temporaryStories.filter(s => s.user.userId === userId);
+
     if (userTempStories.length > 0) {
       this.storyGroups = [{
         userId,

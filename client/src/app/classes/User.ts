@@ -16,11 +16,10 @@ export class User {
   mediaFiles?: MediaFile[] = [];
   followersList?: User[] = [];
   followingsList?: User[] = [];
-  profilePicUrl?: string; 
+  profilePicUrl?: string;
   stories?: Story[] = [];
 
-
-constructor(init?: Partial<User>) {
-  Object.assign(this, init);
-}
+  constructor(init?: Partial<User>) {
+    Object.assign(this, init);
+  }
 }

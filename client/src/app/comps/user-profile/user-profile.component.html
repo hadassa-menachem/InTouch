@@ -7,7 +7,6 @@
           <lucide-icon name="ZoomIn" (click)="openProfileImage()"></lucide-icon>
         </button>
       </div>
-
     </div>
 
     <div class="profile-info">
@@ -30,11 +29,10 @@
         <button class="follow-btn" (click)="toggleFollow()">
           {{ isFollowing ? 'Unfollow' : 'Follow' }}
         </button>
-          <button class="follow-btn"  (click)="openChat()">
-    Message
-  </button>
+        <button class="follow-btn" (click)="openChat()">
+          Message
+        </button>
       </div>
-      
     </div>
   </div>
 
@@ -44,7 +42,6 @@
     <p>{{profileUser.bio}}</p>
   </div>
 
-  <!-- ⚡ היילייטים בלבד (לא זמניים) -->
   <div class="stories">
     <div class="story" *ngFor="let s of highlights">
       <div class="circle">
@@ -56,30 +53,29 @@
     </div>
   </div>
 
-  <!-- טאבים -->
   <div class="profile-tabs">
-    <button [class.active]="selectedTab === 'images'" (click)="selectedTab = 'images'">תמונות</button>
-    <button [class.active]="selectedTab === 'videos'" (click)="selectedTab = 'videos'">וידאו</button>
+    <button [class.active]="selectedTab === 'images'" (click)="selectedTab = 'images'">Pictures</button>
+    <button [class.active]="selectedTab === 'videos'" (click)="selectedTab = 'videos'">Video</button>
   </div>
 
   <div class="no-posts-message" *ngIf="selectedTab === 'images' && imagePosts.length === 0">
-    <p>אין פוסטים של תמונות להצגה.</p>
+    <p>There are no photo posts to display.</p>
   </div>
 
   <div class="no-posts-message" *ngIf="selectedTab === 'videos' && videoPosts.length === 0">
-    <p>אין פוסטים של וידאו להצגה.</p>
+    <p>There are no video posts to display.</p>
   </div>
 
-  <!-- תמונות -->
   <div class="profile-posts" *ngIf="selectedTab === 'images'">
     <div class="post" *ngFor="let post of imagePosts">
       <ng-container *ngFor="let media of post.mediaFiles">
-        <a><img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" /></a>
+        <a>
+          <img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" />
+        </a>
       </ng-container>
     </div>
   </div>
 
-  <!-- וידאו -->
   <div class="profile-posts" *ngIf="selectedTab === 'videos'">
     <div class="post" *ngFor="let post of videoPosts">
       <ng-container *ngFor="let media of post.mediaFiles">
@@ -88,7 +84,7 @@
     </div>
   </div>
 </div>
-      <!-- תצוגת תמונה מוגדלת (Modal) -->
+
 <div *ngIf="selectedImageUrl" class="image-modal" (click)="closeImageView()">
   <div class="image-container" (click)="$event.stopPropagation()">
     <lucide-icon name="X" class="close-btn" (click)="closeImageView()"></lucide-icon>

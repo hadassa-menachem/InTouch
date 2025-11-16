@@ -12,19 +12,8 @@
 .messages-header h2 {
   margin: 0;
   font-size: 24px;
-  color: #4A3F35; 
-}
-
-.new-message-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #D62976;
-}
-
-.new-message-btn:hover {
-  color: #EADDC8; 
+  color: #4A3F35;
+  font-weight: bold;
 }
 
 .messages-list {
@@ -40,6 +29,12 @@
   padding: 8px;
   border-bottom: 1px solid #dbdbdb;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.message-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .profile-pic {
@@ -47,7 +42,7 @@
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff; 
+  border: 3px solid #e7ece2;
 }
 
 .chat-info {
@@ -63,30 +58,32 @@
 
 .last-message {
   font-size: 14px;
-  color: #6b7280; 
+  color: #6b7280;
 }
 
 a {
   cursor: pointer;
 }
-.plus{
+
+.plus {
   width: 24px;
   height: 24px;
   stroke: #7B5E50;
   stroke-width: 1.8;
   border: none;
-  
 }
-button.plus{
+
+button.plus {
   background: none;
 }
+
 .overlay {
   position: fixed;
   top: 0;
   right: 0;
   left: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
 }
 
@@ -122,4 +119,20 @@ button.plus{
   width: 32px;
   height: 32px;
   border-radius: 50%;
+}
+
+.icon-sent,
+.icon-seen {
+  width: 12px;
+  height: 12px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.icon-sent {
+  stroke: #7b5e50;
+}
+
+.icon-seen {
+  stroke: #3c3f2d;
 }

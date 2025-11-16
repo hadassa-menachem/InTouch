@@ -7,5 +7,5 @@ export class Message {
   sent?: boolean;
   isRead?: boolean = false;
   isDelivered?: boolean = false;
-  id?: string
+  id?: string;
 }

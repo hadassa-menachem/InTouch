@@ -14,7 +14,7 @@
 
 .profile-header h1 {
   font-size: 28px;
-  color: #276228;
+  color: #5c6146;
   font-weight: bold;
 }
 
@@ -44,7 +44,7 @@
 
 .profile-info h2 {
   font-size: 24px;
-  color: #000000;
+  color: #5c6146;
 }
 
 .edit-btn {
@@ -54,7 +54,7 @@
   border: 1.5px solid #a3d9a5;
   border-radius: 25px;
   cursor: pointer;
-  color: #276228;
+  color: #5c6146;
   transition: background-color 0.3s ease;
   box-shadow: 0 0 4px rgba(95, 196, 126, 0.4);
 }
@@ -79,17 +79,17 @@
 .profile-stats .stat-number {
   font-weight: bold;
   font-size: 20px;
-  color: #276228;
+  color: #5c6146;
 }
 
 .profile-stats .stat-label {
   font-size: 14px;
-  color: #4caf50;
+  color: #5c6146;
 }
 
 .stories {
   display: flex;
-  direction: rtl;
+  direction: ltr;
   overflow-x: auto;
   white-space: nowrap;
   padding-right: 16px;
@@ -113,15 +113,6 @@
   margin-top: 15px;
 }
 
-.story:first-child {
-  margin-right: 8px;
-  padding-left: 4px;
-}
-
-.story:last-child {
-  margin-left: 8px;
-}
-/* ברירת מחדל */
 .circle {
   border-radius: 100%;
   border: 2px solid #c4c4c4;
@@ -145,11 +136,11 @@
 
 .seen-story {
   border: 2px solid #d1d1d1;
-  filter: brightness(0.9);
   opacity: 0.9;
+  box-shadow: 0 0 10px rgba(76, 142, 175, 0.4);
+
 }
 
-/* תמונת הפרופיל בתוך העיגול */
 .circle img {
   width: 75px;
   height: 75px;
@@ -159,7 +150,6 @@
   transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-/* אפקט hover */
 .circle:hover {
   transform: scale(1.08);
   box-shadow: 0 0 8px rgba(39, 98, 40, 0.4);
@@ -197,7 +187,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin-left: 10px;
+  margin-right: 10px;
   border: 2px solid #fff;
   object-fit: cover;
 }
@@ -205,14 +195,8 @@
 .username {
   font-weight: bold;
   font-size: 16px;
-  color: #4A3F35;
+  color: #3c3f2d;
   flex-grow: 1;
-}
-
-.more-options {
-  cursor: pointer;
-  color: #000000;
-  font-size: 15px;
 }
 
 .post-media {
@@ -235,6 +219,7 @@
   align-items: flex-start;
   padding: 10px 12px;
   gap: 8%; 
+  direction: rtl;
 }
 
 .action-button {
@@ -252,7 +237,7 @@
 .like-count,
 .action-label {
   font-size: 12px;
-  color: #333;
+  color: #3c3f2d;
   margin-top: 4px;
   text-align: center;
 }
@@ -262,7 +247,7 @@
 }
 
 .not-liked {
-  color: black !important;
+  color: #3c3f2d !important;
 }
 
 
@@ -270,20 +255,20 @@
   padding: 0 12px;
   margin-top: 6px;
   font-size: 16px; 
-  color: #222;
+  color: #3c3f2d;
 }
 
 .view-comments {
   padding: 0 12px;
   margin-top: 6px;
   font-size: 14px;
-  color: #333;
+  color: #3c3f2d;
 }
 
 .view-comments-button {
   background: none;
   border: none;
-  color: #6B7280;
+  color: #3c3f2d;
   cursor: pointer;
   text-align: left;
   padding: 0;
@@ -311,7 +296,7 @@
 .add-comment button {
   background: none;
   border: none;
-  color: #0095f6;
+  color: #3c3f2d;
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
@@ -332,7 +317,7 @@ a {
   padding: 0 12px;
   margin-top: 6px;
   font-size: 14px;
-  color: #333;
+  color: #3c3f2d;
 }
 
 .emoji-picker-popover {
@@ -475,7 +460,7 @@ html {
   bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
-  background: #4caf50;
+  background: #3c3f2d;
   color: white;
   padding: 4px 8px;
   border-radius: 4px;
@@ -500,13 +485,13 @@ html {
 }
 
 .stories::-webkit-scrollbar-thumb {
-  background-color: #4caf50aa;
+  background-color: #3c3f2d;
   border-radius: 3px;
 }
 .read-more-btn {
   background: none;
   border: none;
-  color: #007bff;
+  color: #5c6146;
   cursor: pointer;
   font-size: 0.9rem;
   margin-top: 0.5rem;
@@ -516,4 +501,38 @@ html {
 
 .read-more-btn:hover {
   text-decoration: underline;
+}
+.saved svg {
+  stroke: red !important;
+  fill: red !important;
+}
+
+.not-saved svg {
+  stroke: black !important;
+  fill: none !important;
+}
+
+.stories {
+  overflow: hidden;
+  position: relative;
+  background-color: #fff;
+}
+
+.stories-track {
+  display: flex;
+  gap: 10px;
+  animation: slideStories 40s linear infinite;
+}
+
+@keyframes slideStories {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.stories:hover .stories-track {
+  animation-play-state: paused;
 }

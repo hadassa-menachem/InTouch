@@ -14,46 +14,43 @@ import { LucideIconsModule } from '../../lucide.module';
 })
 export class SearchComponent {
   searchTerm: string = '';
-allUsers: User[] = [];
-filteredUsers: User[] = [];
+  allUsers: User[] = [];
+  filteredUsers: User[] = [];
 
-constructor(private userService: UserService, public router: Router) {
-  
-}
+  constructor(private userService: UserService, public router: Router) {}
+
   ngOnInit(): void {
-  this.loadAllUsers();
-}
+    this.loadAllUsers();
+  }
 
-loadAllUsers(): void {
-  this.userService.GetAllUsers().subscribe({
-    next: (users: User[]) => {
-      this.allUsers = users;
-      this.filteredUsers = [...users]; 
-    },
-    error: err => {
-      console.error('שגיאה בטעינת משתמשים:', err);
+  loadAllUsers(): void {
+    this.userService.GetAllUsers().subscribe({
+      next: (users: User[]) => {
+        this.allUsers = users;
+        this.filteredUsers = [...users];
+      },
+      error: err => console.error('שגיאה בטעינת משתמשים:', err)
+    });
+  }
+
+  onSearch(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
+    if (!this.searchTerm) {
+      this.filteredUsers = [...this.allUsers];
+    } else {
+      this.filteredUsers = this.allUsers.filter(user =>
+        user.firstName!.toLowerCase().includes(this.searchTerm) ||
+        user.lastName!.toLowerCase().includes(this.searchTerm)
+      );
     }
-  });
-}
-
-onSearch(event: Event): void {
-  this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
-
-  if (!this.searchTerm) {
-    // אם החיפוש ריק - החזר את כל המשתמשים
-    this.filteredUsers = [...this.allUsers];
-  } else {
-    this.filteredUsers = this.allUsers.filter(user =>
-      user.firstName!.toLowerCase().includes(this.searchTerm) ||
-      user.lastName!.toLowerCase().includes(this.searchTerm) 
-    );
   }
-}
-   navigate(route: string) {
+
+  navigate(route: string) {
     this.router.navigate([route]);
-    
   }
-    GoToUser(userId: string) {
+
+  GoToUser(userId: string) {
     this.router.navigate(['/user-profile', userId]);
   }
 }

@@ -115,7 +115,6 @@
 
 .action-btn.liked { color: #ff3040; }
 
-/* אנימציית לייק */
 .like-heart {
   position: absolute;
   top: 50%;
@@ -204,6 +203,7 @@
 
 .tap-left { left: 0; }
 .tap-right { right: 0; }
+
 .profile-pic {
   width: 44px;
   height: 44px;

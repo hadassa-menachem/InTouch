@@ -4,8 +4,8 @@
   padding: 25px;
   border: 1px solid #EADDC8;
   border-radius: 10px;
-  background: #FFF9F4; 
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  background: #FFF9F4;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   color: #4A3F35;
   font-family: 'Calibri', sans-serif;
   font-size: 16px;
@@ -70,18 +70,17 @@ form select {
   box-shadow: 0 0 8px rgba(163, 217, 165, 0.7);
 }
 
-/* תצוגת הפוסט - מוקטן יותר */
+/* תצוגת הפוסט */
 .preview-container {
   margin-top: 30px;
   text-align: center;
-  /* הסרתי רקע */
   background-color: transparent !important;
 }
 
 .post-preview {
   position: relative;
-  width: 70%;  
-  max-width: 350px; 
+  width: 70%;
+  max-width: 350px;
   border: 2px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
@@ -89,7 +88,8 @@ form select {
   margin: 0 auto;
 }
 
-.preview-image, .preview-video {
+.preview-image,
+.preview-video {
   width: 100%;
   height: auto;
   display: block;

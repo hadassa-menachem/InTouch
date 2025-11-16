@@ -7,20 +7,22 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../ser/user.service';
 import { User } from '../../classes/User';
+import { LucideIconsModule } from '../../lucide.module';
 
 @Component({
   selector: 'app-createpost',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, DragDropModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, DragDropModule, LucideIconsModule],
   templateUrl: './createpost.component.html',
   styleUrls: ['./createpost.component.css']
 })
-export class CreatePostComponent implements OnInit{
+export class CreatePostComponent implements OnInit {
   createPostForm: FormGroup;
   selectedFile: File | null = null;
   imagePreviewUrl: string | null = null;
   textSize = 24;
   user: User = new User();
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -29,7 +31,7 @@ export class CreatePostComponent implements OnInit{
   ) {
     this.createPostForm = this.fb.group({
       content: [''],
-      mediaType: ['image', Validators.required],  // תמונה או וידאו
+      mediaType: ['image', Validators.required],
       imageSource: ['upload', Validators.required],
       imageUrl: [''],
       textColor: ['#ffffff'],
@@ -37,10 +39,12 @@ export class CreatePostComponent implements OnInit{
       customText: ['']
     });
   }
+
   ngOnInit(): void {
-  this.user = this.userSer.getCurrentUser()!;
-  console.log(this.user)
+    this.user = this.userSer.getCurrentUser()!;
+    console.log(this.user);
   }
+
   onMediaTypeChange() {
     this.clearPreviewAndFile();
   }
@@ -87,29 +91,28 @@ export class CreatePostComponent implements OnInit{
     }
   }
 
-onSubmit() {
-  if (this.createPostForm.invalid) return;
-
-  const formValues = this.createPostForm.value;
-  const formData = new FormData();
-
-  formData.append('userId', this.user.userId!); 
-  formData.append('content', formValues.customText);
-
-  if (this.selectedFile) {
-    formData.append('file', this.selectedFile, this.selectedFile.name);
-  }
-
-  this.userSer.addPost(formData).subscribe({
-    next: () => {
-      alert('הפוסט נשלח בהצלחה');
-      this.router.navigate(['/posts']);
-    },
-    error: err => {
-      console.error('שגיאה בשליחה:', err);
-      alert('שגיאה בשליחת הפוסט');
+  onSubmit() {
+    if (this.createPostForm.invalid) {
+      return;
     }
-  });
-}
 
+    const formValues = this.createPostForm.value;
+    const formData = new FormData();
+
+    formData.append('content', formValues.customText || '');
+    formData.append('userId', this.user.userId);
+
+    if (this.selectedFile) {
+      formData.append('file', this.selectedFile, this.selectedFile.name);
+    }
+
+    this.userSer.addPost(formData).subscribe({
+      next: (response) => {
+        alert('הפוסט נשלח בהצלחה');
+        this.router.navigate(['/posts']);
+      },
+      error: err => {
+      }
+    });
+  }
 }

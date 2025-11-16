@@ -6,7 +6,6 @@ import { HttpClient } from '@angular/common/http';
 import { User } from '../../classes/User';
 import { UserService } from '../../ser/user.service';
 import { Router } from '@angular/router';
-
 import { LucideAngularModule } from 'lucide-angular';
 import { LucideIconsModule } from '../../lucide.module';
 
@@ -54,12 +53,12 @@ export class SignupComponent {
   }
 
   onSubmit(): void {
-if (this.registerForm.invalid) {
-    this.registerForm.markAllAsTouched();
-    return;
-  }
-    this.user = this.registerForm.value;
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
+      return;
+    }
 
+    this.user = this.registerForm.value;
     const formData = new FormData();
 
     for (const key in this.user) {
@@ -79,12 +78,12 @@ if (this.registerForm.invalid) {
     this.http.post('https://localhost:7058/api/user', formData).subscribe({
       next: () => {
         this.usersService.currentUser = this.user;
-        alert('נרשמת בהצלחה');
+        alert('Successfully registered');
         this.router.navigate(['/home']);
       },
       error: err => {
-        console.error('שגיאה בהרשמה:', err);
-        alert('שגיאה בהרשמה');
+        console.error('Registration error:', err);
+        alert('Registration failed');
       }
     });
   }
