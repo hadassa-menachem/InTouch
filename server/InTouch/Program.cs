@@ -35,6 +35,7 @@ builder.Services.AddScoped<ICommentDal, CommentDal>();
 builder.Services.AddScoped<IMessageDal, MessageDal>();
 builder.Services.AddScoped<IStatusDal, StatusDal>();
 builder.Services.AddScoped<IStoryDal, StoryDal>();
+builder.Services.AddScoped<ISavedPostDal, SavedPostDal>();
 
 // BLL registrations (רישום גם לממשקים)
 builder.Services.AddScoped<IUserBll, UserBll>();
@@ -46,12 +47,15 @@ builder.Services.AddScoped<ICommentBll, CommentBll>();
 builder.Services.AddScoped<IMessageBll, MessageBll>();
 builder.Services.AddScoped<IStatusBll, StatusBll>();
 builder.Services.AddScoped<IStoryBll, StoryBll>();
+builder.Services.AddScoped<ISavedPostBll, SavedPostBll>();
+
 
 // Mongo database instance
 var mongoSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
 var mongoClient = new MongoClient(mongoSettings.ConnectionString);
 var mongoDatabase = mongoClient.GetDatabase(mongoSettings.DatabaseName);
 builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
+builder.Services.AddAutoMapper(typeof(BLL.Mappings.AutoMappingProfile));
 
 // CORS policy - מאפשר גישה מהשרת של Angular בlocalhost
 // CORS policy - מאפשר גישה מכל מקור (לא רק localhost)

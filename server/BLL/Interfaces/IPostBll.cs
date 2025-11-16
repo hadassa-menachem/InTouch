@@ -7,7 +7,7 @@ namespace BLL.Interfaces
 {
     public interface IPostBll
     {
-        Task<PostDTO> AddPost(CreatePostDTO dto);
+        Task<PostDTO> AddPost(PostDTO dto);
         Task<PostDTO?> GetPostById(string id);
         Task<List<PostDTO>> GetPostsByUserId(string userId);
         Task<PostDTO> UpdatePost(string id, PostDTO dto);

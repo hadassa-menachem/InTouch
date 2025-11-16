@@ -68,6 +68,7 @@ namespace DAL.Repositories
 
             await _messages.UpdateManyAsync(filter, update);
         }
+
         public async Task MarkMessagesAsDelivered(string senderId, string receiverId)
         {
             var filter = Builders<Message>.Filter.And(
@@ -80,6 +81,7 @@ namespace DAL.Repositories
 
             await _messages.UpdateManyAsync(filter, update);
         }
+
         public async Task MarkAllMessagesAsDelivered(string receiverId)
         {
             var filter = Builders<Message>.Filter.And(
@@ -91,6 +93,5 @@ namespace DAL.Repositories
 
             await _messages.UpdateManyAsync(filter, update);
         }
-
     }
 }

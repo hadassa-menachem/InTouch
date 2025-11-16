@@ -9,12 +9,10 @@ namespace DAL.Repositories
     public class LikeDal : ILikeDal
     {
         private readonly IMongoCollection<Like> _likes;
-        private readonly IMongoCollection<User> _users;
 
         public LikeDal(MongoContext context)
         {
             _likes = context.Likes;
-            _users = context.Users;  
         }
 
         public async Task<List<Like>> GetAllLikes()

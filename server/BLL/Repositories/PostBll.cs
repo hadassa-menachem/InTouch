@@ -3,6 +3,7 @@ using BLL.DTO;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
+using DAL.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -37,11 +38,20 @@ namespace BLL.Repositories
             return imapper.Map<List<PostDTO>>(posts);
         }
 
-        public async Task<PostDTO> AddPost(CreatePostDTO dto)
+        public async Task<PostDTO> AddPost(PostDTO postDto)
         {
-            var post = imapper.Map<Post>(dto);
-            await _idal.AddPost(post);
-            return imapper.Map<PostDTO>(post);
+            try
+            {
+                var post = imapper.Map<Post>(postDto);
+
+                await _idal.AddPost(post);
+
+                return imapper.Map<PostDTO>(post);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<PostDTO> UpdatePost(string id, PostDTO dto)
