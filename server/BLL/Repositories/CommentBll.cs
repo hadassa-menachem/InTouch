@@ -50,10 +50,12 @@ namespace BLL.Repositories
             return commentDtos;
         }
 
-        public async Task AddComment(CommentDTO commentDto)
+        public async Task<CommentDTO> AddComment(CommentDTO commentDto)
         {
             var comment = imapper.Map<Comment>(commentDto);
+            comment.CreatedAt = DateTime.UtcNow;
             await _commentDal.AddComment(comment);
+            return imapper.Map<CommentDTO>(comment);
         }
 
         public async Task UpdateComment(string id, CommentDTO updatedCommentDto)

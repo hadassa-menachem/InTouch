@@ -52,7 +52,7 @@ namespace DAL.Repositories
             existingUser.Email = updatedData.Email;
             existingUser.Password = updatedData.Password;
             existingUser.Bio = updatedData.Bio;
-            existingUser.profilePicUrl = updatedData.profilePicUrl;
+            existingUser.ProfilePicUrl = updatedData.ProfilePicUrl;
 
             await _users.ReplaceOneAsync(u => u.UserId == id, existingUser);
         }

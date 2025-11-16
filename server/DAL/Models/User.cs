@@ -22,12 +22,15 @@ namespace DAL.Models
         public string? Email { get; set; }
         public string? Password { get; set; }
         public string? Bio { get; set; }
-        public string? profilePicUrl { get; set; } = "";
+        
+        [BsonElement("profilePicUrl")]
+        public string? ProfilePicUrl { get; set; } = "";
         public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
         public List<string> FollowingsList { get; set; } = new List<string>();
         public List<string> FollowersList { get; set; } = new List<string>();
         public List<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
         public List<string> Categories { get; set; } = new List<string>();
         public List<Story> Stories { get; set; } = new List<Story>();
+        public List<SavedPost> SavedPosts { get; set; } = new List<SavedPost>();
     }
 }

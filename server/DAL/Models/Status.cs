@@ -19,7 +19,7 @@ namespace DAL.Models
          public DateTime CreatedAt { get; set; }
          public string? ImageUrl { get; set; } 
          
-        [BsonIgnore]
+         [BsonIgnore]
          public User? User { get; set; }
         
     }

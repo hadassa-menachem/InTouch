@@ -13,5 +13,4 @@ namespace BLL.DTO
         public string? FolloweeId { get; set; }
         public DateTime? FollowedAt { get; set; }
     }
-
 }
