@@ -1,0 +1,28 @@
+<div class="profile-posts-grid">
+  <div class="post-card" *ngFor="let post of savedPosts" (click)="goToPostPage(post.id)">
+    <div class="post-media" *ngFor="let media of post.mediaFiles">
+      <ng-container [ngSwitch]="media.mediaType">
+        <img *ngSwitchCase="'image'" [src]="media.url" alt="תמונה מהפוסט" class="post-image" />
+        <video
+          *ngSwitchCase="'video'"
+          [src]="media.url"
+          muted
+          loop
+          playsinline
+          controls
+          (mouseenter)="playVideo($event)"
+          (mouseleave)="pauseVideo($event)"
+          class="post-video">
+        </video>
+        <p *ngSwitchDefault class="unsupported-media">Unsupported media type</p>
+      </ng-container>
+    </div>
+    <div class="post-overlay">
+      <div class="overlay-info">
+        <span>❤️ {{ post.likes?.length || 0 }}</span>
+        <span>💬 {{ post.comments?.length || 0 }}</span>
+      </div>
+      <p class="overlay-caption">{{ post.content | slice:0:50 }}...</p>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-<!-- כפתור ללחיצה על פרופיל להצגת סטוריז זמניים -->
 <div *ngIf="storyGroups.length > 0" class="category-tabs">
   <button *ngFor="let group of storyGroups; let i = index"
           [class.active]="i === currentGroupIndex"
@@ -9,7 +8,6 @@
 
 <div *ngIf="story" class="status-container">
 
-  <!-- פסי פרוגרס -->
   <div class="status-progress-bars">
     <div *ngFor="let s of currentGroup?.stories; let i = index" class="progress-segment">
       <div class="progress-fill"
@@ -18,7 +16,6 @@
     </div>
   </div>
 
-  <!-- כותרת סטורי -->
   <div class="status-header">
     <img class="profile-pic" 
          [src]="story.user?.profilePicUrl" 
@@ -30,7 +27,6 @@
     </div>
   </div>
 
-  <!-- תוכן סטורי -->
   <img *ngIf="story.imageUrl"
        [src]="story.imageUrl"
        class="status-image" />
@@ -40,10 +36,8 @@
 
   <div class="status-text">{{ story.content }}</div>
 
-  <!-- אנימציית לייק -->
   <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
 
-  <!-- חלק תחתון עם פעולות ותגובות -->
   <div class="status-bottom">
     <div class="status-actions">
       <button class="action-btn" [class.liked]="story.likes?.includes(user.userId)"
@@ -66,12 +60,10 @@
     </div>
   </div>
 
-  <!-- אזורי טאץ' למעבר בין סטוריז -->
   <div class="tap-area tap-left" (click)="prevStatus()"></div>
   <div class="tap-area tap-right" (click)="nextStatus()"></div>
 </div>
 
-<!-- הודעה אם אין סטוריז -->
 <div *ngIf="storyGroups.length === 0" class="no-stories">
   אין סטוריז להצגה
 </div>

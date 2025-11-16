@@ -1,16 +1,15 @@
 <div *ngIf="userService.currentUser">
   <div class="profile-header">
     <div class="profile-image" style="position: relative;">
-  <img [src]="user.profilePicUrl" alt="Profile Image"/>
-
-  <button 
-    class="add-status-btn"
-    *ngIf="userService.currentUser?.userId === user.userId"
-    (click)="goToCreateStory()"
-    title="הוסף סטורי">
-<lucide-icon name="plus" class="icon"></lucide-icon>
-  </button>
-</div>
+      <img [src]="user.profilePicUrl" alt="Profile Image" />
+      <button 
+        class="add-status-btn"
+        *ngIf="userService.currentUser?.userId === user.userId"
+        (click)="goToCreateStory()"
+        title="הוסף סטורי">
+        <lucide-icon name="plus" class="icon"></lucide-icon>
+      </button>
+    </div>
 
     <div class="profile-stats">
       <div class="stat">
@@ -27,20 +26,16 @@
       </div>
     </div>
 
-    <div class="profile-info">
-
-      <!-- מצב תצוגה -->
-      <ng-container *ngIf="!isEditing">
-  <div class="profile-username-wrapper">
-    <h2 class="centered-name">
-      {{ user?.firstName }} {{ user?.lastName }}
-      <button class="edit-icon-btn" (click)="editUser()">
-        <lucide-icon name="Pencil" size="20"></lucide-icon>
-      </button>
-    </h2>
-    <p class="bio-text">{{ user?.bio }}</p>
-  </div>
-</ng-container>
+    <div class="profile-info" *ngIf="!isEditing">
+      <div class="profile-username-wrapper">
+        <h2 class="centered-name">
+          {{ user?.firstName }} {{ user?.lastName }}
+          <button class="edit-icon-btn" (click)="editUser()">
+            <lucide-icon name="Pencil" size="20"></lucide-icon>
+          </button>
+        </h2>
+        <p class="bio-text">{{ user?.bio }}</p>
+      </div>
     </div>
   </div>
 
@@ -55,38 +50,37 @@
     </div>
   </div>
 
-  <!-- טאבים -->
   <div class="profile-tabs">
-    <button [class.active]="selectedTab === 'images'" (click)="selectedTab = 'images'">תמונות</button>
-    <button [class.active]="selectedTab === 'videos'" (click)="selectedTab = 'videos'">וידאו</button>
+    <button [class.active]="selectedTab === 'images'" (click)="selectedTab = 'images'">Pictures</button>
+    <button [class.active]="selectedTab === 'videos'" (click)="selectedTab = 'videos'">Video</button>
   </div>
 
-  <!-- הודעות אם אין פוסטים -->
   <div class="no-posts-message" *ngIf="selectedTab === 'images' && imagePosts.length === 0">
-    <p>אין פוסטים של תמונות להצגה.</p>
+    <p>There are no photo posts to display.</p>
   </div>
-
   <div class="no-posts-message" *ngIf="selectedTab === 'videos' && videoPosts.length === 0">
-    <p>אין פוסטים של וידאו להצגה.</p>
+    <p>There are no video posts to display.</p>
   </div>
 
-  <!-- תמונות -->
-  <div class="profile-posts" *ngIf="selectedTab === 'images'">
-    <div class="post" *ngFor="let post of imagePosts">
-      <ng-container *ngFor="let media of post.mediaFiles">
-        <a>
-          <img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" />
-        </a>
-      </ng-container>
+  <div class="profile-posts" *ngIf="selectedTab === 'videos'">
+    <div class="post" *ngFor="let post of videoPosts">
+      <div class="post-wrapper" *ngFor="let media of post.mediaFiles">
+        <video *ngIf="media.mediaType === 'video'" controls [src]="media.url" (click)="goToPostPage(post)"></video>
+        <lucide-icon size="15" class="delete-post-btn"
+          *ngIf="userService.currentUser?.userId === post.userId"
+          (click)="deletePost(post.id)" name="Trash2"></lucide-icon>
+      </div>
     </div>
   </div>
 
-  <!-- סרטונים -->
-  <div class="profile-posts" *ngIf="selectedTab === 'videos'">
-    <div class="post" *ngFor="let post of videoPosts">
-      <ng-container *ngFor="let media of post.mediaFiles">
-        <video *ngIf="media.mediaType === 'video'" controls [src]="media.url" (click)="goToPostPage(post)"></video>
-      </ng-container>
+  <div class="profile-posts" *ngIf="selectedTab === 'images'">
+    <div class="post" *ngFor="let post of imagePosts">
+      <div class="post-wrapper" *ngFor="let media of post.mediaFiles">
+        <img *ngIf="media.mediaType === 'image'" [src]="media.url" (click)="goToPostPage(post.id)" />
+        <lucide-icon size="15" class="delete-post-btn"
+          *ngIf="userService.currentUser?.userId === post.userId"
+          (click)="deletePost(post.id)" name="Trash2"></lucide-icon>
+      </div>
     </div>
   </div>
 </div>

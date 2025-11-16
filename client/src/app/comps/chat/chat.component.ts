@@ -41,6 +41,7 @@ export class ChatComponent implements OnInit {
   currentUserId: string = '';
   targetUserId: string = '';
   targetUser: any = null;
+  shouldAutoScroll: boolean = true;
 
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
@@ -51,208 +52,219 @@ export class ChatComponent implements OnInit {
     public userSer: UserService
   ) {}
 
-ngOnInit(): void {
-  this.currentUserId = this.userSer.currentUser?.userId!;
-  
-  this.route.params.subscribe(params => {
-    this.targetUserId = params['id'];
+  ngOnInit(): void {
+    this.currentUserId = this.userSer.currentUser?.userId!;
+    
+    this.route.params.subscribe(params => {
+      this.targetUserId = params['id'];
+      this.loadTargetUser();
+      this.loadMessages();
 
-    this.loadTargetUser();
-    this.loadMessages();
-
-    setInterval(() => {
-  this.get(); 
-}, 3000);
-  })
-  console.log(this.currentUserId+"   "+this.targetUserId)
-}
-
-loadTargetUser(): void {
-  if (this.targetUserId) {
-      this.userSer.GetUserById(this.targetUserId).subscribe({
-      next: user => this.targetUser = user,
-      error: err => console.error('שגיאה בטעינת פרטי משתמש', err)
+      setInterval(() => {
+        this.get(); 
+      }, 3000);
     });
-  }
-}
 
-loadMessages() {
-  if (this.currentUserId && this.targetUserId) {
-      this.userSer.getConversation(this.currentUserId, this.targetUserId).subscribe({
-      next: msgs => {
-      this.messages = msgs.map(m => {
-      let imageUrl = m.imageUrl;
-      if (imageUrl && !imageUrl.startsWith('http')) {
-      imageUrl = 'https://localhost:7058' + imageUrl;
-      }
-  return {
-      ...m,
-      imageUrl: imageUrl,
-      sent: m.senderId === this.currentUserId,
-      isRead: m.isRead 
-      };
+    console.log(this.currentUserId + "   " + this.targetUserId);
+  }
+
+  loadTargetUser(): void {
+    if (this.targetUserId) {
+      this.userSer.GetUserById(this.targetUserId).subscribe({
+        next: user => this.targetUser = user,
+        error: err => console.error('שגיאה בטעינת פרטי משתמש', err)
       });
-      this.scrollToBottom();
-      this.messages.forEach(msg => {
-      if(msg.receiverId == this.currentUserId){
-        this.userSer.markMessagesAsRead(msg).subscribe({
-        next: () => {
-        msg.isRead = true; 
-        }
-        });
+    }
+  }
+
+  loadMessages() {
+    if (this.currentUserId && this.targetUserId) {
+      this.userSer.getConversation(this.currentUserId, this.targetUserId).subscribe({
+        next: msgs => {
+          this.messages = msgs.map(m => {
+            let imageUrl = m.imageUrl;
+            if (imageUrl && !imageUrl.startsWith('http')) {
+              imageUrl = 'https://localhost:7058' + imageUrl;
+            }
+            return {
+              ...m,
+              imageUrl: imageUrl,
+              sent: m.senderId === this.currentUserId,
+              isRead: m.isRead 
+            };
+          });
+
+          this.scrollToBottom();
+
+          this.messages.forEach(msg => {
+            if(msg.receiverId == this.currentUserId) {
+              this.userSer.markMessagesAsRead(msg).subscribe({
+                next: () => { msg.isRead = true; }
+              });
+            }
+          });
         }
       });
     }
- });
- }
-}
-
-get(){
-  if (this.currentUserId && this.targetUserId) {
-    this.userSer.getConversation(this.currentUserId, this.targetUserId).subscribe({
-      next: msgs => {
-        this.messages = msgs.map(m => {
-          let imageUrl = m.imageUrl;
-          if (imageUrl && !imageUrl.startsWith('http')) {
-            imageUrl = 'https://localhost:7058' + imageUrl;
-          }
-          return {
-            ...m,
-            imageUrl: imageUrl,
-            sent: m.senderId === this.currentUserId,
-            isRead: m.isRead 
-          };
-        });
-
-        this.scrollToBottom();
-        this.messages.forEach(msg => {
-        console.log("fdvdv"+msg.receiverId+this.currentUserId)
-        });
-      }
-    });
   }
-}
+
+  get() {
+    if (this.currentUserId && this.targetUserId) {
+      this.userSer.getConversation(this.currentUserId, this.targetUserId).subscribe({
+        next: msgs => {
+          this.messages = msgs.map(m => {
+            let imageUrl = m.imageUrl;
+            if (imageUrl && !imageUrl.startsWith('http')) {
+              imageUrl = 'https://localhost:7058' + imageUrl;
+            }
+            return {
+              ...m,
+              imageUrl: imageUrl,
+              sent: m.senderId === this.currentUserId,
+              isRead: m.isRead 
+            };
+          });
+
+          this.scrollToBottom();
+        }
+      });
+    }
+  }
+
   sendMessage(): void {
     if (!this.newMessage.trim() && !this.selectedFile) return;
+
     const formData = new FormData();
     formData.append('senderId', this.currentUserId);
     formData.append('receiverId', this.targetUserId);
     formData.append('content', this.newMessage.trim() || '');
+
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }
+
     this.userSer.sendMessageWithFile(formData).subscribe({
       next: (msgFromServer: any) => {
         let imageUrl = msgFromServer.imageUrl;
         if (imageUrl && !imageUrl.startsWith('http')) {
           imageUrl = 'https://localhost:7058' + imageUrl;
         }
+
         const newMsg: Message = {
           senderId: msgFromServer.senderId,
           receiverId: msgFromServer.receiverId,
           content: msgFromServer.content,
           sentAt: new Date(msgFromServer.sentAt),
-          //sent: true,
           imageUrl: imageUrl || null,
           isRead: false,
           isDelivered: false
         };
+
         this.messages.push(newMsg);
         this.newMessage = '';
         this.selectedFile = null;
         this.selectedFilePreview = null;
         this.scrollToBottom();
-    },
-    error: err => console.error('שגיאה בשליחת הודעה עם קובץ', err)
-  });
-}
+      },
+      error: err => console.error('שגיאה בשליחת הודעה עם קובץ', err)
+    });
+  }
 
-scrollToBottom(): void {
-  setTimeout(() => {
-    const element = document.querySelector('.chat-messages');
-    if (element) {
-    element.scrollTop = element.scrollHeight;
+  scrollToBottom(): void {
+    if (!this.shouldAutoScroll) return;
+
+    setTimeout(() => {
+      const element = document.querySelector('.chat-messages');
+      if (element) {
+        element.scrollTop = element.scrollHeight;
+      }
+    }, 0);
+  }
+
+  onUserScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+    this.shouldAutoScroll = distanceFromBottom < 100;
+  }
+
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    if (!clickedInside && !clickedButton) {
+      this.showEmojiPicker = false;
     }
-   }, 0);
-}
-
-onDocumentClick(event: MouseEvent): void {
-  const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
-  const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
-  if (!clickedInside && !clickedButton) {
-    this.showEmojiPicker = false;
   }
-}
 
-toggleEmojiPicker(): void {
-  this.showEmojiPicker = !this.showEmojiPicker;
-}
-
-addEmoji(event: any): void {
-  const emoji = event?.emoji?.native || event?.native;
-  if (emoji) {
-    this.newMessage += emoji;
-    setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
   }
-}
 
-handleKeyDown(event: KeyboardEvent): void {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault();
-    this.onEnterKey();
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      this.newMessage += emoji;
+      setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+    }
   }
-}
 
-onEnterKey(): void {
-  if (this.newMessage.trim() || this.selectedFile) {
-    this.sendMessage();
-    this.showEmojiPicker = false;
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.onEnterKey();
+    }
   }
-}
 
-onFileSelected(event: any): void {
-  const file = event.target.files[0];
-  if (file) {
-    this.selectedFile = file;
-    const reader = new FileReader();
-    reader.onload = () => this.selectedFilePreview = reader.result as string;
-    reader.readAsDataURL(file);
+  onEnterKey(): void {
+    if (this.newMessage.trim() || this.selectedFile) {
+      this.sendMessage();
+      this.showEmojiPicker = false;
+    }
   }
-}
-// בודק אם זו ההודעה הראשונה של יום חדש
-isNewDay(index: number): boolean {
-  if (!this.messages || !this.messages[index]) return false;
 
-  const currentDate = new Date(this.messages[index].sentAt);
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => this.selectedFilePreview = reader.result as string;
+      reader.readAsDataURL(file);
+    }
+  }
 
-  if (index === 0) return true; // תמיד true להודעה הראשונה
+  isNewDay(index: number): boolean {
+    if (!this.messages || !this.messages[index]) return false;
+    const currentDate = new Date(this.messages[index].sentAt);
+    if (index === 0) return true;
+    const prevDate = new Date(this.messages[index - 1].sentAt);
+    return currentDate.toDateString() !== prevDate.toDateString();
+  }
 
-  const prevDate = new Date(this.messages[index - 1].sentAt);
+  formatDay(dateStr: string | Date): string {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
 
-  return currentDate.toDateString() !== prevDate.toDateString();
-}
+    if (date.toDateString() === today.toDateString()) return 'Today';
+    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
 
-formatDay(dateStr: string | Date): string {
-  const date = new Date(dateStr);
-  const today = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(today.getDate() - 1);
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.selectedFilePreview = null;
+  }
 
-  if (date.toDateString() === today.toDateString()) return 'היום';
-  if (date.toDateString() === yesterday.toDateString()) return 'אתמול';
-  return date.toLocaleDateString('he-IL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-}
+  navigate(route: string): void {
+    this.router.navigate([route]);
+  }
 
-removeSelectedFile(): void {
-  this.selectedFile = null;
-  this.selectedFilePreview = null;
-}
-
-navigate(route: string): void {
-  this.router.navigate([route]);
-}
-
-GoToUser(): void {
-  this.router.navigate(['/user-profile']);
-}
+  GoToUser() {
+    this.router.navigate(['/user-profile', this.targetUserId]);
+  }
 }

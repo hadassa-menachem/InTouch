@@ -20,17 +20,19 @@
 
 .search-icon {
   position: absolute;
-  left: 20px;
+  right: 20px;
   top: 19px;
   background: none;
   border: none;
   cursor: pointer;
-  justify-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-icon .material-icons {
   font-size: 20px;
-  color: #555;
+  color: #3c3f2d;
 }
 
 .search-list {
@@ -51,7 +53,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid #ddd;
-  margin-left: 12px; 
+  margin-right: 12px; 
 }
 
 .user-info {
@@ -59,11 +61,10 @@
   flex-direction: column;
 }
 
-
 .username {
   font-weight: 600;
   font-size: 15px;
-  color: #333;
+  color: #3c3f2d;
 }
 
 .bio {

@@ -70,3 +70,9 @@
   background-color: #e6f3e8;
   box-shadow: 0 0 8px rgba(95, 196, 126, 0.7);
 }
+
+.error {
+  font-size: 13px;
+  color: red;
+  margin-top: 4px;
+}

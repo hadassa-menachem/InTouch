@@ -25,7 +25,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     const userFromStorage = localStorage.getItem('currentUser');
     if (userFromStorage) {
       const parsedUser = JSON.parse(userFromStorage);
@@ -39,26 +38,27 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-  const codeUserValue = this.codeUser?.value;
-  this.usersSer.GetUserById(codeUserValue).subscribe({
-    next: (userFromServer) => {
-          this.usersSer.currentUser = userFromServer;
+    const codeUserValue = this.codeUser?.value;
+    this.usersSer.GetUserById(codeUserValue).subscribe({
+      next: (userFromServer) => {
+        this.usersSer.currentUser = userFromServer;
 
-      localStorage.setItem('currentUser', JSON.stringify(userFromServer));
-      this.usersSer.markAllMessagesAsDelivered(userFromServer.userId).subscribe({
-        next: () => {
-          console.log('כל ההודעות סומנו כנמסרות');
-        },
-        error: err => console.error('שגיאה בסימון הודעות כנמסרות', err)
-      });
+        localStorage.setItem('currentUser', JSON.stringify(userFromServer));
+        this.usersSer.markAllMessagesAsDelivered(userFromServer.userId).subscribe({
+          next: () => {
+            console.log('כל ההודעות סומנו כנמסרות');
+          },
+          error: err => console.error('שגיאה בסימון הודעות כנמסרות', err)
+        });
 
-      this.router.navigate(['/home']);
-    },
-    error: () => {
-      alert('שגיאה: קוד משתמש לא קיים');
-    }
-  });
-}
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        alert('שגיאה: קוד משתמש לא קיים');
+      }
+    });
+  }
+
   navigate(route: string) {
     this.router.navigate([route]);
   }

@@ -4,7 +4,7 @@
   --color-primary: #a1cfff;         /* בועה נשלחת */
   --color-secondary: #007aff;       /* כפתור שליחה וכו' */
   --color-border: #dce1e6;          /* גבול אפור בהיר */
-  --color-text-main: #1f2937;       /* טקסט כהה */
+  --color-text-main: #5c6146;       /* טקסט כהה */
   --color-text-muted: #6b7280;      /* טקסט משני */
 }
 
@@ -24,7 +24,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    direction: rtl;
+    direction: ltr;
     border: 1px solid #ddd;
     scrollbar-width: none; 
   -ms-overflow-style: none; 
@@ -48,13 +48,14 @@ body {
     align-items: center;
     padding: 10px 16px;
     border-bottom: 1px solid #ddd;
-    background-color: #fff;
+    background-color: #e7ece2;
   }
   
   
   .logo {
     font-size: 24px;
     font-weight: bold;
+    color:#3c3f2d;
   }
   
   .icons {
@@ -66,6 +67,7 @@ body {
   .icons lucide-icon {
     cursor: pointer;
     font-size: 22px;
+    color: #3c3f2d;
   }
   
   .bottom-nav {
@@ -73,11 +75,12 @@ body {
     display: flex;
     justify-content: space-around;
     padding: 10px;
-    background-color: #fff;
+    background-color: #e7ece2;
     border-top: 1px solid #ddd;
     position: sticky;
     bottom: 0;
     margin-bottom: 0px;
+    color: #3c3f2d;
   }
   
   .bottom-nav span {

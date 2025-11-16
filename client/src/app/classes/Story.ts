@@ -7,10 +7,10 @@ export class Story {
     userName?: string;
     profilePicUrl?: string;
   };
-  content?: string;      
-  imageUrl?: string;   
-  likes?: string[];       
-  comments?: {        
+  content?: string;
+  imageUrl?: string;
+  likes?: string[];
+  comments?: {
     userName: string;
     content: string;
   }[];
@@ -18,7 +18,8 @@ export class Story {
   category!: string;
   viewedByUserIds?: string[];
   viewedByCurrentUser: boolean = false;
-  isTemporary?: boolean; 
+  isTemporary?: boolean;
+
   constructor(init?: Partial<Story>) {
     Object.assign(this, init);
     this.viewedByUserIds = this.viewedByUserIds || [];

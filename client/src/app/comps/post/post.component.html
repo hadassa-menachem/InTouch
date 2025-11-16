@@ -7,7 +7,6 @@
           <img class="profile-pic" [src]="post.user!.profilePicUrl" alt="תמונת פרופיל">
           <span class="username">{{ post.user?.firstName }} {{ post.user?.lastName }}</span>
         </a>
-        <span class="more-options">⋯</span>
       </div>
 
       <div class="post-media" *ngFor="let media of post.mediaFiles">
@@ -24,100 +23,90 @@
             (mouseleave)="pauseVideo($event)"
             class="post-video">
           </video>
-          <p *ngSwitchDefault class="unsupported-media">סוג מדיה לא נתמך</p>
+          <p *ngSwitchDefault class="unsupported-media">Unsupported media type</p>
         </ng-container>
       </div>
 
-        <!-- כפתורים -->
-<div class="post-actions">
-    <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
+      <div class="post-actions">
+        <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
 
-  <div class="action-button">
-  <lucide-icon
-  name="heart"
-  class="heart-icon"
-  [ngClass]="{ 'liked': isPostLiked(post), 'not-liked': !isPostLiked(post) }"
-  (click)="toggleLike(post.id!, user.userId!)">
-</lucide-icon>
+        <div class="action-button">
+          <lucide-icon
+            name="heart"
+            class="heart-icon"
+            [ngClass]="{ 'liked': isPostLiked(post), 'not-liked': !isPostLiked(post) }"
+            (click)="toggleLike(post.id!, user.userId!)">
+          </lucide-icon>
+          <span class="like-count">{{ post.likes?.length || 0 }}</span>
+        </div>
 
-  <span class="like-count">{{ post.likes?.length || 0 }}</span>
-</div>
+        <div class="action-button" (click)="toggleCommentBox(post.id)">
+          <lucide-icon name="MessageCircle"></lucide-icon>
+        </div>
 
+        <div class="action-button" (click)="toggleSavePost(post.id)">
+          <lucide-icon
+            name="bookmark"
+            [ngClass]="{ 'saved': isPostSaved(post), 'not-saved': !isPostSaved(post) }">
+          </lucide-icon>
+        </div>
 
-  <div class="action-button" (click)="toggleCommentBox(post.id)">
-    <lucide-icon name="MessageCircle"></lucide-icon>
-  </div>
-
-  <div class="action-button" (click)="sharePost()">
-    <lucide-icon name="send"></lucide-icon>
-  </div>
-   <div class="action-button" (click)="sharePost()">
-  <lucide-icon name="bookmark"></lucide-icon>
-  </div>
-</div>
+        <div class="action-button" (click)="sharePost(post.id)">
+          <lucide-icon name="send"></lucide-icon>
+        </div>
+      </div>
 
       <div class="post-description">
-  <span class="username">{{ post.user?.firstName }} {{ post.user?.lastName }}</span> 
- {{ post.content }}
-</div>
+        <span class="username">{{ post.user?.firstName }} {{ post.user?.lastName }}</span> 
+        {{ post.content }}
+      </div>
 
+      <div class="view-comments">
+        <button class="view-comments-button" (click)="toggleCommentsList(post.id)">
+          <ng-container *ngIf="post.comments?.length > 0; else noComments">
+            Show all {{ post.comments.length }} comments
+          </ng-container>
+          <ng-template #noComments>No comments yet</ng-template>
+        </button>
+      </div>
 
- <!-- הצגת תגובות -->
-<div class="view-comments">
-  <button class="view-comments-button" (click)="toggleCommentsList(post.id)">
-  <ng-container *ngIf="post.comments?.length > 0; else noComments">
-    הצג את כל {{ post.comments.length }} התגובות
-  </ng-container>
-  <ng-template #noComments>
-אין תגובות עדיין  </ng-template>
-</button>
+      <div class="comments-list" *ngIf="commentsListPostId === post.id && post.comments?.length">
+        <div class="comment-line" *ngFor="let c of getVisibleComments(post)">
+          <strong>{{ c.userName }}</strong> {{ c.content }}
+        </div>
 
-</div>
-<!-- רשימת תגובות -->
-<div class="comments-list" *ngIf="commentsListPostId === post.id && post.comments?.length">
-  <div class="comment-line"
-       *ngFor="let c of getVisibleComments(post)">
-    <strong>{{ c.userName }}</strong> {{ c.content }}
-  </div>
+        <button *ngIf="shouldShowReadMore(post)" class="read-more-btn" (click)="toggleReadMore(post.id)">
+          {{ expandedPostIds.includes(post.id) ? 'Show less' : 'Read more' }}
+        </button>
+      </div>
 
-  <!-- כפתור קרא עוד -->
-  <button *ngIf="shouldShowReadMore(post)"
-          class="read-more-btn"
-          (click)="toggleReadMore(post.id)">
-    {{ expandedPostIds.includes(post.id) ? 'הצג פחות' : 'קרא עוד' }}
-  </button>
-</div>
+      <div class="add-comment" *ngIf="commentBoxPostId === post.id" style="display: flex; align-items: center; gap: 0.5rem;">
+        <div class="emoji-button-wrapper" style="position: relative;">
+          <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="אימוג'י">
+            <lucide-icon name="smile"></lucide-icon>
+          </button>
+          <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
+            <emoji-mart
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '300px', height: '350px' }">
+            </emoji-mart>
+          </div>
+        </div>
 
-<!-- תיבת הוספת תגובה -->
-<div class="add-comment" *ngIf="commentBoxPostId === post.id" style="display: flex; align-items: center; gap: 0.5rem;">
- <div class="emoji-button-wrapper" style="position: relative;">
-  <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="אימוג'י">
-    <lucide-icon name="smile"></lucide-icon>
-  </button>
- <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-  <emoji-mart
-    (emojiSelect)="addEmoji($event)"
-    [style]="{ width: '300px', height: '350px' }"
-  ></emoji-mart>
-</div>
+        <input
+          type="text"
+          placeholder="Add a comment..."
+          [(ngModel)]="newCommentContent"
+          #messageInputRef
+          (keydown.enter)="sendComment(post.id); $event.preventDefault()"
+          style="flex: 1;"
+        />
 
-</div>
+        <button aria-label="שלח תגובה" (click)="sendComment(post.id)">
+          <lucide-icon name="send"></lucide-icon>
+        </button>
+      </div>
 
-
- <input
-  type="text"
-  placeholder="הוסיפי תגובה..."
-  [(ngModel)]="newCommentContent"
-  #messageInputRef
-  (keydown.enter)="sendComment(post.id); $event.preventDefault()"
-  style="flex: 1;"
-/>
-
-  <!-- כפתור שליחה -->
-  <button aria-label="שלח תגובה" (click)="sendComment(post.id)">
-    <lucide-icon name="send"></lucide-icon>
-  </button>
-</div>
-
+    </div>
   </div>
 </div>

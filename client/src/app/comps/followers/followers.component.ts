@@ -35,40 +35,39 @@ export class FollowersComponent implements OnInit {
     this.loadAllUsers();
   }
 
- loadAllUsers(): void {
-  this.userService.getFollowers(this.userId).subscribe({
-    next: (follows: Follow[]) => {
-      const followWithUserList: FollowWithUser[] = [];
-      let loadedCount = 0;
+  loadAllUsers(): void {
+    this.userService.getFollowers(this.userId).subscribe({
+      next: (follows: Follow[]) => {
+        const followWithUserList: FollowWithUser[] = [];
+        let loadedCount = 0;
 
-      follows.forEach(follow => {
-        // עכשיו נשתמש ב-followerId (כלומר, מי שעוקב אחרי המשתמש הזה)
-        this.userService.GetUserById(follow.followerId).subscribe({
-          next: (user: User) => {
-            followWithUserList.push({ follow, user });
-            loadedCount++;
-            if (loadedCount === follows.length) {
-              this.allFollowers = followWithUserList;
-              this.filteredFollowers = [...followWithUserList];
+        follows.forEach(follow => {
+          this.userService.GetUserById(follow.followerId).subscribe({
+            next: (user: User) => {
+              followWithUserList.push({ follow, user });
+              loadedCount++;
+              if (loadedCount === follows.length) {
+                this.allFollowers = followWithUserList;
+                this.filteredFollowers = [...followWithUserList];
+              }
+            },
+            error: err => {
+              console.error(`שגיאה בשליפת משתמש ${follow.followeeId}:`, err);
+              followWithUserList.push({ follow, user: null });
+              loadedCount++;
+              if (loadedCount === follows.length) {
+                this.allFollowers = followWithUserList;
+                this.filteredFollowers = [...followWithUserList];
+              }
             }
-          },
-          error: err => {
-            console.error(`שגיאה בשליפת משתמש ${follow.followeeId}:`, err);
-            followWithUserList.push({ follow, user: null });
-            loadedCount++;
-            if (loadedCount === follows.length) {
-              this.allFollowers = followWithUserList;
-              this.filteredFollowers = [...followWithUserList];
-            }
-          }
+          });
         });
-      });
-    },
-    error: err => {
-      console.error('שגיאה בטעינת העוקבים:', err);
-    }
-  });
-}
+      },
+      error: err => {
+        console.error('שגיאה בטעינת העוקבים:', err);
+      }
+    });
+  }
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();

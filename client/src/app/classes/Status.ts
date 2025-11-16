@@ -7,10 +7,10 @@ export class Status {
     userName?: string;
     profilePicUrl?: string;
   };
-  content?: string;      
-  imageUrl?: string;   
-  likes?: string[];       
-  comments?: {        
+  content?: string;
+  imageUrl?: string;
+  likes?: string[];
+  comments?: {
     userName: string;
     content: string;
   }[];

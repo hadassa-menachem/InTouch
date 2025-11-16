@@ -17,12 +17,11 @@ import { FollowersComponent } from './comps/followers/followers.component';
 import { FollowingsComponent } from './comps/followings/followings.component';
 import { StoryComponent } from './comps/story/story.component';
 import { CreateStoryComponent } from './comps/create-story/create-story.component';
-
+import { SavedPostComponent } from './comps/saved-post/saved-post.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
-
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'post/:id', component: PostComponent, canActivate: [AuthGuard] },
@@ -35,10 +34,10 @@ export const routes: Routes = [
   { path: 'user-profile/:id', component: UserProfileComponent, canActivate: [AuthGuard] },
   { path: 'updateuser', component: UpdateUserComponent, canActivate: [AuthGuard] },
   { path: 'followers/:id', component: FollowersComponent},
-{ path: 'followings/:id', component: FollowingsComponent },
+  { path: 'followings/:id', component: FollowingsComponent },
   { path: 'create-story', component: CreateStoryComponent , canActivate: [AuthGuard] },
-{ path: 'story/:storyId', component: StoryComponent , canActivate: [AuthGuard] },
-
+  { path: 'story/:storyId', component: StoryComponent , canActivate: [AuthGuard] },
+  { path: 'saved-post', component: SavedPostComponent, canActivate: [AuthGuard]}
 ];
 
 
