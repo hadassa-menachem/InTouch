@@ -29,7 +29,6 @@ namespace DAL.Models
         public List<string> FollowingsList { get; set; } = new List<string>();
         public List<string> FollowersList { get; set; } = new List<string>();
         public List<MediaFile> MediaFiles { get; set; } = new List<MediaFile>();
-        public List<string> Categories { get; set; } = new List<string>();
         public List<Story> Stories { get; set; } = new List<Story>();
         public List<SavedPost> SavedPosts { get; set; } = new List<SavedPost>();
     }

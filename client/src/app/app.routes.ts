@@ -6,7 +6,6 @@ import { SearchComponent } from './comps/search/search.component';
 import { MessagesComponent } from './comps/messages/messages.component';
 import { ChatComponent } from './comps/chat/chat.component';
 import { CreatePostComponent } from './comps/createpost/createpost.component';
-import { GroupComponent } from './comps/group/group.component';
 import { NotificationsComponent } from './comps/notifications/notifications.component';
 import { SignupComponent } from './comps/signup/signup.component';
 import { LoginComponent } from './comps/login/login.component';
@@ -29,16 +28,12 @@ export const routes: Routes = [
   { path: 'messages', component: MessagesComponent, canActivate: [AuthGuard] },
   { path: 'createpost', component: CreatePostComponent, canActivate: [AuthGuard] },
   { path: 'chat/:id', component: ChatComponent, canActivate: [AuthGuard] },
-  { path: 'group', component: GroupComponent, canActivate: [AuthGuard] },
   { path: 'notification', component: NotificationsComponent, canActivate: [AuthGuard] },
   { path: 'user-profile/:id', component: UserProfileComponent, canActivate: [AuthGuard] },
   { path: 'updateuser', component: UpdateUserComponent, canActivate: [AuthGuard] },
   { path: 'followers/:id', component: FollowersComponent},
   { path: 'followings/:id', component: FollowingsComponent },
   { path: 'create-story', component: CreateStoryComponent , canActivate: [AuthGuard] },
-  { path: 'story/:storyId', component: StoryComponent , canActivate: [AuthGuard] },
+  { path: 'story/:userId', component: StoryComponent , canActivate: [AuthGuard] },
   { path: 'saved-post', component: SavedPostComponent, canActivate: [AuthGuard]}
 ];
-
-
-

@@ -5,11 +5,10 @@
 }
 
 .profile-image {
-  width: 150px;
-  height: 150px;
+  width: 148px;
+  height: 148px;
   object-fit: cover;
   border-radius: 100%;
-  border: 1px solid #dbdbdb;
   margin-left: 30px;
   display: flex;
   align-items: center;
@@ -17,11 +16,14 @@
   margin-top: 10px;
   box-shadow: 0 0 5px rgba(85, 21, 21, 0.1);
   position: relative;
+  cursor: pointer;
+  background: linear-gradient(90deg, #0ab8ce, #1976D2);
+  box-shadow: 0 0 20px rgba(10, 184, 206, 0.5);
 }
 
 .profile-image img {
-  width: 143px;
-  height: 143px;
+  width: 145px;
+  height: 145px;
   object-fit: cover;
   border-radius: 100%;
   border: 3px solid white;
@@ -59,6 +61,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 }
 
 .stat-number {
@@ -99,51 +102,6 @@
   display: block;
 }
 
-.stories {
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  padding: 10px;
-  background-color: #fff;
-  gap: 15px;
-}
-
-.story {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 85px;
-  flex-shrink: 0;
-}
-
-.circle {
-  border-radius: 100%;
-  border: 1px solid #c4c4c4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 82px;
-  height: 82px;
-}
-
-.circle img {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: top center;
-}
-
-.nameStory {
-  margin-top: 5px;
-  font-size: 13px;
-  text-align: center;
-  max-width: 85px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .profile-tabs {
   display: flex;
   justify-content: space-around;
@@ -179,7 +137,7 @@
   font-size: 14px;
   font-weight: bold;
   color: #fff;
-  background-color: #3897f0;
+  background-color: #0ab8ce;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -188,7 +146,7 @@
 }
 
 .follow-btn:hover {
-  background-color: #2b85e4;
+  background-color: #ff347d  ;
 }
 
 a {

@@ -1,18 +1,18 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
-  <p>עדכון פרטי משתמש</p>
+  <p>Private user update</p>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="text" formControlName="userName" placeholder="שם משתמש" />
+      <input type="text" formControlName="userName" placeholder="User name" />
     </div>
   </div>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="text" formControlName="firstName" placeholder="שם פרטי" />
+      <input type="text" formControlName="firstName" placeholder="First name" />
     </div>
     <div class="input-group">
-      <input type="text" formControlName="lastName" placeholder="שם משפחה" />
+      <input type="text" formControlName="lastName" placeholder="Last name" />
     </div>
   </div>
 
@@ -22,31 +22,31 @@
     </div>
     <div class="input-group">
       <select formControlName="gender">
-        <option value="" disabled selected>בחר מין</option>
-        <option value="זכר">זכר</option>
-        <option value="נקבה">נקבה</option>
+        <option value="" disabled selected>Select gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
       </select>
     </div>
   </div>
 
   <div class="input-row">
     <div class="input-group">
-      <input type="text" formControlName="phone" placeholder="טלפון" />
+      <input type="text" formControlName="phone" placeholder="Phone" />
     </div>
     <div class="input-group">
-      <input type="text" formControlName="email" placeholder="אימייל" />
-    </div>
-  </div>
-
-  <div class="input-row single">
-    <div class="input-group">
-      <textarea formControlName="bio" placeholder="ביוגרפיה"></textarea>
+      <input type="text" formControlName="email" placeholder="Email" />
     </div>
   </div>
 
   <div class="input-row single">
     <div class="input-group">
-      <input type="password" formControlName="password" placeholder="סיסמה" />
+      <textarea formControlName="bio" placeholder="Biography"></textarea>
+    </div>
+  </div>
+
+  <div class="input-row single">
+    <div class="input-group">
+      <input type="password" formControlName="password" placeholder="Password" />
     </div>
   </div>
 
@@ -55,6 +55,11 @@
       <input type="file" (change)="onFileSelected($event)" accept="image/*" />
     </div>
   </div>
+  <div *ngIf="showMessage" 
+     [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}"
+     class="floating-message">
+    {{ messageText }}
+  </div>
 
-  <button type="submit" class="submit-btn">עדכן</button>
+  <button type="submit" class="submit-btn">Update</button>
 </form>

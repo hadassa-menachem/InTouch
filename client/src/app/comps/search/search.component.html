@@ -1,5 +1,8 @@
 <div class="search-container">
-  <input type="text" placeholder="Search for users" (input)="onSearch($event)" />
+  <input 
+    type="text" 
+    placeholder="Search for users" 
+    (input)="onSearch($event)"/>
 
   <button class="search-icon">
     <lucide-icon class="material-icons" name="search"></lucide-icon> 
@@ -19,7 +22,9 @@
     </ng-container>
 
     <ng-template #noResults>
-      <div class="no-results">No results found for'{{searchTerm}}'</div>
+      <div class="no-results">
+        No results found for '{{ searchTerm }}'
+      </div>
     </ng-template>
   </div>
 </div>

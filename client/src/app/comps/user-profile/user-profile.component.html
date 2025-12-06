@@ -2,7 +2,7 @@
   <div class="profile-header">
     <div class="profile-image-name">
       <div class="profile-image">
-        <img [src]="profileUser.profilePicUrl" (click)="openProfileStory()" />
+        <img [src]="profileUser.profilePicUrl" (click)="openProfileStory()" alt="view-story"/>
         <button class="view-profile-pic-btn" (click)="openProfileImage(profileUser!.profilePicUrl!)">
           <lucide-icon name="ZoomIn" (click)="openProfileImage()"></lucide-icon>
         </button>
@@ -49,7 +49,6 @@
           <img [src]="s.imageUrl" alt="story" *ngIf="s.imageUrl"/>
         </a>
       </div>
-      <p class="nameStory">{{ s.category! }}</p>
     </div>
   </div>
 

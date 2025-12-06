@@ -8,4 +8,5 @@ export class Message {
   isRead?: boolean = false;
   isDelivered?: boolean = false;
   id?: string;
+  fileType?: 'image' | 'pdf'; 
 }

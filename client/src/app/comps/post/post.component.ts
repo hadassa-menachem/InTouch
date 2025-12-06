@@ -1,12 +1,4 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChildren,
-  QueryList,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, ViewChild,} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -86,7 +78,7 @@ export class PostComponent implements OnInit, AfterViewInit {
                   p.comments = comments;
                   this.allPosts = [...this.allPosts];
                 },
-                error: err => console.error('שגיאה בטעינת תגובות:', err)
+                error: err => console.error('Error loading comments:', err)
               });
 
               this.userService.getLikesByPostId(p.id).subscribe({
@@ -94,14 +86,14 @@ export class PostComponent implements OnInit, AfterViewInit {
                   p.likes = likes;
                   this.allPosts = [...this.allPosts];
                 },
-                error: err => console.error('שגיאה בטעינת לייקים:', err)
+                error: err => console.error('Error loading likes:', err)
               });
             });
           },
-          error: err => console.error('שגיאה בטעינת פוסטים של המשתמש:', err)
+          error: err => console.error('Error loading user posts:', err)
         });
       },
-      error: err => console.error('שגיאה בטעינת הפוסט:', err)
+      error: err => console.error('Error loading post:', err)
     });
 
     this.loadSavedPosts();
@@ -121,7 +113,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  // ==================== Navigation ====================
   navigate(route: string) {
     this.router.navigate([route]);
   }
@@ -130,7 +121,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/user-profile', userId]);
   }
 
-  // ==================== Video ====================
   playVideo(event: Event) {
     (event.target as HTMLVideoElement).play();
   }
@@ -139,7 +129,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     (event.target as HTMLVideoElement).pause();
   }
 
-  // ==================== Likes ====================
   toggleLike(postId: string, userId: string) {
     const post = this.allPosts.find(p => p.id === postId);
     if (!post) return;
@@ -181,7 +170,7 @@ export class PostComponent implements OnInit, AfterViewInit {
           this.allPosts = [...this.allPosts];
         }
       },
-      error: err => console.error('❌ Error refreshing likes:', err)
+      error: err => console.error('Error refreshing likes:', err)
     });
   }
 
@@ -189,7 +178,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     return post.likes?.some(like => like.userId === this.user.userId) || false;
   }
 
-  // ==================== Comments ====================
   toggleCommentBox(postId: string): void {
     this.commentBoxPostId = this.commentBoxPostId === postId ? null : postId;
   }
@@ -205,7 +193,7 @@ export class PostComponent implements OnInit, AfterViewInit {
           const index = this.allPosts.findIndex(p => p.id === postId);
           if (index !== -1) this.allPosts[index].comments = comments;
         },
-        error: err => console.error('שגיאה בטעינת תגובות:', err)
+        error: err => console.error('Error loading comments:', err)
       });
     }
   }
@@ -243,7 +231,7 @@ export class PostComponent implements OnInit, AfterViewInit {
         this.commentsListPostId = null;
         this.showEmojiPicker = false;
       },
-      error: err => console.error('❌ שגיאה בשליחת תגובה:', err)
+      error: err => console.error('Error sending response:', err)
     });
   }
 
@@ -262,7 +250,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     else this.expandedPostIds.push(postId);
   }
 
-  // ==================== Emoji ====================
   toggleEmojiPicker(): void {
     this.showEmojiPicker = !this.showEmojiPicker;
     setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
@@ -273,7 +260,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (emoji) this.newCommentContent += emoji;
   }
 
-  // ==================== Save Posts ====================
   loadSavedPosts() {
     this.userService.getSavedPosts(this.user.userId).subscribe({
       next: posts => this.savedPosts = posts.map(p => p.id!),

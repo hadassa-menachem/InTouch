@@ -66,11 +66,23 @@
     </div>
   </div>
 
-  <div class="input-row single">
-    <div class="input-group">
-      <textarea formControlName="bio" placeholder="Biography"></textarea>
+<div class="input-row single">
+  <div class="input-group bio-group">
+    <div class="bio-input-wrapper">
+      <textarea #bioTextarea formControlName="bio" placeholder="Biography"></textarea>
+      
+      <div class="emoji-button-wrapper">
+        <button type="button" class="emoji-btn-inside" (click)="toggleBioEmojiPicker()" aria-label="emoji">
+          <lucide-icon name="smile"></lucide-icon>
+        </button>
+        
+        <div *ngIf="showBioEmojiPicker" class="emoji-picker-popover" #bioEmojiPickerRef>
+          <emoji-mart (emojiSelect)="addBioEmoji($event)"></emoji-mart>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
   <div class="input-row single">
     <div class="input-group">
@@ -86,6 +98,12 @@
     <div class="input-group">
       <input type="file" (change)="onFileSelected($event)" accept="image/*" />
     </div>
+  </div>
+  
+  <div *ngIf="showMessage" 
+     [ngClass]="{'success-message': isSuccess, 'error-message': !isSuccess}"
+     class="floating-message">
+    {{ messageText }}
   </div>
 
   <button type="submit" class="submit-btn">Register</button>

@@ -9,20 +9,18 @@ export class Story {
   };
   content?: string;
   imageUrl?: string;
-  likes?: string[];
-  comments?: {
-    userName: string;
-    content: string;
-  }[];
+  likes: string[] = [];
+  comments: { userName: string; content: string }[] = [];
   createdAt!: Date;
-  category!: string;
-  viewedByUserIds?: string[];
+  viewedByUserIds: string[] = [];
   viewedByCurrentUser: boolean = false;
-  isTemporary?: boolean;
-
+  durationInHours: number = 24; 
+  
   constructor(init?: Partial<Story>) {
     Object.assign(this, init);
+    this.likes = this.likes || [];
+    this.comments = this.comments || [];
     this.viewedByUserIds = this.viewedByUserIds || [];
-    this.viewedByCurrentUser = false;
+    this.durationInHours = init?.durationInHours ?? 24;
   }
 }

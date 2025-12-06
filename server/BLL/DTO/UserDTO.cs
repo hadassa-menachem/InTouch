@@ -20,7 +20,7 @@ namespace BLL.DTO
         public string? Password { get; set; } = "";
         public string? Bio { get; set; } = "";
         public DateTime? CreatedAt { get; set; }
-        public string? profilePicUrl { get; set; } = "";
+        public string? ProfilePicUrl { get; set; } = "";
         public List<MediaFile>? MediaFiles { get; set; } = null; 
         public List<string>? FollowingsList { get; set; } = null;// רשימת משתמשים שהמשתמש עוקב אחריהם
         public List<string>? FollowersList { get; set; } = null;// רשימת משתמשים שעקובים אחרי המשתשמש

@@ -1,21 +1,32 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
-  <p>התחברות באמצעות קוד משתמש</p>
+  <p>Login using a user code</p>
 
   <input
     type="text"
     id="codeUser"
     formControlName="codeUser"
-    placeholder="הכנס קוד משתמש"
-  />
+    placeholder="Enter user code"/>
 
   <div class="error" *ngIf="codeUser?.touched && codeUser?.invalid">
-    <div *ngIf="codeUser?.errors?.['required']">שדה קוד משתמש חובה</div>
+    <div *ngIf="codeUser?.errors?.['required']">User code field required</div>
   </div>
 
-  <button type="submit" [disabled]="loginForm.invalid">התחבר</button>
+  <div
+    *ngIf="showMessage"
+    [ngClass]="{ success: isSuccess, error: !isSuccess }"
+    class="floating-message">
+    {{ messageText }}
+  </div>
+
+  <button
+    type="submit"
+    class="submit-btn"
+    [disabled]="loginForm.invalid">
+    Log in
+  </button>
 </form>
 
 <div class="signup">
-  <p>אין לך חשבון עדיין?</p>
-  <a (click)="navigate('/signup')">הרשם</a>
+  <p>Don't have an account yet?</p>
+  <a (click)="navigate('/signup')">Sign Up</a>
 </div>

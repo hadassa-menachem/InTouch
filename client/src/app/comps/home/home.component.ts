@@ -41,16 +41,24 @@ export class HomeComponent implements OnInit, AfterViewInit {
   expandedPostIds: string[] = [];
   savedPosts: string[] = [];
 
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
+
   @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
+  @ViewChild('storyContainer') storyContainer!: ElementRef;
+
+  autoScrollInterval: any;
+  isPaused = false;
 
   constructor(
     private router: Router,
     private http: HttpClient,
     private userService: UserService
   ) {}
-
+ 
   ngOnInit(): void {
     const userFromStorage = localStorage.getItem('currentUser');
     if (userFromStorage) {
@@ -63,12 +71,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.getAllPosts();
     this.getAllUsers();
     this.getAllStories();
+    this.loadSavedPosts();
   }
 
   getAllUsers() {
     this.userService.GetAllUsers().subscribe({
       next: users => {
-        this.allUsers = users.map(u => ({
+        this.allUsers = users.filter(u => u.userId !== this.user.userId)
+        .map(u => ({
           ...u,
           stories: u.stories?.map(s => {
             if (!s.user) return null;
@@ -82,13 +92,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
               },
               content: s.content,
               imageUrl: s.imageUrl,
-              category: s.category,
-              createdAt: new Date(s.createdAt),
               viewedByUserIds: s.viewedByUserIds || [],
               viewedByCurrentUser: s.viewedByUserIds?.includes(this.user.userId) || false
             };
           }).filter(s => s !== null) || []
         })) as User[];
+        this.allUsers=this.shuffleArray(users)
         console.log(this.allUsers);
       },
       error: err => console.error('שגיאה בטעינת משתמשים:', err)
@@ -128,7 +137,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void {
+  this.startAutoScroll();
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -142,8 +153,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   getAllPosts() {
     this.userService.getAllPosts().subscribe({
       next: posts => {
-        this.allPosts = posts;
-        console.log(this.allPosts);
+      this.allPosts = this.shuffleArray(posts); 
+      console.log(this.allPosts);
       },
       error: err => console.error('שגיאה בטעינת פוסטים:', err)
     });
@@ -250,9 +261,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.commentBoxPostId = null;
         this.commentsListPostId = null;
         this.showEmojiPicker = false;
+        this.showFloatingMessage('The comment was added successfully.', true);
       },
       error: err => {
-        console.error('❌ שגיאה בשליחת תגובה:', err);
+      this.showFloatingMessage('Error adding comment', false);
         if (err.error && err.error.errors) {
           Object.keys(err.error.errors).forEach(key => {
             console.error(`   - ${key}:`, err.error.errors[key]);
@@ -264,7 +276,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   toggleEmojiPicker(): void {
     this.showEmojiPicker = !this.showEmojiPicker;
-    console.log('Emoji Picker toggled! סטטוס:', this.showEmojiPicker);
   }
 
   addEmoji(event: any): void {
@@ -304,7 +315,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.savedPosts = this.savedPosts.filter(id => id !== postId);
       this.savedPosts = [...this.savedPosts];
       this.userService.unsavePost(this.user.userId, postId).subscribe({
-        next: () => console.log('Post unsaved successfully'),
+        next: () => 
+          this.showFloatingMessage('Post unsaved successfully.', true),
         error: () => {
           this.savedPosts = [...this.savedPosts, postId];
         }
@@ -312,7 +324,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     } else {
       this.savedPosts = [...this.savedPosts, postId];
       this.userService.savePost(this.user.userId, postId).subscribe({
-        next: () => console.log('Post saved successfully'),
+        next: () =>         
+          this.showFloatingMessage('Post saved successfully.', true),
         error: () => {
           this.savedPosts = this.savedPosts.filter(id => id !== postId);
           this.savedPosts = [...this.savedPosts];
@@ -320,4 +333,54 @@ export class HomeComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
+  loadSavedPosts() {
+    this.userService.getSavedPosts(this.user.userId).subscribe({
+      next: posts => this.savedPosts = posts.map(p => p.id!),
+      error: err => console.error('Error loading saved posts:', err)
+    });
+  }
+
+  startAutoScroll() {
+    this.autoScrollInterval = setInterval(() => {
+    if (!this.isPaused) {
+      const el = this.storyContainer.nativeElement;
+      el.scrollLeft += 1; 
+    }
+  }, 30);
+}
+
+  pauseAutoScroll() {
+    this.isPaused = true;
+}
+
+  resumeAutoScroll() {
+    setTimeout(() => {
+    this.isPaused = false;
+  }, 2000); 
+}
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+     this.showMessage = false;
+  }, 2000); 
+}
+
+ shouldShowReadMoreContent(post: Post): boolean {
+   if (!post.content) return false;
+   return post.content.length > 100; 
+}
+
+ shuffleArray<T>(array: T[]): T[] {
+   for (let i = array.length - 1; i > 0; i--) {
+     const j = Math.floor(Math.random() * (i + 1));
+     [array[i], array[j]] = [array[j], array[i]];
+   }
+   return array;
+}
+
 }

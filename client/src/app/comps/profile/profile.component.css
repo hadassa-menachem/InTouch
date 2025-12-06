@@ -7,23 +7,50 @@
 }
 
 .profile-image {
-  width: 150px;
-  height: 150px;
+   width: 148px;
+  height: 148px;
   object-fit: cover;
   border-radius: 100%;
-  border: 1px solid #dbdbdb;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+  box-shadow: 0 0 5px rgba(85, 21, 21, 0.1);
+  position: relative;
+  cursor: pointer;
+  background: linear-gradient(90deg, #0ab8ce, #1976D2);
+  box-shadow: 0 0 20px rgba(10, 184, 206, 0.5);
 }
 
 .profile-image img {
-  width: 143px;
-  height: 143px;
+ width: 145px;
+  height: 145px;
   object-fit: cover;
   border-radius: 100%;
   border: 3px solid white;
+}
+
+.image-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  z-index: 10000;
+  height: 350vh;
+}
+
+.image-container img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  margin: auto;
 }
 
 .profile-info {
@@ -60,7 +87,6 @@
 
 .bio-text {
   font-size: 14px;
-  color: #555;
   margin-top: 6px;
 }
 
@@ -75,6 +101,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
 }
 
 .stat-number {
@@ -84,16 +111,16 @@
 
 .stat-label {
   font-size: 20px;
-  color: #555;
 }
 
 .profile-posts {
   display: flex;
   flex-wrap: wrap;
+  width: 100%; 
 }
 
 .profile-posts .post {
-  width: 33.3%;
+  width: 33%;
   height: 250px;
   border: 1px solid #ddd;
   overflow: hidden;
@@ -102,54 +129,9 @@
 .profile-posts .post img,
 .profile-posts .post video {
   width: 100%;
-  height: 100%;
+  height: 250px;
   object-fit: cover;
   display: block;
-}
-
-.stories {
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  padding: 10px;
-  background-color: #fff;
-  gap: 15px;
-}
-
-.story {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 85px;
-  flex-shrink: 0;
-}
-
-.circle {
-  border-radius: 100%;
-  border: 1px solid #c4c4c4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 82px;
-  height: 82px;
-}
-
-.circle img {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  object-fit: cover;
-  object-position: top center;
-}
-
-.nameStory {
-  margin-top: 5px;
-  font-size: 13px;
-  text-align: center;
-  max-width: 85px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .profile-tabs {
@@ -157,7 +139,6 @@
   justify-content: space-around;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  margin-top: 10px;
 }
 
 .profile-tabs button {
@@ -171,9 +152,9 @@
 }
 
 .profile-tabs button.active {
-  border-bottom: 2px solid #3c3f2d;
-  color: #3c3f2d;
-}
+  border-bottom: 3px solid #000;
+} 
+
 
 video {
   background-color: #fff;
@@ -217,13 +198,13 @@ a {
 
 .add-status-btn {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 30px;
-  height: 30px;
+  bottom: 8px;
+  right: 8px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   border: none;
-  background-color: #3c3f2d;
+  background-color: #ff347d;
   color: white;
   font-size: 15px;
   font-weight: bold;

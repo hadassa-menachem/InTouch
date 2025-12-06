@@ -26,8 +26,8 @@ export class AppComponent implements OnInit {
       this.userService.currentUser = user;
 
       this.userService.markAllMessagesAsDelivered(user.userId).subscribe({
-        next: () => console.log('כל ההודעות סומנו כנמסרו'),
-        error: err => console.error('שגיאה בסימון הודעות כנמסרו', err)
+        next: () => console.log('All messages have been marked as delivered'),
+        error: err => console.error('Error marking delivered messages', err)
       });
     }
   }
@@ -42,6 +42,10 @@ export class AppComponent implements OnInit {
 
   ifUser(): boolean {
     return localStorage.getItem('currentUser') == null;
+  }
+
+  isActiveRoute(route: string): boolean {
+    return this.router.url === route || this.router.url.startsWith(route + '/');
   }
 
   logout() {

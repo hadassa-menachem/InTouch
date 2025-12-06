@@ -15,7 +15,7 @@ namespace InTouch.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBll _userBll;
-        private readonly IMapper _mapper; // הוספנו את AutoMapper
+        private readonly IMapper _mapper; 
 
         public UserController(IUserBll userBll, IMapper mapper)
         {
@@ -91,8 +91,6 @@ namespace InTouch.Controllers
             if (existingUser == null)
                 return NotFound();
 
-            _mapper.Map(dto, existingUser);
-
             if (profileImage != null && profileImage.Length > 0)
             {
                 var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
@@ -108,13 +106,15 @@ namespace InTouch.Controllers
                 }
 
                 var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/{fileName}";
-                existingUser.profilePicUrl = imageUrl;
+
+                dto.profilePicUrl = imageUrl;
             }
 
             await _userBll.UpdateUser(id, dto);
 
             return NoContent();
         }
+
 
         // DELETE api/user/{id}
         [HttpDelete("{id}")]

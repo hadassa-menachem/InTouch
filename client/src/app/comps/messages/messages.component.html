@@ -3,30 +3,78 @@
     <h2>Messages</h2>
   </div>
 
+  <div class="search-container">
+    <input type="text" placeholder="Search for users" (input)="onSearch($event)" />
+    <button class="search-icon">
+      <lucide-icon class="material-icons" name="search"></lucide-icon>
+    </button>
+  </div>
+
   <div class="messages-list">
+    <div *ngIf="filteredChats.length === 0" class="no-results">
+      You don't have any messages with '{{searchTerm}}' yet
+    </div>
+
     <div
       class="message-item"
-      *ngFor="let chat of chats"
-      (click)="navigateToChat(chat.userId)"
-    >
-      <img class="profile-pic" [src]="chat.profilePic" alt="תמונה" />
+      *ngFor="let chat of filteredChats"
+      (click)="navigateToChat(chat.userId)">
+      <img class="profile-pic" [src]="chat.profilePic" alt="image" />
       <div class="message-info">
         <span class="username">{{ chat.username }}</span>
-        <div class="last-message">
-          {{ chat.lastMessage || 'No recent messages' }}
-          <ng-container *ngIf="chat.isSentByCurrentUser">
-            <lucide-icon
-              *ngIf="chat.isSeen"
-              name="check-check"
-              class="icon-seen"
-            ></lucide-icon>
-            <lucide-icon
-              *ngIf="!chat.isSeen"
-              name="check"
-              class="icon-sent"
-            ></lucide-icon>
-          </ng-container>
-        </div>
+        <span class="last-message">
+          <span *ngIf="chat.isSentByCurrentUser" class="under">You:</span>
+          {{ chat.lastMessage?.content || 'No messages yet' }}
+        </span>
+      </div>
+
+      <div class="status-checks" *ngIf="chat.isSentByCurrentUser && chat.lastMessage">
+        <ng-container *ngIf="!chat.lastMessage.isDelivered && !chat.lastMessage.isRead">
+          <svg class="check-icon"
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="12" 
+          viewBox="0 0 22 12" 
+          fill="none" 
+          stroke="#7a7a7a" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round">
+          <polyline points="1 7 4 11 13 1" />
+          </svg>
+        </ng-container>
+
+        <ng-container *ngIf="chat.lastMessage.isDelivered && !chat.lastMessage.isRead">
+          <svg class="check-icon" 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="12" 
+          viewBox="0 0 22 12" 
+          fill="none" 
+          stroke="#7a7a7a" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round">
+          <polyline points="1 7 4 11 13 1" />
+          <polyline points="7 7 10 11 19 1" />
+          </svg>
+        </ng-container>
+
+        <ng-container *ngIf="chat.lastMessage.isRead">
+          <svg class="check-icon" 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="20" 
+          height="12" 
+          viewBox="0 0 22 12" 
+          fill="none" 
+          stroke="#34B7F1" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round">
+          <polyline points="1 7 4 11 13 1" />
+          <polyline points="7 7 10 11 19 1" />
+          </svg>
+        </ng-container>
       </div>
     </div>
   </div>

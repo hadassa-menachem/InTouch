@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,19 +8,28 @@ import { UserService } from '../../ser/user.service';
 import { Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { LucideIconsModule } from '../../lucide.module';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, LucideIconsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, LucideIconsModule, PickerModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
+  @ViewChild('bioTextarea') bioTextarea!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('bioEmojiPickerRef') bioEmojiPickerRef!: ElementRef;
+
   registerForm: FormGroup;
   submitted = false;
   user: User = new User();
   selectedFile: File | null = null;
+  showBioEmojiPicker: boolean = false;
+
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
 
   constructor(
     private fb: FormBuilder,
@@ -43,6 +52,30 @@ export class SignupComponent {
       bio: [''],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.bioEmojiPickerRef?.nativeElement?.contains(event.target);
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    if (!clickedInside && !clickedButton) {
+      this.showBioEmojiPicker = false;
+    }
+  }
+
+  toggleBioEmojiPicker(): void {
+    this.showBioEmojiPicker = !this.showBioEmojiPicker;
+  }
+
+  addBioEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      const currentBio = this.registerForm.get('bio')?.value || '';
+      this.registerForm.patchValue({
+        bio: currentBio + emoji
+      });
+      setTimeout(() => this.bioTextarea?.nativeElement?.focus(), 0);
+    }
   }
 
   onFileSelected(event: Event) {
@@ -69,6 +102,9 @@ export class SignupComponent {
 
     if (this.selectedFile) {
       formData.append('profileImage', this.selectedFile);
+    } else {
+      const defaultFile = new File([], 'assets/images/default-profile.jpg', { type: 'image/jpg' });
+      formData.append('profileImage', defaultFile);
     }
 
     formData.append('createdAt', new Date().toISOString());
@@ -78,17 +114,29 @@ export class SignupComponent {
     this.http.post('https://localhost:7058/api/user', formData).subscribe({
       next: () => {
         this.usersService.currentUser = this.user;
-        alert('Successfully registered');
-        this.router.navigate(['/home']);
+        this.showFloatingMessage('Registration successful!', true);
+        setTimeout(() => {
+          this.router.navigate(['/home']);
+        }, 1000);
       },
       error: err => {
         console.error('Registration error:', err);
-        alert('Registration failed');
+        this.showFloatingMessage('Registration failed', false);
       }
     });
   }
 
   navigate(route: string) {
     this.router.navigate([route]);
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 5000); 
   }
 }

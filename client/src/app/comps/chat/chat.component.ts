@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  HostListener,
-  ViewChild
-} from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -32,15 +26,19 @@ import { UserService } from '../../ser/user.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ChatComponent implements OnInit {
+
   newMessage: string = '';
   messages: Message[] = [];
+
   selectedFile: File | null = null;
   selectedFilePreview: string | null = null;
+
   showEmojiPicker: boolean = false;
 
   currentUserId: string = '';
   targetUserId: string = '';
   targetUser: any = null;
+
   shouldAutoScroll: boolean = true;
 
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
@@ -54,14 +52,15 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserId = this.userSer.currentUser?.userId!;
-    
+
     this.route.params.subscribe(params => {
       this.targetUserId = params['id'];
+
       this.loadTargetUser();
       this.loadMessages();
 
       setInterval(() => {
-        this.get(); 
+        this.get();
       }, 3000);
     });
 
@@ -72,7 +71,7 @@ export class ChatComponent implements OnInit {
     if (this.targetUserId) {
       this.userSer.GetUserById(this.targetUserId).subscribe({
         next: user => this.targetUser = user,
-        error: err => console.error('שגיאה בטעינת פרטי משתמש', err)
+        error: err => console.error('Error loading user information', err)
       });
     }
   }
@@ -83,23 +82,38 @@ export class ChatComponent implements OnInit {
         next: msgs => {
           this.messages = msgs.map(m => {
             let imageUrl = m.imageUrl;
+
             if (imageUrl && !imageUrl.startsWith('http')) {
               imageUrl = 'https://localhost:7058' + imageUrl;
             }
+
+            let fileType: 'image' | 'pdf' | undefined = undefined;
+
+            if (imageUrl) {
+              if (imageUrl.toLowerCase().endsWith('.pdf')) {
+                fileType = 'pdf';
+              } else {
+                fileType = 'image';
+              }
+            }
+
             return {
               ...m,
               imageUrl: imageUrl,
               sent: m.senderId === this.currentUserId,
-              isRead: m.isRead 
+              isRead: m.isRead,
+              fileType: fileType
             };
           });
 
           this.scrollToBottom();
 
           this.messages.forEach(msg => {
-            if(msg.receiverId == this.currentUserId) {
+            if (msg.receiverId == this.currentUserId) {
               this.userSer.markMessagesAsRead(msg).subscribe({
-                next: () => { msg.isRead = true; }
+                next: () => {
+                  msg.isRead = true;
+                }
               });
             }
           });
@@ -114,14 +128,27 @@ export class ChatComponent implements OnInit {
         next: msgs => {
           this.messages = msgs.map(m => {
             let imageUrl = m.imageUrl;
+
             if (imageUrl && !imageUrl.startsWith('http')) {
               imageUrl = 'https://localhost:7058' + imageUrl;
             }
+
+            let fileType: 'image' | 'pdf' | undefined = undefined;
+
+            if (imageUrl) {
+              if (imageUrl.toLowerCase().endsWith('.pdf')) {
+                fileType = 'pdf';
+              } else {
+                fileType = 'image';
+              }
+            }
+
             return {
               ...m,
               imageUrl: imageUrl,
               sent: m.senderId === this.currentUserId,
-              isRead: m.isRead 
+              isRead: m.isRead,
+              fileType: fileType
             };
           });
 
@@ -146,6 +173,7 @@ export class ChatComponent implements OnInit {
     this.userSer.sendMessageWithFile(formData).subscribe({
       next: (msgFromServer: any) => {
         let imageUrl = msgFromServer.imageUrl;
+
         if (imageUrl && !imageUrl.startsWith('http')) {
           imageUrl = 'https://localhost:7058' + imageUrl;
         }
@@ -157,16 +185,20 @@ export class ChatComponent implements OnInit {
           sentAt: new Date(msgFromServer.sentAt),
           imageUrl: imageUrl || null,
           isRead: false,
-          isDelivered: false
+          isDelivered: false,
+          fileType: this.selectedFileType || undefined
         };
 
         this.messages.push(newMsg);
+
         this.newMessage = '';
         this.selectedFile = null;
         this.selectedFilePreview = null;
+        this.selectedFileType = null;
+
         this.scrollToBottom();
       },
-      error: err => console.error('שגיאה בשליחת הודעה עם קובץ', err)
+      error: err => console.error('Error sending message with file', err)
     });
   }
 
@@ -184,12 +216,14 @@ export class ChatComponent implements OnInit {
   onUserScroll(event: Event): void {
     const element = event.target as HTMLElement;
     const distanceFromBottom = element.scrollHeight - element.scrollTop - element.clientHeight;
+
     this.shouldAutoScroll = distanceFromBottom < 100;
   }
 
   onDocumentClick(event: MouseEvent): void {
     const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
     const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+
     if (!clickedInside && !clickedButton) {
       this.showEmojiPicker = false;
     }
@@ -201,8 +235,10 @@ export class ChatComponent implements OnInit {
 
   addEmoji(event: any): void {
     const emoji = event?.emoji?.native || event?.native;
+
     if (emoji) {
       this.newMessage += emoji;
+
       setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
     }
   }
@@ -221,43 +257,61 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  selectedFileType: 'image' | 'pdf' | null = null;
+
   onFileSelected(event: any): void {
     const file = event.target.files[0];
+
     if (file) {
       this.selectedFile = file;
-      const reader = new FileReader();
-      reader.onload = () => this.selectedFilePreview = reader.result as string;
-      reader.readAsDataURL(file);
+
+      if (file.type.startsWith('image/')) {
+        this.selectedFileType = 'image';
+
+        const reader = new FileReader();
+        reader.onload = () => this.selectedFilePreview = reader.result as string;
+        reader.readAsDataURL(file);
+
+      } else if (file.type === 'application/pdf') {
+        this.selectedFileType = 'pdf';
+      }
     }
+  }
+
+  removeSelectedFile(): void {
+    this.selectedFile = null;
+    this.selectedFilePreview = null;
+    this.selectedFileType = null;
   }
 
   isNewDay(index: number): boolean {
     if (!this.messages || !this.messages[index]) return false;
+
     const currentDate = new Date(this.messages[index].sentAt);
+
     if (index === 0) return true;
+
     const prevDate = new Date(this.messages[index - 1].sentAt);
+
     return currentDate.toDateString() !== prevDate.toDateString();
   }
 
   formatDay(dateStr: string | Date): string {
     const date = new Date(dateStr);
     const today = new Date();
+
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) return 'Today';
     if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric'
     });
-  }
-
-  removeSelectedFile(): void {
-    this.selectedFile = null;
-    this.selectedFilePreview = null;
   }
 
   navigate(route: string): void {

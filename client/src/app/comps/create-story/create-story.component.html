@@ -1,95 +1,119 @@
-<div class="create-status-container">
+<div class="create-story-container">
   <form [formGroup]="createStoryForm" (ngSubmit)="onSubmit()">
+    <p>Uploading a story</p>
 
     <div class="input-row">
       <div class="input-group">
-        <label>סוג מדיה:</label>
+        <label>Media Type:</label>
         <select formControlName="mediaType" (change)="onMediaTypeChange()">
-          <option value="image">תמונה</option>
-          <option value="video">וידיאו</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
         </select>
       </div>
 
       <div class="input-group">
-        <label>מקור מדיה:</label>
+        <label>Media source:</label>
         <select formControlName="imageSource" (change)="onImageSourceChange()">
-          <option value="upload">העלאה מהמחשב</option>
-          <option value="url">קישור</option>
+          <option value="upload">Upload from computer</option>
+          <option value="url">Link</option>
         </select>
       </div>
     </div>
 
-    <div class="input-row single">
+    <div class="input-row">
       <div class="input-group" *ngIf="createStoryForm.value.imageSource === 'upload'">
-        <label>העלה קובץ:</label>
-        <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" />
+        <label>Upload a file:</label>
+        <input 
+          type="file" 
+          (change)="onFileSelected($event)" 
+          accept="image/*,video/*"/>
       </div>
 
       <div class="input-group" *ngIf="createStoryForm.value.imageSource === 'url'">
-        <label>קישור לתמונה או וידיאו:</label>
-        <input type="text" formControlName="imageUrl" placeholder="הכנס קישור" />
+        <label>Link to image or video:</label>
+        <input 
+          type="text" 
+          formControlName="imageUrl" 
+          placeholder="Insert link"/>
+      </div>
+
+      <div class="input-group">
+        <label>Story activity duration (in hours):</label>
+        <input
+          type="number"
+          formControlName="durationHours"
+          min="1"
+          max="24"
+          placeholder="24 hours default"/>
+      </div>
+    </div>
+
+    <div class="input-row single">
+      <div class="input-group">
+        <label>Text:</label>
+        <input type="text" formControlName="customText"/>
       </div>
     </div>
 
     <div class="input-row">
       <div class="input-group">
-        <label>טקסט על התמונה:</label>
-        <input type="text" formControlName="customText" />
+        <label>Text color:</label>
+        <input type="color" formControlName="textColor"/>
       </div>
 
       <div class="input-group">
-        <label>צבע טקסט:</label>
-        <input type="color" formControlName="textColor" />
+        <label>Text size:</label>
+        <input
+          type="range"
+          min="12"
+          max="60"
+          [(ngModel)]="textSize"
+          [ngModelOptions]="{ standalone: true }"
+          name="textSize"/>
       </div>
     </div>
 
-    <div class="input-row single">
-      <div class="input-group">
-        <label>גודל טקסט:</label>
-        <input type="range"
-               min="12"
-               max="60"
-               [(ngModel)]="textSize"
-               [ngModelOptions]="{standalone: true}"
-               name="textSize" />
-      </div>
+    <button type="submit" class="submit-btn">Publish a story</button>
+
+    <div 
+      *ngIf="showMessage" 
+      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
+      class="floating-message">
+      {{ messageText }}
     </div>
-
-    <div class="input-row single">
-      <div class="input-group">
-        <label>סוג סטורי:</label>
-        <select formControlName="storyType" (change)="onStoryTypeChange()">
-          <option value="temporary">סטורי רגיל (24 שעות)</option>
-          <option value="saved">סטורי שמור בקטגוריה</option>
-        </select>
-      </div>
-    </div>
-
-    <div *ngIf="createStoryForm.value.storyType === 'saved'">
-      <div class="input-row single">
-        <div class="input-group">
-          <label>קטגוריה:</label>
-          <select formControlName="category" (click)="onCategoryClick()">
-            <option value="" disabled>בחר קטגוריה</option>
-            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-            <option value="new">צור קטגוריה חדשה...</option>
-          </select>
-        </div>
-
-        <div class="input-group" *ngIf="createStoryForm.value.category === 'new'">
-          <label>שם קטגוריה חדשה:</label>
-          <input type="text" formControlName="newCategory" placeholder="הכנס שם קטגוריה" />
-        </div>
-      </div>
-    </div>
-
-    <div class="input-row single" *ngIf="createStoryForm.value.storyType === 'temporary'">
-      <div class="input-group">
-        <label>משך פעילות (בשעות):</label>
-        <input type="number" formControlName="durationHours" min="1" max="24" />
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn">פרסם סטורי</button>
   </form>
+
+  <div class="preview-container">
+    <div class="story-preview">
+
+      <ng-container *ngIf="imagePreviewUrl">
+        <img
+          *ngIf="createStoryForm.value.mediaType === 'image'"
+          [src]="imagePreviewUrl"
+          class="preview-image"/>
+
+        <video
+          *ngIf="createStoryForm.value.mediaType === 'video'"
+          [src]="imagePreviewUrl"
+          class="preview-video"
+          controls>
+        </video>
+      </ng-container>
+
+      <div
+        class="draggable-text"
+        cdkDrag
+        cdkDragBoundary=".story-preview"
+        [style.left.px]="dragPosition.x"
+        [style.top.px]="dragPosition.y"
+        [ngStyle]="{
+          color: createStoryForm.value.textColor,
+          'font-size.px': textSize
+        }"
+        (cdkDragEnded)="onDragEnded($event)">
+        {{ createStoryForm.value.customText }}
+      </div>
+
+    </div>
+  </div>
 </div>

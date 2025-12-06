@@ -2,9 +2,9 @@
   max-width: 400px;
   margin: 50px auto;
   padding: 25px;
-  border: 1px solid #EADDC8;
+  border: 1px solid #c4c4c4;
   border-radius: 8px;
-  background: #FFF9F4;
+  background-color: #FAFAFA;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   color: #4A3F35;
   font-family: 'Calibri', sans-serif;
@@ -31,24 +31,30 @@ input {
   box-sizing: border-box;
 }
 
-button {
+input:focus {
+  border: 1px solid #0ab8ce;
+  box-shadow: 0 0 8px rgba(10, 184, 206, 0.3);
+}
+
+.submit-btn {
   width: 100%;
   padding: 14px;
-  background-color: #fff;
-  color: #276228;
+  background-color: #E0F7FA;
+  color: #1565C0;
   font-weight: bold;
   font-size: 18px;
-  border: 1.5px solid #a3d9a5;
+  border: 1.5px solid #999797;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
-  box-shadow: 0 0 4px rgba(95, 196, 126, 0.4);
+  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  margin-top: 10px;
 }
 
-button:hover {
-  background-color: #e6f3e8;
-  box-shadow: 0 0 8px rgba(95, 196, 126, 0.7);
+.submit-btn:hover {
+  background-color: #ffffff;
+  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
 }
 
 .error {
@@ -71,7 +77,7 @@ button:hover {
 }
 
 .signup a {
-  color: #276228;
+  color: #1565C0;
   text-decoration: underline;
   font-weight: bold;
   font-size: 20px;
@@ -81,4 +87,27 @@ button:hover {
 
 .signup a:hover {
   color: #1e451f;
+}
+
+.floating-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: opacity 0.3s ease;
+}
+
+.floating-message.success {
+  background-color: #4caf50;
+}
+
+.floating-message.error {
+  background-color: #f44336;
 }

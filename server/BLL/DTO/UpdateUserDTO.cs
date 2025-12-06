@@ -17,5 +17,6 @@ namespace BLL.DTO
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string? Bio { get; set; }
+        public string? profilePicUrl { get; set; } = "";
     }
 }
