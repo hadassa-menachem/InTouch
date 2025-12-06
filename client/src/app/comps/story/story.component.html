@@ -1,69 +1,38 @@
-<div *ngIf="storyGroups.length > 0" class="category-tabs">
-  <button *ngFor="let group of storyGroups; let i = index"
-          [class.active]="i === currentGroupIndex"
-          (click)="selectGroup(i)">
-    {{ group.category }}
-  </button>
-</div>
 
-<div *ngIf="story" class="status-container">
+<div *ngIf="currentStory" class="status-container">
 
   <div class="status-progress-bars">
-    <div *ngFor="let s of currentGroup?.stories; let i = index" class="progress-segment">
+    <div *ngFor="let s of currentUserStories; let i = index" class="progress-segment">
       <div class="progress-fill"
-           [style.width.%]="i < currentStoryIndex ? 100 : i === currentStoryIndex ? progress : 0">
+           [style.width.%]="i < currentUserStoryIndex ? 100 : i === currentUserStoryIndex ? progress : 0">
       </div>
     </div>
   </div>
 
   <div class="status-header">
     <img class="profile-pic" 
-         [src]="story.user?.profilePicUrl" 
+         [src]="currentStory.user?.profilePicUrl" 
          alt="Profile"
-         (click)="showTemporaryStories(story.user?.userId)">
+         (click)="showTemporaryStories(currentStory.user?.userId)">
     <div class="user-info">
-      <div class="username">{{ story.user?.firstName }} {{ story.user?.lastName }}</div>
-      <div class="time-ago">{{ getTimeAgo(story.createdAt) }}</div>
+      <div class="username">{{ currentStory.user?.firstName }} {{ currentStory.user?.lastName }}</div>
+<div class="time-ago">{{ getTimeAgo(currentStory.createdAt) }}</div>
     </div>
   </div>
 
-  <img *ngIf="story.imageUrl"
-       [src]="story.imageUrl"
-       class="status-image" />
-  <video *ngIf="story.videoUrl"
-         [src]="story.videoUrl"
-         controls class="status-video"></video>
+  <img *ngIf="currentStory.mediaFiles?.length && currentStory.mediaFiles[0].mediaType === 'image'"
+     [src]="currentStory.mediaFiles[0].url"
+     class="status-image" />
 
-  <div class="status-text">{{ story.content }}</div>
-
-  <div class="like-heart" [class.animate]="showLikeAnimation">❤</div>
-
-  <div class="status-bottom">
-    <div class="status-actions">
-      <button class="action-btn" [class.liked]="story.likes?.includes(user.userId)"
-              (click)="toggleLike(story.id)">
-        <lucide-icon name="heart"></lucide-icon>
-      </button>
-      <button class="action-btn" (click)="toggleCommentBox(story.id)">
-        <lucide-icon name="message-circle"></lucide-icon>
-      </button>
-      <button class="action-btn" (click)="shareStatus(story.id)">
-        <lucide-icon name="send"></lucide-icon>
-      </button>
-    </div>
-
-    <div class="comment-box"
-         [class.active]="commentBoxOpenFor === story.id">
-      <input type="text" class="comment-input" placeholder="כתוב תגובה..." [(ngModel)]="newComment"
-             (keydown.enter)="sendComment(story.id)">
-      <button class="send-btn" (click)="sendComment(story.id)">שלח</button>
-    </div>
-  </div>
-
-  <div class="tap-area tap-left" (click)="prevStatus()"></div>
-  <div class="tap-area tap-right" (click)="nextStatus()"></div>
+<video *ngIf="currentStory.mediaFiles?.length && currentStory.mediaFiles[0].mediaType === 'video'"
+       [src]="currentStory.mediaFiles[0].url"
+       controls class="status-video"></video>
+  <div class="status-text">{{ currentStory.content }}</div>
+  <div class="tap-area tap-left" (click)="prevStory()"></div>
+  <div class="tap-area tap-right" (click)="nextStory()"></div>
 </div>
 
-<div *ngIf="storyGroups.length === 0" class="no-stories">
-  אין סטוריז להצגה
+<div *ngIf="storiesByUser.length == 0 || currentUserStories.length == 0" class="no-stories">
+  No stories to show
 </div>
+

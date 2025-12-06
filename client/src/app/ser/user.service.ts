@@ -167,9 +167,11 @@ export class UserService implements OnInit {
   }
 
   // Stories
-  addStory(formData: FormData): Observable<void> {
-    return this.http.post<void>('https://localhost:7058/api/Story/', formData);
-  }
+  addStory(formData: FormData): Observable<any> {
+  return this.http.post('https://localhost:7058/api/Story/', formData, {
+    responseType: 'text' // זה אומר ל-Angular לא לנסות לפרסר את התשובה כ-JSON
+  });
+}
 
   getStoryByUserId(userId: string): Observable<Story[]> {
     return this.http.get<Story[]>(`https://localhost:7058/api/Story/user/${userId}`);
@@ -192,13 +194,6 @@ export class UserService implements OnInit {
     return this.http.post('https://localhost:7058/api/Story/mark-viewed', body, { responseType: 'text' });
   }
 
-  getTemporaryStories(userId: string): Observable<any[]> {
-    return this.http.get<any[]>(`https://localhost:7058/api/Story/temporary/${userId}`);
-  }
-
-  getUserHighlights(userId: string): Observable<any[]> {
-    return this.http.get<any[]>(`https://localhost:7058/api/Story/highlights/${userId}`);
-  }
 
   // Saved posts
   savePost(userId: string, postId: string): Observable<any> {

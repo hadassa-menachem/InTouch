@@ -29,7 +29,7 @@ export class SearchComponent {
         this.allUsers = users;
         this.filteredUsers = [...users];
       },
-      error: err => console.error('שגיאה בטעינת משתמשים:', err)
+      error: err => console.error('Error loading users:', err)
     });
   }
 

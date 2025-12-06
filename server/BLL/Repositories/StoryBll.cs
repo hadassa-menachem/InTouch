@@ -3,45 +3,65 @@ using BLL.DTO;
 using BLL.Interfaces;
 using DAL.Interfaces;
 using DAL.Models;
+using DAL.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Repositories
 {
-    public class StoryBll : IStoryBll   
+    public class StoryBll : IStoryBll
     {
-        private readonly IStoryDal _storyDal;  
-        private readonly IMapper imapper;
+        private readonly IStoryDal _storyDal;
+        private readonly IMapper _mapper;
 
-        public StoryBll(IStoryDal storyDal, IMapper mapper) 
+        public StoryBll(IStoryDal storyDal, IMapper mapper)
         {
             _storyDal = storyDal;
-            this.imapper = mapper;
+            _mapper = mapper;
         }
 
-        public async Task<List<Story>> GetAllStories()
+        public async Task<List<StoryDTO>> GetAllStories()
         {
             await DeleteOldStories();
-            return await _storyDal.GetAllStories();
+            var stories = await _storyDal.GetAllStories();
+
+            var now = DateTime.UtcNow;
+            var activeStories = stories.FindAll(s => s.CreatedAt.AddHours(s.DurationInHours) > now);
+
+            return _mapper.Map<List<StoryDTO>>(activeStories);
         }
 
-        public async Task<Story?> GetStoryById(string id)
+        public async Task<StoryDTO?> GetStoryById(string id)
         {
-            return await _storyDal.GetStoryById(id);
+            var story = await _storyDal.GetStoryById(id);
+            return story == null ? null : _mapper.Map<StoryDTO>(story);
         }
 
-        public async Task<List<Story>> GetStoriesByUserId(string userId)
+        public async Task<List<StoryDTO>> GetStoriesByUserId(string userId)
         {
-            return await _storyDal.GetStoriesByUserId(userId);
+            var stories = await _storyDal.GetStoriesByUserId(userId);
+            return _mapper.Map<List<StoryDTO>>(stories);
         }
 
-        public async Task AddStory(Story story)
+        public async Task<StoryDTO> AddStory(StoryDTO storyDto)
         {
-            await _storyDal.AddStory(story);
+            try
+            {
+                var story = _mapper.Map<Story>(storyDto);
+
+                await _storyDal.AddStory(story);
+
+                return _mapper.Map<StoryDTO>(story);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
-        public async Task UpdateStory(string id, Story updatedStory)
+        public async Task UpdateStory(string id, StoryDTO updatedStoryDto)
         {
+            var updatedStory = _mapper.Map<Story>(updatedStoryDto);
             await _storyDal.UpdateStory(id, updatedStory);
         }
 

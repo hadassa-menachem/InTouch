@@ -33,7 +33,6 @@ builder.Services.AddScoped<ILikeDal, LikeDal>();
 builder.Services.AddScoped<IFollowDal, FollowDal>();
 builder.Services.AddScoped<ICommentDal, CommentDal>();
 builder.Services.AddScoped<IMessageDal, MessageDal>();
-builder.Services.AddScoped<IStatusDal, StatusDal>();
 builder.Services.AddScoped<IStoryDal, StoryDal>();
 builder.Services.AddScoped<ISavedPostDal, SavedPostDal>();
 
@@ -45,7 +44,6 @@ builder.Services.AddScoped<ILikeBll, LikeBll>();
 builder.Services.AddScoped<IFollowBll, FollowBll>();
 builder.Services.AddScoped<ICommentBll, CommentBll>();
 builder.Services.AddScoped<IMessageBll, MessageBll>();
-builder.Services.AddScoped<IStatusBll, StatusBll>();
 builder.Services.AddScoped<IStoryBll, StoryBll>();
 builder.Services.AddScoped<ISavedPostBll, SavedPostBll>();
 

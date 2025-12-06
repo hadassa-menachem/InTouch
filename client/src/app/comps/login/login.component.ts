@@ -14,6 +14,10 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
 
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
+
   constructor(
     private fb: FormBuilder,
     private usersSer: UserService,
@@ -46,20 +50,29 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('currentUser', JSON.stringify(userFromServer));
         this.usersSer.markAllMessagesAsDelivered(userFromServer.userId).subscribe({
           next: () => {
-            console.log('כל ההודעות סומנו כנמסרות');
+            this.showFloatingMessage('Error marking messages as delivered', false);
           },
-          error: err => console.error('שגיאה בסימון הודעות כנמסרות', err)
         });
 
         this.router.navigate(['/home']);
       },
       error: () => {
-        alert('שגיאה: קוד משתמש לא קיים');
+        this.showFloatingMessage('User code does not exist', false);
       }
     });
   }
 
   navigate(route: string) {
     this.router.navigate([route]);
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 5000);
   }
 }

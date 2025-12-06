@@ -1,6 +1,9 @@
 <div class="context">
   <div class="top-bar">
+     <div class="logo-wrapper">
+    <img class="logo-img" src="assets/images/logo.png"/>
     <div class="logo">InTouch</div>
+  </div>
     <div class="icons">
       <lucide-icon name="bell" *ngIf="!ifUser()" (click)="navigate('/notification')"></lucide-icon>
       <lucide-icon name="message-square" *ngIf="!ifUser()" (click)="navigate('/messages')"></lucide-icon>
@@ -13,10 +16,34 @@
   </div>
 
   <div class="bottom-nav">
-    <lucide-icon name="home" (click)="navigate('/home')"></lucide-icon>
-    <lucide-icon name="search" (click)="navigate('/search')"></lucide-icon>
-    <lucide-icon name="plus-square" (click)="navigate('/createpost')"></lucide-icon>
-    <lucide-icon name="heart" (click)="navigate('/saved-post')"></lucide-icon>
-    <lucide-icon name="user" (click)="navigate('/profile')"></lucide-icon>
+    <lucide-icon 
+      name="home" 
+      (click)="navigate('/home')"
+      [class.active]="isActiveRoute('/home')">
+    </lucide-icon>
+    
+    <lucide-icon 
+      name="search" 
+      (click)="navigate('/search')"
+      [class.active]="isActiveRoute('/search')">
+    </lucide-icon>
+    
+    <lucide-icon 
+      name="plus-square" 
+      (click)="navigate('/createpost')"
+      [class.active]="isActiveRoute('/createpost')">
+    </lucide-icon>
+    
+    <lucide-icon 
+      name="heart" 
+      (click)="navigate('/saved-post')"
+      [class.active]="isActiveRoute('/saved-post')">
+    </lucide-icon>
+    
+    <lucide-icon 
+      name="user" 
+      (click)="navigate('/profile')"
+      [class.active]="isActiveRoute('/profile')">
+    </lucide-icon>
   </div>
 </div>

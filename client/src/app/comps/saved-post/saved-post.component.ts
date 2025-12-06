@@ -31,7 +31,7 @@ export class SavedPostComponent implements OnInit {
         this.savedPosts = posts || [];
         console.log(this.savedPosts);
       },
-      error: (err) => console.error('❌ Error loading saved posts:', err)
+      error: (err) => console.error('Error loading saved posts:', err)
     });
   }
 

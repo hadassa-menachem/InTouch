@@ -21,7 +21,10 @@ export class CreateStoryComponent implements OnInit {
   textSize = 24;
   user: User = new User();
 
-  // משתנים לשמירת מיקום הגרירה
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
+
   dragPosition = { x: 50, y: 50 };
 
   constructor(
@@ -38,52 +41,18 @@ export class CreateStoryComponent implements OnInit {
       textColor: ['#ffffff'],
       backgroundColor: ['#0f1b4c'],
       customText: [''],
-      category: ['default'],      
-      newCategory: [''],          
       durationHours: [24],
-      storyType: ['temporary'] // ✅ חדש    
     });
   }
-
-  categories: string[] = [];
-  categoriesLoaded = false;
 
   ngOnInit(): void {
     this.user = this.userSer.getCurrentUser()!;
 
-    // מביא את הקטגוריות מהשרת
-    this.userSer.getUserCategories(this.user.userId!).subscribe({
-      next: (cats: string[]) => this.categories = cats,
-      error: err => console.error('Error fetching categories', err)
+    this.createStoryForm.get('imageUrl')?.valueChanges.subscribe(url => {
+      if (this.createStoryForm.get('imageSource')?.value === 'url') {
+        this.imagePreviewUrl = url || null;
+      }
     });
-  }
-
-  onStoryTypeChange() {
-    const storyType = this.createStoryForm.value.storyType;
-
-    if (storyType === 'temporary') {
-      // אם חוזרים לסטורי רגיל – ננקה קטגוריה
-      this.createStoryForm.patchValue({ category: '', newCategory: '', durationHours: 24 });
-    } else if (storyType === 'saved') {
-      // אם בוחרים שמור – לא צריך משך זמן
-      this.createStoryForm.patchValue({ durationHours: null });
-    }
-  }
-
-  onCategoryClick() {
-    if (this.categoriesLoaded) return;
-
-    this.userSer.getUserCategories(this.user.userId!).subscribe({
-      next: (cats: string[]) => {
-        this.categories = cats;
-        this.categoriesLoaded = true;
-      },
-      error: err => console.error('Error fetching categories', err)
-    });
-  }
-
-  onMediaTypeChange() {
-    this.clearPreviewAndFile();
   }
 
   onImageSourceChange() {
@@ -96,6 +65,16 @@ export class CreateStoryComponent implements OnInit {
       this.imagePreviewUrl = url || null;
       this.selectedFile = null;
     }
+  }
+
+  onStoryTypeChange() {
+    const storyType = this.createStoryForm.value.storyType;
+
+    this.createStoryForm.patchValue({ durationHours: 24 });
+  }
+
+  onMediaTypeChange() {
+    this.clearPreviewAndFile();
   }
 
   clearPreviewAndFile() {
@@ -127,15 +106,17 @@ export class CreateStoryComponent implements OnInit {
     }
   }
 
-  // מעדכן מיקום הגרירה
   onDragEnded(event: any) {
+    const element = event.source.element.nativeElement;
+    const parentRect = element.parentElement.getBoundingClientRect();
+    const elemRect = element.getBoundingClientRect();
+
     this.dragPosition = {
-      x: event.source.getFreeDragPosition().x,
-      y: event.source.getFreeDragPosition().y
+      x: elemRect.left - parentRect.left,
+      y: elemRect.top - parentRect.top
     };
   }
 
-  /** פונקציה שמכניסה את הטקסט על גבי התמונה לפני שליחה לשרת */
   private async composeImageWithText(
     baseImageSrc: string,
     text: string,
@@ -157,15 +138,12 @@ export class CreateStoryComponent implements OnInit {
     canvas.height = img.naturalHeight;
     const ctx = canvas.getContext('2d')!;
 
-    // מציירים את התמונה
     ctx.drawImage(img, 0, 0);
-    // מוסיפים טקסט לפי המיקום הנגרר
     ctx.font = `${textSize}px Arial`;
     ctx.fillStyle = textColor;
     ctx.textBaseline = 'top';
     ctx.fillText(text, posX, posY);
 
-    // הופכים לקובץ חדש
     const blob: Blob = await new Promise(resolve =>
       canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
     );
@@ -178,32 +156,19 @@ export class CreateStoryComponent implements OnInit {
     const formValues = this.createStoryForm.value;
     const formData = new FormData();
 
-    formData.append('userId', this.user.userId!);
-    formData.append('textColor', formValues.textColor);
-    formData.append('textSize', this.textSize.toString());
-    formData.append('backgroundColor', formValues.backgroundColor);
-    formData.append('mediaType', formValues.mediaType);
-    formData.append('storyType', formValues.storyType);
+    formData.append('UserId', this.user.userId!);
 
-    // טיפול בקטגוריה
-    let categoryToSend = formValues.category;
-    if (categoryToSend === 'new' && formValues.newCategory) {
-      categoryToSend = formValues.newCategory;
+    let duration = formValues.durationHours || 24;
+    if (duration > 24) duration = 24;
+    formData.append('DurationInHours', duration.toString());
+
+    if (formValues.content) {
+      formData.append('Content', formValues.content);
+    }
+    if (formValues.customText) {
+      formData.append('Content', formValues.customText);
     }
 
-    if (formValues.storyType === 'saved') {
-      formData.append('category', categoryToSend);
-      formData.append('isTemporary', 'false');
-      formData.append('durationHours', '0'); // אין תוקף
-    } else {
-      formData.append('category', '');
-      formData.append('isTemporary', 'true');
-      let duration = formValues.durationHours || 24;
-      if (duration > 24) duration = 24;
-      formData.append('durationHours', duration.toString());
-    }
-
-    // טיפול במדיה
     let fileToSend: File | null = null;
 
     if (formValues.mediaType === 'image' && this.imagePreviewUrl) {
@@ -222,23 +187,32 @@ export class CreateStoryComponent implements OnInit {
     if (fileToSend) {
       formData.append('file', fileToSend, fileToSend.name);
     } else if (formValues.imageSource === 'url' && formValues.imageUrl) {
-      formData.append('imageUrl', formValues.imageUrl);
+      formData.append('ImageUrl', formValues.imageUrl);
     }
 
-    // שליחה
+    formData.forEach((value, key) => {
+    });
+
     this.userSer.addStory(formData).subscribe({
-      next: (res: any) => {
-        if (formValues.category === 'new' && formValues.newCategory) {
-          this.categories.push(formValues.newCategory);
-          this.createStoryForm.patchValue({ category: formValues.newCategory });
-        }
-        alert('✅ הסטורי פורסם בהצלחה!');
-        this.router.navigate(['/']); // או עמוד אחר
+      next: (res) => {
+        this.showFloatingMessage('The story was successfully published!', true);
+        setTimeout(() => {
+          this.router.navigate(['/profile']);
+        }, 1000);
       },
-      error: err => {
-        console.error('שגיאה בהעלאה:', err);
-        alert('שגיאה בהעלאת הסטורי');
+      error: (err) => {
+        this.showFloatingMessage('Error uploading story', false);
       }
     });
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 5000);
   }
 }

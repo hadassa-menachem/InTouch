@@ -17,15 +17,15 @@ export class MessagesComponent implements OnInit {
   chats: {
     profilePic: string;
     username: string;
-    lastMessage: string;
+    lastMessage: any;
     userId: string;
     isSentByCurrentUser?: boolean;
     isSeen?: boolean;
     lastSentAt?: number;
   }[] = [];
 
-  allUsers: User[] = [];
-  showUserList: boolean = false;
+  filteredChats: typeof this.chats = [];
+  searchTerm: string = '';
 
   constructor(private router: Router, private userSer: UserService) {}
 
@@ -34,7 +34,6 @@ export class MessagesComponent implements OnInit {
     if (currentUserId) {
       this.getConversations(currentUserId);
     }
-    this.loadAllUsers();
   }
 
   getConversations(userId: string) {
@@ -47,7 +46,6 @@ export class MessagesComponent implements OnInit {
         });
 
         const requests = [...partnerUserIds].map(id => this.userSer.GetUserById(id));
-
         forkJoin(requests).subscribe(users => {
           this.chats = users
             .filter((u): u is User => !!u)
@@ -55,54 +53,45 @@ export class MessagesComponent implements OnInit {
               const msgs = messages.filter(
                 m => m.senderId === u.userId || m.receiverId === u.userId
               );
-              const lastMsg = msgs.sort(
-                (a, b) => new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
-              )[0];
+
+              const lastMsg = msgs.length
+                ? msgs.sort((a, b) =>
+                    new Date(b.sentAt).getTime() - new Date(a.sentAt).getTime()
+                  )[0]
+                : null;
 
               return {
                 userId: u.userId,
                 username: `${u.firstName} ${u.lastName}`,
                 profilePic: u.profilePicUrl!,
-                lastMessage: lastMsg ? lastMsg.content : 'אין הודעות',
-                isSentByCurrentUser: lastMsg?.senderId === userId,
-                isSeen: lastMsg?.isRead || false,
+                lastMessage: lastMsg,
+                isSentByCurrentUser: lastMsg ? lastMsg.senderId === userId : false,
+                isSeen: lastMsg ? lastMsg.isRead : false,
                 lastSentAt: lastMsg ? new Date(lastMsg.sentAt).getTime() : 0
               };
             })
-            .sort((a, b) => b.lastSentAt! - a.lastSentAt!);
+            .sort((a, b) => b.lastSentAt - a.lastSentAt);
+
+          this.filteredChats = [...this.chats];
         });
       },
-      error: (err) => {
-        console.error('שגיאה בטעינת שיחות:', err);
-      }
+      error: (err) => console.error('Error loading conversations:', err)
     });
+  }
+
+  onSearch(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
+    if (!this.searchTerm) {
+      this.filteredChats = [...this.chats];
+    } else {
+      this.filteredChats = this.chats.filter(chat =>
+        chat.username.toLowerCase().includes(this.searchTerm)
+      );
+    }
   }
 
   navigateToChat(userId: string) {
     this.router.navigate(['/chat', userId]);
-  }
-
-  openUserPopup() {
-    this.showUserList = true;
-  }
-
-  closePopup() {
-    this.showUserList = false;
-  }
-
-  loadAllUsers() {
-    this.userSer.GetAllUsers().subscribe({
-      next: (users) => {
-        this.allUsers = users;
-      },
-      error: (err) => {
-        console.error('שגיאה בטעינת משתמשים:', err);
-      }
-    });
-  }
-
-  startNewChat(user: User) {
-    this.closePopup();
-    this.navigateToChat(user.userId);
   }
 }

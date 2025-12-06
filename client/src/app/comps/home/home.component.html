@@ -1,13 +1,13 @@
 <div class="context">
-  <div class="stories">
+  <div
+    class="stories"
+    #storyContainer
+    (mouseenter)="pauseAutoScroll()"
+    (mouseleave)="resumeAutoScroll()">
     <div class="stories-track">
       <div class="story" *ngFor="let user of allUsers">
         <a (click)="GoToUser(user.userId)">
-          <div
-            class="circle"
-            [ngClass]="{'unseen-story': !hasViewedStory(user) && user.stories?.length,
-                        'seen-story': hasViewedStory(user)}"
-            (click)="markStoriesAsViewed(user)">
+          <div class="circle">
             <img [src]="user.profilePicUrl" alt="story" />
           </div>
         </a>
@@ -20,20 +20,33 @@
     <div class="post-card" *ngFor="let post of allPosts">
       <div class="post-header">
         <a (click)="GoToUser(post.user!.userId)" class="user-link">
-          <img class="profile-pic" [src]="post.user!.profilePicUrl" alt="תמונת פרופיל" />
+          <img
+            class="profile-pic"
+            [src]="post.user!.profilePicUrl"
+            alt="Profile picture"/>
           <span class="username">{{ post.user?.firstName }} {{ post.user?.lastName }}</span>
+          <span class="bio">{{ user.userName }}</span>
         </a>
       </div>
 
       <div class="post-media" *ngFor="let media of post.mediaFiles">
         <ng-container [ngSwitch]="media.mediaType">
-          <img *ngSwitchCase="'image'" [src]="media.url" alt="תמונה מהפוסט" class="post-image" />
+          <img
+            *ngSwitchCase="'image'"
+            [src]="media.url"
+            alt="Image from the post"
+            class="post-image"/>
           <video
-            *ngSwitchCase="'video'" [src]="media.url" muted loop playsinline
+            *ngSwitchCase="'video'"
+            [src]="media.url"
+            muted
+            loop
+            playsinline
             controls
             (mouseenter)="playVideo($event)"
             (mouseleave)="pauseVideo($event)"
             class="post-video">
+
           </video>
           <p *ngSwitchDefault class="unsupported-media">Unsupported media type</p>
         </ng-container>
@@ -43,7 +56,9 @@
         <div class="action-button" (click)="toggleLike(post)">
           <lucide-icon
             name="heart"
-            [ngClass]="{ 'liked': isPostLiked(post), 'not-liked': !isPostLiked(post) }">
+            [ngClass]="{liked: isPostLiked(post),
+              'not-liked': !isPostLiked(post)}">
+
           </lucide-icon>
           <span class="like-count">{{ post.likes?.length || 0 }}</span>
         </div>
@@ -53,7 +68,8 @@
         <div class="action-button" (click)="toggleSavePost(post.id)">
           <lucide-icon
             name="bookmark"
-            [ngClass]="{ 'saved': isPostSaved(post), 'not-saved': !isPostSaved(post) }">
+            [ngClass]="{saved: isPostSaved(post),
+              'not-saved': !isPostSaved(post)}">
           </lucide-icon>
         </div>
         <div class="action-button" (click)="sharePost(post.id)">
@@ -62,7 +78,13 @@
       </div>
 
       <div class="post-description">
-        <strong>{{ post.user?.firstName }} {{ post.user?.lastName }}</strong> {{ post.content }}
+        <strong>{{ post.user?.firstName }} {{ post.user?.lastName }}</strong>
+        <span
+          [ngClass]="{collapsed: !expandedPostIds.includes(post.id),
+            expanded: expandedPostIds.includes(post.id)}"
+          (click)="toggleReadMore(post.id)">
+          {{ post.content }}
+        </span>
       </div>
 
       <div class="view-comments">
@@ -78,18 +100,34 @@
         <div class="comment-line" *ngFor="let c of getVisibleComments(post)">
           <strong>{{ c.userName }}</strong> {{ c.content }}
         </div>
-        <button *ngIf="shouldShowReadMore(post)" class="read-more-btn" (click)="toggleReadMore(post.id)">
+        <button
+          *ngIf="shouldShowReadMore(post)"
+          class="read-more-btn"
+          (click)="toggleReadMore(post.id)">
           {{ expandedPostIds.includes(post.id) ? 'Show less' : 'Read more' }}
         </button>
       </div>
 
-      <div class="add-comment" *ngIf="commentBoxPostId === post.id" style="display: flex; align-items: center; gap: 0.5rem;">
+      <div
+        *ngIf="showMessage"
+        [ngClass]="{ success: isSuccess, error: !isSuccess }"
+        class="floating-message">
+        {{ messageText }}
+      </div>
+
+      <div
+        class="add-comment"
+        *ngIf="commentBoxPostId === post.id"
+        style="display: flex; align-items: center; gap: 0.5rem;">
         <div class="emoji-button-wrapper" style="position: relative;">
           <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
             <lucide-icon name="smile"></lucide-icon>
           </button>
           <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-            <emoji-mart (emojiSelect)="addEmoji($event)" [style]="{ width: '300px', height: '350px' }"></emoji-mart>
+            <emoji-mart
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '300px', height: '350px' }">
+            </emoji-mart>
           </div>
         </div>
         <input
@@ -98,13 +136,11 @@
           [(ngModel)]="newCommentContent"
           #messageInputRef
           (keydown.enter)="sendComment(post.id); $event.preventDefault()"
-          style="flex: 1;"
-        />
+          style="flex: 1;"/>
         <button aria-label="Send a comment" (click)="sendComment(post.id)">
           <lucide-icon name="send"></lucide-icon>
         </button>
       </div>
-
     </div>
   </div>
 </div>

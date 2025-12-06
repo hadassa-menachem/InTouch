@@ -1,9 +1,8 @@
 <div class="search-container">
   <input
     type="text"
-    placeholder="חפש משתמשים"
-    (input)="onSearch($event)"
-  />
+    placeholder="Search for users"
+    (input)="onSearch($event)"/>
 
   <button class="search-icon">
     <lucide-icon class="material-icons" name="search"></lucide-icon>
@@ -16,18 +15,22 @@
           <img
             class="profile-pic"
             [src]="f.user.profilePicUrl"
-            alt="Profile Picture"
-          />
-          <div class="user-info">
-            <div class="username">{{ f.user.firstName }} {{ f.user.lastName }}</div>
-            <div class="bio">{{ f.user.bio }}</div>
+            alt="Profile Picture"/>
+
+            <div class="user-info">
+            <div class="username">
+              {{ f.user.firstName }} {{ f.user.lastName }}
+            </div>
+            <div class="bio">
+              {{ f.user.bio }}
+            </div>
           </div>
         </a>
       </div>
     </ng-container>
 
     <ng-template #noResults>
-      <div class="no-results">No followers</div>
+      <div class="no-results">No results found for'{{searchTerm}}'</div>
     </ng-template>
   </div>
 </div>

@@ -9,10 +9,15 @@ namespace BLL.Mappings
         public AutoMappingProfile()
         {
             CreateMap<User, UserDTO>()
-                .ForMember(dest => dest.FollowersCount, opt => opt.MapFrom(src => src.FollowersList != null ? src.FollowersList.Count : 0))
-                .ForMember(dest => dest.FollowingCount, opt => opt.MapFrom(src => src.FollowingsList != null ? src.FollowingsList.Count : 0))
-                .ForMember(dest => dest.PostsCount, opt => opt.MapFrom(src => src.MediaFiles != null ? src.MediaFiles.Count : 0))
-                .ReverseMap();
+            .ForMember(dest => dest.FollowersCount, opt => opt.MapFrom(src => src.FollowersList != null ? src.FollowersList.Count : 0))
+            .ForMember(dest => dest.FollowingCount, opt => opt.MapFrom(src => src.FollowingsList != null ? src.FollowingsList.Count : 0))
+            .ForMember(dest => dest.PostsCount, opt => opt.MapFrom(src => src.MediaFiles != null ? src.MediaFiles.Count : 0))
+            .ReverseMap();
+
+            CreateMap<UpdateUserDTO, User>()
+                .ForMember(dest => dest.UserId, opt => opt.Ignore()) 
+                .ForMember(dest => dest.ProfilePicUrl, opt => opt.MapFrom(src => src.profilePicUrl));
+           
 
             CreateMap<MediaFile, MediaFileDTO>().ReverseMap();
 
@@ -38,9 +43,8 @@ namespace BLL.Mappings
 
             CreateMap<Follow, FollowDTO>().ReverseMap();
 
-            CreateMap<Status, CreateStatusDTO>().ReverseMap();
 
-            CreateMap<Story, CreateStoryDTO>().ReverseMap();
+            CreateMap<Story, StoryDTO>().ReverseMap();
 
             CreateMap<SavedPost, SavedPostDTO>().ReverseMap();
         }

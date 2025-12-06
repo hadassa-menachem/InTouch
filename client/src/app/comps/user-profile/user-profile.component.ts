@@ -47,7 +47,6 @@ export class UserProfileComponent implements OnInit {
       next: userData => {
         this.profileUser = userData;
         this.loadCountsAndPosts();
-        this.loadHighlights();
         this.checkIfFollowing();
       },
       error: err => console.error('Error loading user:', err)
@@ -63,25 +62,10 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  loadHighlights() {
-    this.userService.getUserHighlights(this.profileUser.userId).subscribe({
-      next: highlights => {
-        this.highlights = Array.isArray(highlights)
-          ? highlights
-          : Object.values(highlights || {}).flat();
-      },
-      error: err => console.error('Error loading highlights:', err)
-    });
-  }
-
   openProfileStory() {
-    this.userService.getTemporaryStories(this.profileUser.userId).subscribe({
+    this.userService.getStoryByUserId(this.profileUser.userId).subscribe({
       next: stories => {
-        if (stories && stories.length > 0) {
           this.router.navigate(['/story', this.profileUser.userId]);
-        } else {
-          alert('No temporary stories available.');
-        }
       },
       error: err => console.error('Error loading temporary stories:', err)
     });
@@ -95,10 +79,6 @@ export class UserProfileComponent implements OnInit {
 
   closeImageView() {
     this.selectedImageUrl = null;
-  }
-
-  openStory(storyId: string) {
-    if (storyId) this.router.navigate(['/story', storyId]);
   }
 
   goToPostPage(id: string) {

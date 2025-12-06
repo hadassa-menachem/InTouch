@@ -19,6 +19,7 @@ interface FollowWithUser {
   styleUrls: ['./followers.component.css']
 })
 export class FollowersComponent implements OnInit {
+  
   searchTerm: string = '';
   allFollowers: FollowWithUser[] = [];
   filteredFollowers: FollowWithUser[] = [];
@@ -46,15 +47,17 @@ export class FollowersComponent implements OnInit {
             next: (user: User) => {
               followWithUserList.push({ follow, user });
               loadedCount++;
+
               if (loadedCount === follows.length) {
                 this.allFollowers = followWithUserList;
                 this.filteredFollowers = [...followWithUserList];
               }
             },
             error: err => {
-              console.error(`שגיאה בשליפת משתמש ${follow.followeeId}:`, err);
+              console.error(`Error retrieving user${follow.followeeId}:`, err);
               followWithUserList.push({ follow, user: null });
               loadedCount++;
+
               if (loadedCount === follows.length) {
                 this.allFollowers = followWithUserList;
                 this.filteredFollowers = [...followWithUserList];
@@ -64,13 +67,14 @@ export class FollowersComponent implements OnInit {
         });
       },
       error: err => {
-        console.error('שגיאה בטעינת העוקבים:', err);
+        console.error('Error loading followers:', err);
       }
     });
   }
 
   onSearch(event: Event): void {
     this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
     if (!this.searchTerm) {
       this.filteredFollowers = [...this.allFollowers];
     } else {

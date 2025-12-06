@@ -1,8 +1,12 @@
+<div *ngIf="savedPosts.length === 0" class="no-posts-message">
+  No saved posts.
+</div>
+
 <div class="profile-posts-grid">
   <div class="post-card" *ngFor="let post of savedPosts" (click)="goToPostPage(post.id)">
     <div class="post-media" *ngFor="let media of post.mediaFiles">
       <ng-container [ngSwitch]="media.mediaType">
-        <img *ngSwitchCase="'image'" [src]="media.url" alt="תמונה מהפוסט" class="post-image" />
+        <img *ngSwitchCase="'image'" [src]="media.url" alt="Picture from the post" class="post-image" />
         <video
           *ngSwitchCase="'video'"
           [src]="media.url"
@@ -17,6 +21,7 @@
         <p *ngSwitchDefault class="unsupported-media">Unsupported media type</p>
       </ng-container>
     </div>
+
     <div class="post-overlay">
       <div class="overlay-info">
         <span>❤️ {{ post.likes?.length || 0 }}</span>

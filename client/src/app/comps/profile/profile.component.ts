@@ -6,40 +6,27 @@ import { LucideIconsModule } from '../../lucide.module';
 import { UserService } from '../../ser/user.service';
 import { Post } from '../../classes/Post';
 import { HttpClient } from '@angular/common/http';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   imports: [CommonModule, FormsModule, LucideIconsModule],
-  standalone: true
+  standalone: true,
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('400ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 @Injectable({ providedIn: 'root' })
 export class ProfileComponent implements OnInit {
-  images = [
-    "../assets/images/natan.jpg",
-    "../assets/images/toar.jpg",
-    "../assets/images/nof.jpg",
-    "../assets/images/pic3.jpg",
-    "../assets/images/pic4.jpg",
-    "../assets/images/pic5.jpg",
-  ];
-
-  titles = [
-    { title: 'weeding', image: "../assets/images/pic6.jpg" },
-    { title: 'my son', image: "../assets/images/pic7.jpg" },
-    { title: 'design', image: "../assets/images/pic8.jpg" },
-    { title: 'food', image: "../assets/images/pic9.jpg" },
-    { title: 'work', image: "../assets/images/pic10.jpg" },
-    { title: 'aaa', image: "../assets/images/pic11.jpg" }
-  ];
-
   selectedTab = 'images';
-  videos = [
-    '../assets/videos/video1.mp4',
-    '../assets/videos/video2.mp4'
-  ];
-
   bio: string = '';
   isEditing = false;
   user: any;
@@ -47,6 +34,12 @@ export class ProfileComponent implements OnInit {
   FollowingCount: number = 0;
   MediaFilesCount: number = 0;
   userPosts: Post[] = [];
+  imagePosts: Post[] = [];
+  videoPosts: Post[] = [];
+
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
 
   constructor(
     public router: Router,
@@ -63,7 +56,10 @@ export class ProfileComponent implements OnInit {
       this.userService.GetUserById(userId).subscribe(user => {
         this.userService.getPostsByUserId(userId).subscribe(posts => {
           this.userPosts = posts;
+          this.imagePosts = this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType == 'image'));
+          this.videoPosts = this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType == 'video'));
           this.MediaFilesCount = posts.length;
+          console.log(this.imagePosts);
         });
         this.userService.getFollowers(this.user.userId).subscribe(arr => {
           this.FollowersCount = arr.length;
@@ -87,14 +83,6 @@ export class ProfileComponent implements OnInit {
     this.isEditing = false;
   }
 
-  get imagePosts(): Post[] {
-    return this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType === 'image'));
-  }
-
-  get videoPosts(): Post[] {
-    return this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType === 'video'));
-  }
-
   editUser() {
     this.router.navigate(['/updateuser']);
   }
@@ -112,16 +100,41 @@ export class ProfileComponent implements OnInit {
   }
 
   deletePost(postId: string): void {
-    if (!confirm('את בטוחה שאת רוצה למחוק את הפוסט הזה?')) return;
+    if (!confirm('Are you sure you want to delete this post?')) return;
     this.userService.deletePost(postId).subscribe({
       next: () => {
         this.userPosts = this.userPosts.filter(p => p.id !== postId);
         this.MediaFilesCount = this.userPosts.length;
-        console.log('הפוסט נמחק בהצלחה');
+        console.log('Post successfully deleted');
+        this.userService.getPostsByUserId(this.user.userId).subscribe(posts => {
+          this.userPosts = posts;
+          this.imagePosts = this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType == 'image'));
+          this.videoPosts = this.userPosts.filter(p => p.mediaFiles.some(m => m.mediaType == 'video'));
+          this.MediaFilesCount = posts.length;
+        });
       },
       error: (err) => {
-        console.error('שגיאה במחיקת הפוסט:', err);
+        console.error('Error deleting post:', err);
       }
+    });
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 3000);
+  }
+
+  openProfileStory() {
+    this.userService.getStoryByUserId(this.user.userId).subscribe({
+      next: stories => {
+        this.router.navigate(['/story', this.user.userId]);
+      },
+      error: err => console.error('Error loading temporary stories:', err)
     });
   }
 }

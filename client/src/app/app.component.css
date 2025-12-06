@@ -1,14 +1,3 @@
-:root {
-  --color-bg-main: #ffffff;         /* לבן רקע */
-  --color-bg-secondary: #f5f7fa;    /* רקע אפור בהיר */
-  --color-primary: #a1cfff;         /* בועה נשלחת */
-  --color-secondary: #007aff;       /* כפתור שליחה וכו' */
-  --color-border: #dce1e6;          /* גבול אפור בהיר */
-  --color-text-main: #5c6146;       /* טקסט כהה */
-  --color-text-muted: #6b7280;      /* טקסט משני */
-}
-
-
 body {
   font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -17,80 +6,116 @@ body {
     display: flex;
     justify-content: center;
     height: 100%;
-  }
-  .context{
-    width: 650px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    direction: ltr;
-    border: 1px solid #ddd;
-    scrollbar-width: none; 
+}
+
+.context{
+  width: 650px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  direction: ltr;
+  border: 1px solid #ddd;
+  scrollbar-width: none; 
   -ms-overflow-style: none; 
 }
-  .feed {
-    flex: 1;
-  }
-  .container {
-    width: 100%;
-    max-width: 500px;
-    background-color: #fff;
-    min-height: 100vh;
-  }
+
+.feed {
+  flex: 1;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  background-color: #fff;
+  min-height: 100vh;
+}
   
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    border-bottom: 1px solid #ddd;
-    background-color: #e7ece2;
-  }
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  min-height: 50px;
+  border-bottom: 1px solid #ddd;
+  background-color: white ;
+}
   
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #0ab8ce, #1976D2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  cursor: pointer;
+}
+
+.logo:hover {
+  background: linear-gradient(90deg, #1976D2, #0ab8ce);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
   
-  .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color:#3c3f2d;
-  }
+.icons lucide-icon {
+  cursor: pointer;
+  font-size: 22px;
+  color: #3c3f2d;
+}
   
-  .icons {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+.bottom-nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background-color: #ffffff;
+  border-top: 1px solid #ddd;
+  position: sticky;
+  bottom: 0;
+  margin-bottom: 0px;
+  color: #3c3f2d;
+}
   
-  .icons lucide-icon {
-    cursor: pointer;
-    font-size: 22px;
-    color: #3c3f2d;
-  }
+.bottom-nav span {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.bottom-nav lucide-icon {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bottom-nav lucide-icon.active {
+  color: #ff347d;
+}
+
+.bottom-nav lucide-icon:hover {
+  color: #0ab8ce;
+  transform: scale(1.08);
+}
+
+.icons lucide-icon {
+  cursor: pointer;
+}
   
-  .bottom-nav {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    padding: 10px;
-    background-color: #e7ece2;
-    border-top: 1px solid #ddd;
-    position: sticky;
-    bottom: 0;
-    margin-bottom: 0px;
-    color: #3c3f2d;
-  }
-  
-  .bottom-nav span {
-    font-size: 24px;
-    cursor: pointer;
-  }
-  .bottom-nav lucide-icon {
-    cursor: pointer;
-  }
-  .icons lucide-icon {
-    cursor: pointer;
-  }
-  
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.logo-img {
+  width: 30px;
+  height: 25px;
+}

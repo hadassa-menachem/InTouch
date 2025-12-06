@@ -7,12 +7,6 @@ import { Story } from '../../classes/Story';
 import { User } from '../../classes/User';
 import { UserService } from '../../ser/user.service';
 
-interface StoryGroup {
-  userId: string;
-  category: string;
-  stories: Story[];
-}
-
 @Component({
   selector: 'app-story',
   templateUrl: './story.component.html',
@@ -21,73 +15,54 @@ interface StoryGroup {
   imports: [CommonModule, FormsModule, LucideIconsModule]
 })
 export class StoryComponent implements OnInit, OnDestroy {
-  storyGroups: StoryGroup[] = [];      
-  temporaryStories: Story[] = [];      
+  storiesByUser: { userId: string; stories: Story[] }[] = [];
+  temporaryStories: Story[] = [];
   commentBoxOpenFor: string | null = null;
   newComment: string = '';
   showLikeAnimation: boolean = false;
   user!: User;
-  currentGroupIndex: number = 0;
-  currentStoryIndex: number = 0;
+  currentUserStoryIndex: number = 0;
+  currentUserIndex: number = 0;
   progress: number = 0;
   progressInterval: any;
   storyDuration: number = 5000;
 
-  constructor(
-    private userService: UserService,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private userService: UserService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    const storyId = this.route.snapshot.paramMap.get('storyId');
-    if (!storyId) return;
-
+    const userId = this.route.snapshot.paramMap.get('userId');
+    console.log('userId from route:', userId); 
+    if (!userId) return;
     this.user = this.userService.getCurrentUser()!;
 
-    this.userService.getStoryById(storyId).subscribe({
-      next: (story: Story) => {
-        this.userService.getStoryByUserId(story.user.userId!).subscribe({
-          next: (stories: Story[]) => {
-            const now = new Date();
+    this.userService.getStoryByUserId(userId).subscribe({
+      next: (stories: Story[]) => {
 
-            stories.forEach(s => {
-              if (!s.user) s.user = { userId: '', firstName: '', lastName: '', profilePicUrl: '' };
-              s.likes = s.likes || [];
-              s.comments = s.comments || [];
-              s.viewedByUserIds = s.viewedByUserIds || [];
-              s.viewedByCurrentUser = s.viewedByUserIds.includes(this.user.userId);
+        const validStories = stories.map(s => {
+          s.likes = s.likes || [];
+          s.comments = s.comments || [];
+          s.viewedByUserIds = s.viewedByUserIds || [];
+          s.viewedByCurrentUser = s.viewedByUserIds.includes(this.user.userId);
+          return s;
+        });
 
-              const created = new Date(s.createdAt);
-              const diffHours = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+        this.userService.GetUserById(userId).subscribe(user => {
 
-              if (s.isTemporary) {
-                s.isTemporary = true;
-                s.category = ''; 
-              } else {
-                s.isTemporary = false;
-                s.category = s.category || 'default';
-              }
-            });
+          validStories.forEach(s => (s.user = user));
 
-            this.temporaryStories = stories.filter(s => s.isTemporary);
-            const highlightStories = stories.filter(s => !s.isTemporary);
+          this.storiesByUser = [{
+            userId,
+            stories: validStories
+          }];
+          console.log(this.storiesByUser)
 
-            this.storyGroups = this.groupStoriesByCategory(highlightStories);
+          this.currentUserIndex = 0;
+          this.currentUserStoryIndex = 0;
 
-            const currentGroupFound = this.storyGroups.find((group, gIndex) => {
-              const storyIndex = group.stories.findIndex(s => s.id === storyId);
-              if (storyIndex >= 0) {
-                this.currentGroupIndex = gIndex;
-                this.currentStoryIndex = storyIndex;
-                this.markStoryAsViewed(group.stories[storyIndex]);
-                return true;
-              }
-              return false;
-            });
-
-            if (currentGroupFound) this.startProgress();
-          },
-          error: err => console.error(err)
+          if (validStories.length > 0) {
+            this.markStoryAsViewed(validStories[0]);
+            this.startProgress();
+          }
         });
       },
       error: err => console.error(err)
@@ -98,59 +73,34 @@ export class StoryComponent implements OnInit, OnDestroy {
     clearInterval(this.progressInterval);
   }
 
-  get currentGroup(): StoryGroup | null {
-    return this.storyGroups[this.currentGroupIndex] || null;
+  get currentUserStories() {
+    return this.storiesByUser[this.currentUserIndex]?.stories || [];
   }
 
-  get story(): Story | null {
-    return this.currentGroup?.stories[this.currentStoryIndex] || null;
-  }
-
-  groupStoriesByCategory(stories: Story[]): StoryGroup[] {
-    const groupsMap: { [key: string]: StoryGroup } = {};
-
-    stories.forEach(story => {
-      const userId = story.user?.userId || 'unknown';
-      const key = userId + '-' + (story.category || 'default');
-
-      if (!groupsMap[key]) {
-        groupsMap[key] = {
-          userId,
-          category: story.category || 'default',
-          stories: []
-        };
-      }
-
-      if (!groupsMap[key].stories.some(s => s.id === story.id)) {
-        groupsMap[key].stories.push(story);
-      }
-    });
-
-    return Object.values(groupsMap);
+  get currentStory(): Story | null {
+    return this.currentUserStories[this.currentUserStoryIndex] || null;
   }
 
   startProgress() {
     this.progress = 0;
     clearInterval(this.progressInterval);
 
-    if (this.story) this.markStoryAsViewed(this.story);
+    if (this.currentStory) this.markStoryAsViewed(this.currentStory);
 
     const step = 100 / (this.storyDuration / 100);
     this.progressInterval = setInterval(() => {
       this.progress += step;
-      if (this.progress >= 100) this.nextStatus();
+      if (this.progress >= 100) this.nextStory();
     }, 100);
   }
 
-  nextStatus() {
-    if (!this.currentGroup) return;
-
-    if (this.currentStoryIndex < this.currentGroup.stories.length - 1) {
-      this.currentStoryIndex++;
+  nextStory() {
+    if (this.currentUserStoryIndex < this.currentUserStories.length - 1) {
+      this.currentUserStoryIndex++;
       this.startProgress();
-    } else if (this.currentGroupIndex < this.storyGroups.length - 1) {
-      this.currentGroupIndex++;
-      this.currentStoryIndex = 0;
+    } else if (this.currentUserIndex < this.storiesByUser.length - 1) {
+      this.currentUserIndex++;
+      this.currentUserStoryIndex = 0;
       this.startProgress();
     } else {
       clearInterval(this.progressInterval);
@@ -158,29 +108,27 @@ export class StoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  prevStatus() {
-    if (!this.currentGroup) return;
-
-    if (this.currentStoryIndex > 0) {
-      this.currentStoryIndex--;
+  prevStory() {
+    if (this.currentUserStoryIndex > 0) {
+      this.currentUserStoryIndex--;
       this.startProgress();
-    } else if (this.currentGroupIndex > 0) {
-      this.currentGroupIndex--;
-      this.currentStoryIndex = this.currentGroup!.stories.length - 1;
+    } else if (this.currentUserIndex > 0) {
+      this.currentUserIndex--;
+      this.currentUserStoryIndex = this.storiesByUser[this.currentUserIndex].stories.length - 1;
       this.startProgress();
     }
   }
 
-  toggleLike(id: string) {
-    if (!this.story) return;
+  toggleLike() {
+    if (!this.currentStory) return;
 
     this.showLikeAnimation = true;
     setTimeout(() => (this.showLikeAnimation = false), 800);
 
-    if (this.story.likes!.includes(this.user.userId)) {
-      this.story.likes = this.story.likes!.filter(uid => uid !== this.user.userId);
+    if (this.currentStory.likes!.includes(this.user.userId)) {
+      this.currentStory.likes = this.currentStory.likes!.filter(uid => uid !== this.user.userId);
     } else {
-      this.story.likes!.push(this.user.userId);
+      this.currentStory.likes!.push(this.user.userId);
     }
   }
 
@@ -188,55 +136,44 @@ export class StoryComponent implements OnInit, OnDestroy {
     this.commentBoxOpenFor = this.commentBoxOpenFor === id ? null : id;
   }
 
-  sendComment(id: string) {
-    if (this.newComment.trim() && this.story) {
-      this.story.comments!.push({ userName: this.user.userName || '', content: this.newComment });
+  sendComment() {
+    if (this.newComment.trim() && this.currentStory) {
+      this.currentStory.comments!.push({ userName: this.user.userName || '', content: this.newComment });
       this.newComment = '';
       this.commentBoxOpenFor = null;
     }
   }
 
-  selectGroup(index: number) {
-    this.currentGroupIndex = index;
-    this.currentStoryIndex = 0;
-    this.startProgress();
-  }
-
-  getTimeAgo(createdAt: Date | string): string {
-    if (!createdAt) return '';
-
-    const now = new Date();
-    const created = new Date(createdAt);
-    const diffMs = now.getTime() - created.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffHours < 1) return 'עכשיו';
-    if (diffHours < 24) return `לפני ${diffHours} שעות`;
-    if (diffDays < 7) return `לפני ${diffDays} ימים`;
-    return `לפני ${Math.floor(diffDays / 7)} שבועות`;
-  }
-
   markStoryAsViewed(story: Story) {
     if (!story.viewedByCurrentUser) {
       story.viewedByCurrentUser = true;
-      if (story.user.userId)
-        this.userService.markStoryAsViewed(story.id, this.user.userId).subscribe();
+      this.userService.markStoryAsViewed(story.id, this.user.userId).subscribe();
     }
   }
 
   showTemporaryStories(userId: string) {
-    const userTempStories = this.temporaryStories.filter(s => s.user.userId === userId);
-
-    if (userTempStories.length > 0) {
-      this.storyGroups = [{
-        userId,
-        category: 'temporary',
-        stories: userTempStories
-      }];
-      this.currentGroupIndex = 0;
-      this.currentStoryIndex = 0;
+    const temp = this.temporaryStories.filter(s => s.user.userId === userId);
+    if (temp.length > 0) {
+      this.storiesByUser = [{ userId, stories: temp }];
+      this.currentUserIndex = 0;
+      this.currentUserStoryIndex = 0;
       this.startProgress();
     }
+  }
+
+  getTimeAgo(dateString: string | Date | undefined): string {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return `${seconds} seconds ago`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} minutes ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hours ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} days ago`;
   }
 }

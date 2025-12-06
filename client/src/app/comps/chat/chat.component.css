@@ -2,17 +2,17 @@
   display: flex;
   flex-direction: column;
   height: 85vh;
-  background-color: #ffffff;
+  background-color: #FAFAFA;
 }
 
 .chat-header {
   display: flex;
   align-items: center;
   padding: 10px;
-  border-bottom: 1px groove #a3d9a5;
+  border-bottom: 1px groove #E0E0E0;
   position: sticky;
   top: 50px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   z-index: 10;
   margin-top: 3px;
 }
@@ -21,15 +21,25 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin: 0 10px;
+  margin-right: 10px;
+  border: 2px solid #fff;
   object-fit: cover;
-  border: 1.5px solid #a3d9a5;
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(238, 13, 107, 0.808);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+}
+
+.profile-pic:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+  cursor: pointer;
 }
 
 .username {
   font-weight: bold;
-  font-size: 18px;
-  color: #276228;
+  font-size: 16px;
+  color: #252734;
+  flex-grow: 1;
 }
 
 .chat-messages {
@@ -39,7 +49,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #ffffff;
+  background: #FAFAFA;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -53,21 +63,22 @@
   border-radius: 8px;
   word-wrap: break-word;
   line-height: 1.4;
-  padding: 4px;
-  color: #276228;
+  padding: 8px;
+  color: #424242;
   text-align: left;
   position: relative;
 }
 
 .sent {
   align-self: flex-end;
-  background-color: #e6f3e8;
+  background-color: #E0F7FA ;
+  padding-right: 4px; 
 }
 
 .received {
   align-self: flex-start;
   background-color: #ffffff;
-  border: 1px solid #a3d9a5;
+  border: 1px solid #E0E0E0;
   border-bottom-left-radius: 8px;
 }
 
@@ -75,13 +86,14 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding-bottom: 6px;
 }
 
 .message-content img {
   max-width: 100%;
   max-height: 200px;
   border-radius: 8px;
-  border: 1px solid #a3d9a5;
+  border: 1px solid #E3F2FD;
 }
 
 .message-footer {
@@ -96,7 +108,7 @@
 
 .timestamp {
   font-size: 9px;
-  color: #9e9e9e;
+  color: #9E9E9E;
   margin: 0;
   padding: 0;
   line-height: 1;
@@ -111,8 +123,8 @@
 }
 
 .check-icon {
-  width: 10px;
-  height: 7px;
+  width: 20px;
+  height: 9px;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -123,19 +135,22 @@
   text-align: center;
   margin: 10px auto;
   padding: 5px;
-  background-color: #f2f2f2;
+  background-color: #F5F5F5;
   border-radius: 10px;
   font-size: 0.7rem;
-  color: #707070;
+  color: #9E9E9E;
   width: 30%;
 }
 
 .chat-input {
   padding: 10px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   position: sticky;
   bottom: 60px;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .input-wrapper {
@@ -143,9 +158,11 @@
   align-items: center;
   background-color: #ffffff;
   border-radius: 25px;
-  padding: 6px 10px;
-  border: 1.5px solid #a3d9a5;
-  box-shadow: 0 0 4px rgba(95, 196, 126, 0.6);
+  padding: 8px 16px;
+  border: 1.5px solid #E0E0E0;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  border: 1px solid #0ab8ce;
 }
 
 .message-input {
@@ -154,32 +171,29 @@
   outline: none;
   font-size: 15px;
   background-color: transparent;
-  color: #276228;
+  color: #424242;
 }
 
 .message-input::placeholder {
-  color: #8fbf94;
+  color: #BDBDBD;
 }
 
 .icon-btn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
-  font-size: 20px;
-  color: #4caf50;
+  padding: 8px;
+  font-size: 22px;
+  color: #ff347d;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: all 0.2s;
 }
 
 .icon-btn:hover {
-  color: #3a8d36;
-}
-
-.icon-btn.left {
-  margin: 0 4px;
+  color: #0ab8ce;
+  transform: scale(1.1);
 }
 
 .send-btn {
@@ -197,7 +211,7 @@
   display: inline-flex;
   align-items: center;
   margin-right: 5px;
-  color: #276228;
+  color: #757575;
   text-decoration: none;
   font-size: 12px;
 }
@@ -217,7 +231,7 @@
   max-width: 150px;
   max-height: 150px;
   border-radius: 12px;
-  border: 1.5px solid #a3d9a5;
+  border: 1.5px solid #E0E0E0;
 }
 
 .remove-btn {
@@ -227,15 +241,45 @@
   cursor: pointer;
   border: none;
   background: transparent;
-  color: #4caf50;
+  color: #616161;
 }
 
 a {
   cursor: pointer;
-  color: #4caf50;
+  color: #757575;
   text-decoration: none;
 }
 
-lucide-icon {
-  stroke: #4caf50;
+.send-btn {
+  border: none;
+}
+
+.pdf-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.pdf-preview span {
+  font-size: 12px;
+  color: #666;
+}
+
+.pdf-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+
+.pdf-name {
+  font-size: 14px;
+  color: #666;
 }

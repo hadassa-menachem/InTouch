@@ -46,15 +46,17 @@ export class FollowingsComponent implements OnInit {
             next: (user: User) => {
               followWithUserList.push({ follow, user });
               loadedCount++;
+
               if (loadedCount === follows.length) {
                 this.allFollowings = followWithUserList;
                 this.filteredFollowings = [...followWithUserList];
               }
             },
             error: err => {
-              console.error(`שגיאה בשליפת משתמש ${follow.followerId}:`, err);
+              console.error(`Error retrieving user${follow.followerId}:`, err);
               followWithUserList.push({ follow, user: null });
               loadedCount++;
+
               if (loadedCount === follows.length) {
                 this.allFollowings = followWithUserList;
                 this.filteredFollowings = [...followWithUserList];
@@ -64,13 +66,16 @@ export class FollowingsComponent implements OnInit {
         });
       },
       error: err => {
-        console.error('שגיאה בטעינת העוקבים:', err);
+        console.error('Error loading followers:', err);
       }
     });
   }
 
   onSearch(event: Event): void {
-    this.searchTerm = (event.target as HTMLInputElement).value.toLowerCase().trim();
+    this.searchTerm = (event.target as HTMLInputElement).value
+      .toLowerCase()
+      .trim();
+
     if (!this.searchTerm) {
       this.filteredFollowings = [...this.allFollowings];
     } else {

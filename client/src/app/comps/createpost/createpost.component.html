@@ -1,64 +1,54 @@
 <div class="create-post-container">
   <form [formGroup]="createPostForm" (ngSubmit)="onSubmit()">
+    <p>Uploading a post</p>
 
     <div class="input-row">
       <div class="input-group">
-        <label>סוג מדיה:</label>
+        <label>Media Type:</label>
         <select formControlName="mediaType" (change)="onMediaTypeChange()">
-          <option value="image">תמונה</option>
-          <option value="video">וידיאו</option>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
         </select>
       </div>
 
       <div class="input-group">
-        <label>מקור מדיה:</label>
+        <label>Media source:</label>
         <select formControlName="imageSource" (change)="onImageSourceChange()">
-          <option value="upload">העלאה מהמחשב</option>
-          <option value="url">קישור</option>
+          <option value="upload">Upload from computer</option>
+          <option value="url">Link</option>
         </select>
       </div>
     </div>
 
     <div class="input-row single">
       <div class="input-group" *ngIf="createPostForm.value.imageSource === 'upload'">
-        <label>העלה קובץ:</label>
+        <label>Upload a file:</label>
         <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" />
       </div>
 
       <div class="input-group" *ngIf="createPostForm.value.imageSource === 'url'">
-        <label>קישור לתמונה או וידיאו:</label>
-        <input type="text" formControlName="imageUrl" placeholder="הכנס קישור" />
-      </div>
-    </div>
-
-    <div class="input-row">
-      <div class="input-group">
-        <label>טקסט על התמונה:</label>
-        <input type="text" formControlName="customText" />
-      </div>
-
-      <div class="input-group">
-        <label>צבע טקסט:</label>
-        <input type="color" formControlName="textColor" />
+        <label>Link to image or video:</label>
+        <input type="text" formControlName="imageUrl" placeholder="Insert link" />
       </div>
     </div>
 
     <div class="input-row single">
       <div class="input-group">
-        <label>גודל טקסט:</label>
-        <input type="range"
-               min="12"
-               max="60"
-               [(ngModel)]="textSize"
-               [ngModelOptions]="{standalone: true}"
-               name="textSize" />
+        <label>Text:</label>
+        <textarea formControlName="customText" rows="4"></textarea> 
       </div>
     </div>
 
-    <button type="submit" class="submit-btn">פרסם פוסט</button>
+    <button type="submit" class="submit-btn">Publish a post</button>
+    
+    <div *ngIf="showMessage" 
+      [ngClass]="{'success': isSuccess, 'error': !isSuccess}" 
+      class="floating-message">
+      {{ messageText }}
+    </div>
   </form>
 
-  <div class="preview-container" [style.backgroundColor]="createPostForm.value.backgroundColor">
+  <div class="preview-container">
     <div class="post-preview">
       <ng-container *ngIf="imagePreviewUrl">
         <img *ngIf="createPostForm.value.mediaType === 'image'" 
@@ -71,9 +61,7 @@
         </video>
       </ng-container>
 
-      <div class="draggable-text"
-           [ngStyle]="{ color: createPostForm.value.textColor, 'font-size.px': textSize }"
-           cdkDrag>
+      <div class="post-text" *ngIf="createPostForm.value.customText">
         {{ createPostForm.value.customText }}
       </div>
     </div>

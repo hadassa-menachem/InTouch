@@ -4,19 +4,24 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { UserService } from '../../ser/user.service';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-update-user',
   standalone: true,
   templateUrl: './update-user.component.html',
   styleUrl: './update-user.component.css',
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class UpdateUserComponent implements OnInit {
   registerForm: FormGroup;
   submitted = false;
   user: User = new User();
   selectedFile: File | null = null;
+
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
 
   constructor(
     private fb: FormBuilder,
@@ -48,7 +53,7 @@ export class UpdateUserComponent implements OnInit {
         userName: this.user.userName,
         firstName: this.user.firstName,
         lastName: this.user.lastName,
-        dateOfBirth: this.user.dateOfBirth, 
+        dateOfBirth: this.user.dateOfBirth,
         gender: this.user.gender,
         phone: this.user.phone,
         email: this.user.email,
@@ -92,17 +97,28 @@ export class UpdateUserComponent implements OnInit {
       next: () => {
         this.usersService.setCurrentUser(updatedUser);
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        alert('המשתמש עודכן בהצלחה');
-        this.router.navigate(['/profile']);
+        this.showFloatingMessage('User updated successfully', true);
+        setTimeout(() => {
+          this.router.navigate(['/profile']);
+        }, 1000);
       },
       error: err => {
-        console.error('שגיאה בעדכון המשתמש:', err);
-        alert('אירעה שגיאה בעדכון');
+        this.showFloatingMessage('An error occurred while updating', false);
       }
     });
   }
 
   navigate(route: string) {
     this.router.navigate([route]);
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 5000);
   }
 }

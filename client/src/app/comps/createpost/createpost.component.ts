@@ -23,6 +23,10 @@ export class CreatePostComponent implements OnInit {
   textSize = 24;
   user: User = new User();
 
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -73,11 +77,11 @@ export class CreatePostComponent implements OnInit {
       const mediaType = this.createPostForm.get('mediaType')?.value;
 
       if (mediaType === 'image' && !file.type.startsWith('image/')) {
-        alert('נא לבחור קובץ תמונה בלבד');
+        this.showFloatingMessage('Please select an image file only', false);
         return;
       }
       if (mediaType === 'video' && !file.type.startsWith('video/')) {
-        alert('נא לבחור קובץ וידאו בלבד');
+        this.showFloatingMessage('Please select a video file only', false);
         return;
       }
 
@@ -108,11 +112,24 @@ export class CreatePostComponent implements OnInit {
 
     this.userSer.addPost(formData).subscribe({
       next: (response) => {
-        alert('הפוסט נשלח בהצלחה');
-        this.router.navigate(['/posts']);
+        this.showFloatingMessage('Post published successfully!', true);
+        setTimeout(() => {
+          this.router.navigate(['/profile']);
+        }, 1000);
       },
-      error: err => {
+      error: () => {
+        this.showFloatingMessage('Failed to publish the post', false);
       }
     });
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 5000);
   }
 }

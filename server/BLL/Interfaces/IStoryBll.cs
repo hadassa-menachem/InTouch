@@ -8,11 +8,11 @@ namespace BLL.Interfaces
 {
     public interface IStoryBll
     {
-        Task<List<Story>> GetAllStories();          
-        Task<Story?> GetStoryById(string id);      
-        Task<List<Story>> GetStoriesByUserId(string userId);
-        Task AddStory(Story story);
-        Task UpdateStory(string id, Story updatedStory);
+        Task<List<StoryDTO>> GetAllStories();          
+        Task<StoryDTO?> GetStoryById(string id);      
+        Task<List<StoryDTO>> GetStoriesByUserId(string userId);
+        Task<StoryDTO> AddStory(StoryDTO storyDto);
+        Task UpdateStory(string id, StoryDTO updatedStory);
         Task DeleteStory(string id);
         Task DeleteOldStories();
         Task<bool> MarkStoryAsViewed(string storyId, string viewerId);

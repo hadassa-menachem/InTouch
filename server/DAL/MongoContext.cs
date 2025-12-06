@@ -19,6 +19,5 @@ public class MongoContext
     public IMongoCollection<Like> Likes => _database.GetCollection<Like>("Like");
     public IMongoCollection<MediaFile> MediaFiles => _database.GetCollection<MediaFile>("MediaFile");
     public IMongoCollection<Follow> Follows => _database.GetCollection<Follow>("Follow");
-    public IMongoCollection<Status> Statuses => _database.GetCollection<Status>("Status");
     public IMongoCollection<Story> Stories => _database.GetCollection<Story>("Story");
 }
