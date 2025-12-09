@@ -99,21 +99,17 @@
           controls>
         </video>
       </ng-container>
-
       <div
-        class="draggable-text"
-        cdkDrag
-        cdkDragBoundary=".story-preview"
-        [style.left.px]="dragPosition.x"
-        [style.top.px]="dragPosition.y"
-        [ngStyle]="{
-          color: createStoryForm.value.textColor,
-          'font-size.px': textSize
-        }"
-        (cdkDragEnded)="onDragEnded($event)">
-        {{ createStoryForm.value.customText }}
+       class="draggable-text"
+       cdkDrag
+       cdkDragBoundary=".story-preview"
+       [cdkDragFreeDragPosition]="dragPosition"
+       [ngStyle]="{
+       color: createStoryForm.value.textColor,
+       'font-size.px': textSize}"
+       (cdkDragEnded)="onDragEnded($event)">
+      {{ createStoryForm.value.customText }}
       </div>
-
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -22,6 +22,7 @@ export class CreatePostComponent implements OnInit {
   imagePreviewUrl: string | null = null;
   textSize = 24;
   user: User = new User();
+  showEmojiPicker: boolean = false;
 
   showMessage = false;
   messageText = '';
@@ -43,6 +44,8 @@ export class CreatePostComponent implements OnInit {
       customText: ['']
     });
   }
+  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
+  @ViewChild('input') messageInputRef!: ElementRef;
 
   ngOnInit(): void {
     this.user = this.userSer.getCurrentUser()!;
@@ -121,6 +124,28 @@ export class CreatePostComponent implements OnInit {
         this.showFloatingMessage('Failed to publish the post', false);
       }
     });
+  }
+
+  onDocumentClick(event: MouseEvent): void {
+   const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
+   const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+
+   if (!clickedInside && !clickedButton) {
+     this.showEmojiPicker = false;
+   }
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+     if (emoji) {
+     const currentText = this.createPostForm.get('customText')?.value || '';
+     this.createPostForm.get('customText')?.setValue(currentText + emoji);
+     setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+    }
   }
 
   showFloatingMessage(text: string, success: boolean = true) {

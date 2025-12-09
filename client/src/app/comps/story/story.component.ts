@@ -35,38 +35,45 @@ export class StoryComponent implements OnInit, OnDestroy {
     if (!userId) return;
     this.user = this.userService.getCurrentUser()!;
 
-    this.userService.getStoryByUserId(userId).subscribe({
-      next: (stories: Story[]) => {
+ this.userService.getStoryByUserId(userId).subscribe({
+  next: (stories: Story[]) => {
 
-        const validStories = stories.map(s => {
-          s.likes = s.likes || [];
-          s.comments = s.comments || [];
-          s.viewedByUserIds = s.viewedByUserIds || [];
-          s.viewedByCurrentUser = s.viewedByUserIds.includes(this.user.userId);
-          return s;
-        });
-
-        this.userService.GetUserById(userId).subscribe(user => {
-
-          validStories.forEach(s => (s.user = user));
-
-          this.storiesByUser = [{
-            userId,
-            stories: validStories
-          }];
-          console.log(this.storiesByUser)
-
-          this.currentUserIndex = 0;
-          this.currentUserStoryIndex = 0;
-
-          if (validStories.length > 0) {
-            this.markStoryAsViewed(validStories[0]);
-            this.startProgress();
-          }
-        });
-      },
-      error: err => console.error(err)
+    // מוודא שכל השדות קיימים
+    const validStories = stories.map(s => {
+      s.likes = s.likes || [];
+      s.comments = s.comments || [];
+      s.viewedByUserIds = s.viewedByUserIds || [];
+      s.viewedByCurrentUser = s.viewedByUserIds.includes(this.user.userId);
+      return s;
     });
+
+    // מיון לפי תאריך מהחדש לישן
+    validStories.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA; // b לפני a => מהחדש לישן
+    });
+
+    this.userService.GetUserById(userId).subscribe(user => {
+      validStories.forEach(s => (s.user = user));
+
+      this.storiesByUser = [{
+        userId,
+        stories: validStories
+      }];
+
+      this.currentUserIndex = 0;
+      this.currentUserStoryIndex = 0;
+
+      if (validStories.length > 0) {
+        this.markStoryAsViewed(validStories[0]);
+        this.startProgress();
+      }
+    });
+  },
+  error: err => console.error(err)
+});
+
   }
 
   ngOnDestroy(): void {
