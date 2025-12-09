@@ -36,6 +36,15 @@
       <div class="input-group">
         <label>Text:</label>
         <textarea formControlName="customText" rows="4"></textarea> 
+         <div class="emoji-button-wrapper" style="position: relative;">
+        <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+        <lucide-icon name="smile"></lucide-icon>
+        </button>
+    
+    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
+      <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+    </div>
+  </div>
       </div>
     </div>
 

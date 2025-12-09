@@ -10,5 +10,6 @@
         public string? UserName { get; set; }
         public UserDTO? User { get; set; }
         public int DurationInHours { get; set; } = 24;
+        public List<string> ViewedByUserIds { get; set; } = new List<string>();
     }
 }

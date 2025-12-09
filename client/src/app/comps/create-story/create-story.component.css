@@ -60,22 +60,24 @@ form input[type="number"] {
 .submit-btn {
   width: 100%;
   padding: 14px;
-  background-color: #E0F7FA;
-  color: #1565C0;
+  background-color: #ffeef4;
+  color: #ff347d;
   font-weight: bold;
   font-size: 18px;
-  border: 1.5px solid #999797;
+  border: 1.5px solid #ff347d;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
-  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 2px 8px rgba(241, 59, 135, 0.541);
   margin-top: 10px;
 }
 
 .submit-btn:hover {
   background-color: #ffffff;
   box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  border: 1.5px solid #0ab8ce;
+  color: #1976D2;
 }
 
 .preview-container {
@@ -94,6 +96,7 @@ form input[type="number"] {
   overflow: hidden;
   background-color: #fff;
   margin: 0 auto;
+  overflow: hidden; 
 }
 
 .preview-image,

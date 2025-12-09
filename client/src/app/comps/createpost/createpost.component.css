@@ -66,22 +66,24 @@ form textarea {
 .submit-btn {
   width: 100%;
   padding: 14px;
-  background-color: #E0F7FA;
-  color: #1565C0;
+  background-color: #ffeef4;
+  color: #ff347d;
   font-weight: bold;
   font-size: 18px;
-  border: 1.5px solid #999797;
+  border: 1.5px solid #ff347d;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
-  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 2px 8px rgba(241, 59, 135, 0.541);
   margin-top: 10px;
 }
 
 .submit-btn:hover {
   background-color: #ffffff;
   box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  border: 1.5px solid #0ab8ce;
+  color: #1976D2;
 }
 
 .preview-container {
@@ -146,4 +148,29 @@ form textarea {
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+.emoji-picker-popover {
+  position: absolute;
+  bottom: 40px;
+  right: 0;
+  z-index: 1000;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 22px;
+  color: #ff347d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  color: #0ab8ce;
+  transform: scale(1.1);
 }

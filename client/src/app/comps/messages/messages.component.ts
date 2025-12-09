@@ -22,6 +22,7 @@ export class MessagesComponent implements OnInit {
     isSentByCurrentUser?: boolean;
     isSeen?: boolean;
     lastSentAt?: number;
+    unreadCount?: number; 
   }[] = [];
 
   filteredChats: typeof this.chats = [];
@@ -60,6 +61,10 @@ export class MessagesComponent implements OnInit {
                   )[0]
                 : null;
 
+              const unreadMessages = msgs.filter(
+                m => m.senderId === u.userId && !m.isRead
+              ).length;
+
               return {
                 userId: u.userId,
                 username: `${u.firstName} ${u.lastName}`,
@@ -67,7 +72,8 @@ export class MessagesComponent implements OnInit {
                 lastMessage: lastMsg,
                 isSentByCurrentUser: lastMsg ? lastMsg.senderId === userId : false,
                 isSeen: lastMsg ? lastMsg.isRead : false,
-                lastSentAt: lastMsg ? new Date(lastMsg.sentAt).getTime() : 0
+                lastSentAt: lastMsg ? new Date(lastMsg.sentAt).getTime() : 0,
+                unreadCount: unreadMessages
               };
             })
             .sort((a, b) => b.lastSentAt - a.lastSentAt);

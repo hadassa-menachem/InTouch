@@ -116,22 +116,35 @@ export class CreateStoryComponent implements OnInit {
       y: elemRect.top - parentRect.top
     };
   }
-
+  
   private async composeImageWithText(
-    baseImageSrc: string,
-    text: string,
-    textColor: string,
-    textSize: number,
-    posX: number,
-    posY: number
-  ): Promise<File> {
+   baseImageSrc: string,
+   text: string,
+   textColor: string,
+   textSize: number,
+   posX: number,
+   posY: number
+   ): Promise<File> {
+
     const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const im = new Image();
-      im.crossOrigin = 'anonymous';
-      im.onload = () => resolve(im);
-      im.onerror = reject;
-      im.src = baseImageSrc;
-    });
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => resolve(im);
+    im.onerror = reject;
+    im.src = baseImageSrc;
+  });
+
+
+    const previewElement = document.querySelector('.story-preview') as HTMLElement;
+    const previewWidth = previewElement.offsetWidth;
+    const previewHeight = previewElement.offsetHeight;
+
+  
+    const scaleX = img.naturalWidth / previewWidth;
+    const scaleY = img.naturalHeight / previewHeight;
+
+    const realX = posX * scaleX;
+    const realY = posY * scaleY;
 
     const canvas = document.createElement('canvas');
     canvas.width = img.naturalWidth;
@@ -139,14 +152,17 @@ export class CreateStoryComponent implements OnInit {
     const ctx = canvas.getContext('2d')!;
 
     ctx.drawImage(img, 0, 0);
-    ctx.font = `${textSize}px Arial`;
+
+    ctx.font = `${textSize * scaleX}px Calibri`;
     ctx.fillStyle = textColor;
     ctx.textBaseline = 'top';
-    ctx.fillText(text, posX, posY);
+
+    ctx.fillText(text, realX, realY);
 
     const blob: Blob = await new Promise(resolve =>
-      canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
-    );
+    canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
+  );
+
     return new File([blob], 'story.jpg', { type: 'image/jpeg' });
   }
 
@@ -162,24 +178,27 @@ export class CreateStoryComponent implements OnInit {
     if (duration > 24) duration = 24;
     formData.append('DurationInHours', duration.toString());
 
-    if (formValues.content) {
-      formData.append('Content', formValues.content);
-    }
     if (formValues.customText) {
       formData.append('Content', formValues.customText);
     }
 
     let fileToSend: File | null = null;
 
-    if (formValues.mediaType === 'image' && this.imagePreviewUrl) {
-      fileToSend = await this.composeImageWithText(
-        this.imagePreviewUrl,
-        formValues.customText || '',
-        formValues.textColor,
-        this.textSize,
-        this.dragPosition.x,
-        this.dragPosition.y
-      );
+    if (formValues.mediaType === 'image' && this.selectedFile) {
+
+    const baseImageSrc = URL.createObjectURL(this.selectedFile);
+
+    fileToSend = await this.composeImageWithText(
+      baseImageSrc,
+      formValues.customText || '',
+      formValues.textColor,
+      this.textSize,
+      this.dragPosition.x,
+      this.dragPosition.y
+    );
+
+    URL.revokeObjectURL(baseImageSrc);
+
     } else if (formValues.mediaType === 'video' && this.selectedFile) {
       fileToSend = this.selectedFile;
     }
@@ -204,6 +223,7 @@ export class CreateStoryComponent implements OnInit {
         this.showFloatingMessage('Error uploading story', false);
       }
     });
+    console.log("fileToSend:", fileToSend);
   }
 
   showFloatingMessage(text: string, success: boolean = true) {

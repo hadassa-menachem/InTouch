@@ -1,6 +1,4 @@
-
 <div *ngIf="currentStory" class="status-container">
-
   <div class="status-progress-bars">
     <div *ngFor="let s of currentUserStories; let i = index" class="progress-segment">
       <div class="progress-fill"
@@ -10,24 +8,29 @@
   </div>
 
   <div class="status-header">
-    <img class="profile-pic" 
-         [src]="currentStory.user?.profilePicUrl" 
-         alt="Profile"
-         (click)="showTemporaryStories(currentStory.user?.userId)">
+    <div class="profile-pic-wrapper">
+      <img class="profile-pic"
+           [src]="currentStory.user?.profilePicUrl"
+           alt="Profile"
+           (click)="showTemporaryStories(currentStory.user?.userId)">
+      <div class="post-overlay" *ngIf="currentStory.user?.userId === user.userId">
+      <span> {{ currentStory.viewedByUserIds?.length - 1 || 0 }}</span>  
+      </div>
+    </div>
     <div class="user-info">
       <div class="username">{{ currentStory.user?.firstName }} {{ currentStory.user?.lastName }}</div>
-<div class="time-ago">{{ getTimeAgo(currentStory.createdAt) }}</div>
+      <div class="time-ago">{{ getTimeAgo(currentStory.createdAt) }}</div>
     </div>
   </div>
 
   <img *ngIf="currentStory.mediaFiles?.length && currentStory.mediaFiles[0].mediaType === 'image'"
-     [src]="currentStory.mediaFiles[0].url"
-     class="status-image" />
-
-<video *ngIf="currentStory.mediaFiles?.length && currentStory.mediaFiles[0].mediaType === 'video'"
        [src]="currentStory.mediaFiles[0].url"
-       controls class="status-video"></video>
-  <div class="status-text">{{ currentStory.content }}</div>
+       class="status-image" />
+
+  <video *ngIf="currentStory.mediaFiles?.length && currentStory.mediaFiles[0].mediaType === 'video'"
+         [src]="currentStory.mediaFiles[0].url"
+         controls class="status-video"></video>
+
   <div class="tap-area tap-left" (click)="prevStory()"></div>
   <div class="tap-area tap-right" (click)="nextStory()"></div>
 </div>
@@ -35,4 +38,3 @@
 <div *ngIf="storiesByUser.length == 0 || currentUserStories.length == 0" class="no-stories">
   No stories to show
 </div>
-

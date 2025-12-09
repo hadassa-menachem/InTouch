@@ -93,7 +93,7 @@
   margin-right: 5px;
   border: 2px solid #fff;
   object-fit: cover;
-  box-shadow: 0 0 8px rgba(25, 118, 210, 0.4);
+  box-shadow: 0 2px 8px rgba(238, 13, 107, 0.808);
   transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
 }
 
@@ -126,4 +126,21 @@
   color: #999;
   padding: 20px;
   font-size: 14px;
+}
+
+.profile-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.unread-bubble {
+  position: absolute;
+  top: -2px;   
+  right: 2px;  
+  background-color: #0ab8ce;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(255, 59, 48, 0.3);
 }
