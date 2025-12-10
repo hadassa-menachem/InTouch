@@ -59,7 +59,7 @@
                         *ngIf="media.mediaType === 'video'" 
                         controls 
                         [src]="media.url" 
-                        (click)="goToPostPage(post)">
+                        (click)="goToPostPage(post.id)">
                     </video>
                     <lucide-icon 
                         size="15" 

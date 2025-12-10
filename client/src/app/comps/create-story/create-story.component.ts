@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -6,27 +6,39 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../ser/user.service';
 import { User } from '../../classes/User';
+import { LucideIconsModule } from '../../lucide.module';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-create-story',
   templateUrl: './create-story.component.html',
   styleUrls: ['./create-story.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, DragDropModule]
-})
+  imports: [CommonModule, 
+    ReactiveFormsModule,
+    FormsModule,
+    DragDropModule,
+    LucideIconsModule,
+    PickerModule,
+    EmojiModule
+  ],})
 export class CreateStoryComponent implements OnInit {
   createStoryForm: FormGroup;
   selectedFile: File | null = null;
   imagePreviewUrl: string | null = null;
   textSize = 24;
   user: User = new User();
-
+  errImage:boolean=false;
+  errVideo:boolean=false;
   showMessage = false;
   messageText = '';
   isSuccess = true;
-
+  showEmojiPicker = false;
   dragPosition = { x: 50, y: 50 };
 
+  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
+  @ViewChild('messageInputRef') messageInputRef!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -89,14 +101,17 @@ export class CreateStoryComponent implements OnInit {
       const mediaType = this.createStoryForm.get('mediaType')?.value;
 
       if (mediaType === 'image' && !file.type.startsWith('image/')) {
-        alert('נא לבחור קובץ תמונה בלבד');
+        this.errImage = true;
+        this.showFloatingMessage('Please select an image file only', false);
         return;
       }
       if (mediaType === 'video' && !file.type.startsWith('video/')) {
-        alert('נא לבחור קובץ וידאו בלבד');
+        this.errVideo = true;
+        this.showFloatingMessage('Please select an video file only', false);
         return;
       }
-
+      this.errImage = false;
+      this.errVideo = false;
       this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => {
@@ -234,5 +249,27 @@ export class CreateStoryComponent implements OnInit {
     setTimeout(() => {
       this.showMessage = false;
     }, 5000);
+  }
+  
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target) ?? false;
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    if (!clickedInside && !clickedButton) {
+      this.showEmojiPicker = false;
+    }
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      const current = this.createStoryForm.get('customText')?.value || '';
+      this.createStoryForm.get('customText')?.setValue(current + emoji);
+      setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+    }
   }
 }

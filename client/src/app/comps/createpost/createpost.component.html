@@ -1,6 +1,6 @@
 <div class="create-post-container">
   <form [formGroup]="createPostForm" (ngSubmit)="onSubmit()">
-    <p>Uploading a post</p>
+    <p>Create a post</p>
 
     <div class="input-row">
       <div class="input-group">
@@ -26,49 +26,59 @@
         <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" />
       </div>
 
+      <div 
+      *ngIf="errImage" 
+      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
+      class="floating-message">
+    </div>
+
+    <div 
+      *ngIf="errVideo" 
+      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
+      class="floating-message">
+    </div>
+
       <div class="input-group" *ngIf="createPostForm.value.imageSource === 'url'">
         <label>Link to image or video:</label>
         <input type="text" formControlName="imageUrl" placeholder="Insert link" />
       </div>
     </div>
 
-    <div class="input-row single">
-      <div class="input-group">
-        <label>Text:</label>
-        <textarea formControlName="customText" rows="4"></textarea> 
-         <div class="emoji-button-wrapper" style="position: relative;">
-        <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+<div class="input-group text-with-emoji">
+  <label>Text:</label>
+
+  <div class="text-input-wrapper">
+
+    <div class="emoji-button-wrapper">
+      <button type="button" class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
         <lucide-icon name="smile"></lucide-icon>
-        </button>
-    
+      </button>
+    </div>
+    <input
+      formControlName="customText"
+      #messageInputRef
+      type="text"
+      placeholder="Type text..." />
     <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-      <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+      <emoji-mart (emojiSelect)="addEmoji($event)"
+                  [style]="{ width: '300px', height: '350px' }"
+                  [showPreview]="false"></emoji-mart>
     </div>
   </div>
-      </div>
+</div>
+
+
+    <div *ngIf="showMessage" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="floating-message">
+      {{ messageText }}
     </div>
 
     <button type="submit" class="submit-btn">Publish a post</button>
-    
-    <div *ngIf="showMessage" 
-      [ngClass]="{'success': isSuccess, 'error': !isSuccess}" 
-      class="floating-message">
-      {{ messageText }}
-    </div>
   </form>
 
-  <div class="preview-container">
+  <div class="preview-container" *ngIf="imagePreviewUrl">
     <div class="post-preview">
-      <ng-container *ngIf="imagePreviewUrl">
-        <img *ngIf="createPostForm.value.mediaType === 'image'" 
-             [src]="imagePreviewUrl" 
-             class="preview-image" />
-        <video *ngIf="createPostForm.value.mediaType === 'video'" 
-               [src]="imagePreviewUrl" 
-               class="preview-video" 
-               controls>
-        </video>
-      </ng-container>
+      <img *ngIf="createPostForm.value.mediaType === 'image'" [src]="imagePreviewUrl" class="preview-image" />
+      <video *ngIf="createPostForm.value.mediaType === 'video'" [src]="imagePreviewUrl" class="preview-video" controls></video>
 
       <div class="post-text" *ngIf="createPostForm.value.customText">
         {{ createPostForm.value.customText }}

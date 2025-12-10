@@ -1,18 +1,26 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { FormsModule } from '@angular/forms';
 import { UserService } from '../../ser/user.service';
 import { User } from '../../classes/User';
 import { LucideIconsModule } from '../../lucide.module';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-createpost',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, DragDropModule, LucideIconsModule],
+  imports: [CommonModule, 
+    ReactiveFormsModule,
+    FormsModule,
+    DragDropModule,
+    LucideIconsModule,
+    PickerModule,
+    EmojiModule
+  ],
   templateUrl: './createpost.component.html',
   styleUrls: ['./createpost.component.css']
 })
@@ -20,13 +28,16 @@ export class CreatePostComponent implements OnInit {
   createPostForm: FormGroup;
   selectedFile: File | null = null;
   imagePreviewUrl: string | null = null;
-  textSize = 24;
   user: User = new User();
-  showEmojiPicker: boolean = false;
-
+  showEmojiPicker = false;
+  errImage:boolean=false;
+  errVideo:boolean=false;
   showMessage = false;
   messageText = '';
   isSuccess = true;
+
+  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
+  @ViewChild('messageInputRef') messageInputRef!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -44,8 +55,6 @@ export class CreatePostComponent implements OnInit {
       customText: ['']
     });
   }
-  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
-  @ViewChild('input') messageInputRef!: ElementRef;
 
   ngOnInit(): void {
     this.user = this.userSer.getCurrentUser()!;
@@ -80,14 +89,17 @@ export class CreatePostComponent implements OnInit {
       const mediaType = this.createPostForm.get('mediaType')?.value;
 
       if (mediaType === 'image' && !file.type.startsWith('image/')) {
+        this.errImage = true;
         this.showFloatingMessage('Please select an image file only', false);
         return;
       }
       if (mediaType === 'video' && !file.type.startsWith('video/')) {
-        this.showFloatingMessage('Please select a video file only', false);
+        this.errVideo = true;
+        this.showFloatingMessage('Please select an video file only', false);
         return;
       }
-
+      this.errImage = false;
+      this.errVideo = false;
       this.selectedFile = file;
 
       const reader = new FileReader();
@@ -99,9 +111,7 @@ export class CreatePostComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.createPostForm.invalid) {
-      return;
-    }
+    if (this.createPostForm.invalid) return;
 
     const formValues = this.createPostForm.value;
     const formData = new FormData();
@@ -114,7 +124,7 @@ export class CreatePostComponent implements OnInit {
     }
 
     this.userSer.addPost(formData).subscribe({
-      next: (response) => {
+      next: () => {
         this.showFloatingMessage('Post published successfully!', true);
         setTimeout(() => {
           this.router.navigate(['/profile']);
@@ -126,28 +136,6 @@ export class CreatePostComponent implements OnInit {
     });
   }
 
-  onDocumentClick(event: MouseEvent): void {
-   const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
-   const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
-
-   if (!clickedInside && !clickedButton) {
-     this.showEmojiPicker = false;
-   }
-  }
-
-  toggleEmojiPicker(): void {
-    this.showEmojiPicker = !this.showEmojiPicker;
-  }
-
-  addEmoji(event: any): void {
-    const emoji = event?.emoji?.native || event?.native;
-     if (emoji) {
-     const currentText = this.createPostForm.get('customText')?.value || '';
-     this.createPostForm.get('customText')?.setValue(currentText + emoji);
-     setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
-    }
-  }
-
   showFloatingMessage(text: string, success: boolean = true) {
     this.messageText = text;
     this.isSuccess = success;
@@ -156,5 +144,27 @@ export class CreatePostComponent implements OnInit {
     setTimeout(() => {
       this.showMessage = false;
     }, 5000);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target) ?? false;
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    if (!clickedInside && !clickedButton) {
+      this.showEmojiPicker = false;
+    }
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      const current = this.createPostForm.get('customText')?.value || '';
+      this.createPostForm.get('customText')?.setValue(current + emoji);
+      setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+    }
   }
 }

@@ -1,6 +1,6 @@
 <div class="create-story-container">
   <form [formGroup]="createStoryForm" (ngSubmit)="onSubmit()">
-    <p>Uploading a story</p>
+    <p>Create a story</p>
 
     <div class="input-row">
       <div class="input-group">
@@ -29,6 +29,18 @@
           accept="image/*,video/*"/>
       </div>
 
+    <div 
+      *ngIf="errImage" 
+      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
+      class="floating-message">
+    </div>
+
+    <div 
+      *ngIf="errVideo" 
+      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
+      class="floating-message">
+    </div>
+
       <div class="input-group" *ngIf="createStoryForm.value.imageSource === 'url'">
         <label>Link to image or video:</label>
         <input 
@@ -48,12 +60,28 @@
       </div>
     </div>
 
-    <div class="input-row single">
-      <div class="input-group">
-        <label>Text:</label>
-        <input type="text" formControlName="customText"/>
-      </div>
+   <div class="input-group text-with-emoji">
+  <label>Text:</label>
+
+  <div class="text-input-wrapper">
+
+    <div class="emoji-button-wrapper">
+      <button type="button" class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+        <lucide-icon name="smile"></lucide-icon>
+      </button>
     </div>
+    <input
+      formControlName="customText"
+      #messageInputRef
+      type="text"
+      placeholder="Type text..." />
+    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
+      <emoji-mart (emojiSelect)="addEmoji($event)"
+                  [style]="{ width: '300px', height: '350px' }"
+                  [showPreview]="false"></emoji-mart>
+    </div>
+  </div>
+</div>
 
     <div class="input-row">
       <div class="input-group">

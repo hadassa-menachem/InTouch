@@ -36,9 +36,8 @@ input:focus {
   flex-direction: column;
 }
 
-.input-group input,
 .input-group select,
-.input-group textarea {
+.input-group input {
   width: 100%;
   padding: 12px;
   border-radius: 6px;
@@ -51,28 +50,31 @@ input:focus {
   resize: vertical;
 }
 
-.input-group textarea {
-  min-height: 80px;
+.input-group {
+  min-height: 58px;
 }
 
 .submit-btn {
   width: 100%;
   padding: 14px;
-  background-color: #E0F7FA ;
-  color: #1565C0;;
+  background-color: #ffeef4;
+  color: #ff347d;
   font-weight: bold;
   font-size: 18px;
-  border: 1.5px solid #1565C0;
+  border: 1.5px solid #ff347d;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  margin-top: 15px;
   font-family: inherit;
-  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  box-shadow: 0 2px 8px rgba(241, 59, 135, 0.541);
+  margin-top: 10px;
 }
 
 .submit-btn:hover {
-  background-color: #ffffff;
+  background-color: #f1feff;
+  box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
+  border: 1.5px solid #0ab8ce;
+  color: #1976D2;
 }
 
 .floating-message {
@@ -96,4 +98,43 @@ input:focus {
 .error-message {
   background-color: #f44336;
   color: white;
+}
+
+
+.emoji-button-wrapper {
+  position: absolute;
+  right: 10px;
+  top: 45%;
+  transform: translateY(-50%);
+  z-index: 20;              
+  pointer-events: auto;     
+}
+
+.emoji-button-wrapper .icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 22px;
+  color: #0ab8ce;
+}
+
+.emoji-picker-popover {
+  position: absolute;
+  bottom: 55px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.text-input-wrapper {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+.text-input-wrapper input {
+  width: 100%;
+  padding-left: 56px;
+  box-sizing: border-box;
+  z-index: 1;
 }

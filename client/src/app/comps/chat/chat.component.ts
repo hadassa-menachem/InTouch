@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -29,17 +29,14 @@ export class ChatComponent implements OnInit {
 
   newMessage: string = '';
   messages: Message[] = [];
-
   selectedFile: File | null = null;
   selectedFilePreview: string | null = null;
-
   showEmojiPicker: boolean = false;
-
   currentUserId: string = '';
   targetUserId: string = '';
   targetUser: any = null;
-
   shouldAutoScroll: boolean = true;
+  selectedFileType: 'image' | 'pdf' | null = null;
 
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
@@ -220,6 +217,7 @@ export class ChatComponent implements OnInit {
     this.shouldAutoScroll = distanceFromBottom < 100;
   }
 
+@HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
     const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
@@ -228,19 +226,13 @@ export class ChatComponent implements OnInit {
       this.showEmojiPicker = false;
     }
   }
-
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker() {
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
-  addEmoji(event: any): void {
-    const emoji = event?.emoji?.native || event?.native;
-
-    if (emoji) {
-      this.newMessage += emoji;
-
-      setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
-    }
+  addEmoji(event: any) {
+    const emoji = event.emoji.native;
+    this.newMessage = (this.newMessage || '') + emoji;
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -256,8 +248,6 @@ export class ChatComponent implements OnInit {
       this.showEmojiPicker = false;
     }
   }
-
-  selectedFileType: 'image' | 'pdf' | null = null;
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];

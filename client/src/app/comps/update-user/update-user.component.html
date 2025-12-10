@@ -1,9 +1,12 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form">
+<form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="form">
   <p>Private user update</p>
 
   <div class="input-row">
     <div class="input-group">
       <input type="text" formControlName="userName" placeholder="User name" />
+    </div>
+        <div class="input-group">
+      <input type="password" formControlName="password" placeholder="Password" />
     </div>
   </div>
 
@@ -39,17 +42,24 @@
   </div>
 
   <div class="input-row single">
-    <div class="input-group">
-      <textarea formControlName="bio" placeholder="Biography"></textarea>
+        <div class="input-group">
+    <div class="emoji-button-wrapper">
+      <button type="button" class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+        <lucide-icon name="smile"></lucide-icon>
+      </button>
+    </div>
+    <input
+      formControlName="bio"
+      #messageInputRef
+      type="text"
+      placeholder="Type text..." />
+    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
+      <emoji-mart (emojiSelect)="addEmoji($event)"
+                  [style]="{ width: '300px', height: '350px' }"
+                  [showPreview]="false"></emoji-mart>
     </div>
   </div>
-
-  <div class="input-row single">
-    <div class="input-group">
-      <input type="password" formControlName="password" placeholder="Password" />
-    </div>
-  </div>
-
+</div>
   <div class="input-row single">
     <div class="input-group">
       <input type="file" (change)="onFileSelected($event)" accept="image/*" />

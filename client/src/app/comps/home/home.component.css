@@ -263,6 +263,7 @@
 .post-card {
   width: 100%;
   max-width: 620px;
+  /* max-height: fit-content; */
   margin: 20px auto;
   border: 1px solid #E0E0E0;
   border-radius: 12px;
@@ -355,7 +356,6 @@
 .post-media img,
 .post-media video {
   width: 100%;
-  max-height: 500px;
   object-fit: cover;
   display: block;
   border-radius: 0;

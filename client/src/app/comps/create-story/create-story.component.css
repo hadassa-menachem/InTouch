@@ -16,6 +16,7 @@ form p {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 20px;
+  color: #ff347d;
 }
 
 form input[type="text"],
@@ -74,7 +75,7 @@ form input[type="number"] {
 }
 
 .submit-btn:hover {
-  background-color: #ffffff;
+  background-color: #f1feff;
   box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
   border: 1.5px solid #0ab8ce;
   color: #1976D2;
@@ -88,15 +89,13 @@ form input[type="number"] {
 
 .story-preview {
   position: relative;
-  width: 70%;
-  max-width: 350px;
-  min-height: 300px; 
+  width: fit-content;
+  height: fit-content;
   border: 2px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
   background-color: #fff;
   margin: 0 auto;
-  overflow: hidden; 
 }
 
 .preview-image,
@@ -142,4 +141,42 @@ form input[type="number"] {
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+.emoji-button-wrapper {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;              
+  pointer-events: auto;     
+}
+
+.emoji-button-wrapper .icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 22px;
+  color: #0ab8ce;
+}
+
+.emoji-picker-popover {
+  position: absolute;
+  bottom: 55px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.text-input-wrapper {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+.text-input-wrapper input {
+  width: 100%;
+  padding-left: 56px;
+  box-sizing: border-box;
+  z-index: 1;
 }

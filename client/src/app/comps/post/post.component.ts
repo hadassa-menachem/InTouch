@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, ViewChild,} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef, ViewChild, HostListener,} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -32,11 +32,11 @@ export class PostComponent implements OnInit, AfterViewInit {
   commentBoxPostId: string | null = null;
   commentsListPostId: string | null = null;
   expandedPostIds: string[] = [];
+  showEmojiPicker: boolean = false;
 
   @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
-  showEmojiPicker: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -248,6 +248,16 @@ export class PostComponent implements OnInit, AfterViewInit {
     const index = this.expandedPostIds.indexOf(postId);
     if (index > -1) this.expandedPostIds.splice(index, 1);
     else this.expandedPostIds.push(postId);
+  }
+
+@HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target);
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+
+    if (!clickedInside && !clickedButton) {
+      this.showEmojiPicker = false;
+    }
   }
 
   toggleEmojiPicker(): void {

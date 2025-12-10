@@ -1,15 +1,5 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChildren,
-  QueryList,
-  ElementRef,
-  ViewChild,
-  HostListener,
-} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChildren, QueryList, ElementRef,  ViewChild, HostListener} from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { LucideIconsModule } from '../../lucide.module';
 import { Post } from '../../classes/Post';
@@ -40,7 +30,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   showEmojiPicker: boolean = false;
   expandedPostIds: string[] = [];
   savedPosts: string[] = [];
-
   showMessage = false;
   messageText = '';
   isSuccess = true;
@@ -55,7 +44,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient,
     private userService: UserService
   ) {}
  
@@ -100,7 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.allUsers=this.shuffleArray(users)
         console.log(this.allUsers);
       },
-      error: err => console.error('שגיאה בטעינת משתמשים:', err)
+      error: err => console.error('Error loading users:', err)
     });
   }
 
@@ -113,18 +101,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   checkViewedStories() {
-    console.log('--- כל הסטוריז במערכת ---');
     this.allStories.forEach((story: any) => {
       const hasViewed = story.viewers?.includes(this.user);
-      console.log(`משתמש: ${story.userName} | סטורי ID: ${story.storyId} | נצפה ע"י המשתמש המחובר: ${hasViewed ? 'כן' : 'לא'}`);
       if (story.stories && story.stories.length > 0) {
         story.stories.forEach((s: any) => {
           const viewed = s.viewers?.includes(this.user);
-          console.log(`   ↳ סטורי משנה ID: ${s.storyId} | נצפה: ${viewed ? 'כן' : 'לא'}`);
         });
       }
     });
-    console.log('--------------------------');
   }
 
   getAllStories() {
@@ -156,7 +140,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.allPosts = this.shuffleArray(posts); 
       console.log(this.allPosts);
       },
-      error: err => console.error('שגיאה בטעינת פוסטים:', err)
+      error: err => console.error('Error loading posts:', err)
     });
   }
 
@@ -167,7 +151,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         next: () => {
           post!.likes = post!.likes?.filter(like => like.userId !== this.user.userId) || [];
           this.allPosts = [...this.allPosts];
-          console.log(`❌ Like removed from post ${post.id}`);
         },
         error: err => console.error('Error removing like:', err)
       });
@@ -177,7 +160,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
           if (!post!.likes) post!.likes = [];
           post!.likes.push({ userId: this.user.userId } as Like);
           this.allPosts = [...this.allPosts];
-          console.log(`✅ Like added to post ${post.id}`);
         },
         error: err => console.error('Error adding like:', err)
       });
@@ -194,7 +176,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.allPosts = [...this.allPosts];
         }
       },
-      error: err => console.error('❌ Error refreshing likes:', err)
+      error: err => console.error('Error refreshing likes:', err)
     });
   }
 
@@ -212,7 +194,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   playVideo(event: Event) {
     const video = event.target as HTMLVideoElement;
-    video.play().catch(err => console.log('בעיה בניגון וידאו:', err));
+    video.play().catch(err => console.log('Problem playing video:', err));
   }
 
   pauseVideo(event: Event) {
@@ -347,18 +329,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const el = this.storyContainer.nativeElement;
       el.scrollLeft += 1; 
     }
-  }, 30);
-}
+   }, 30);
+  }
 
   pauseAutoScroll() {
     this.isPaused = true;
-}
+  }
 
   resumeAutoScroll() {
     setTimeout(() => {
     this.isPaused = false;
-  }, 2000); 
-}
+   }, 2000); 
+  }
 
   showFloatingMessage(text: string, success: boolean = true) {
     this.messageText = text;
@@ -366,14 +348,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.showMessage = true;
 
     setTimeout(() => {
-     this.showMessage = false;
-  }, 2000); 
-}
+    this.showMessage = false;
+   }, 2000); 
+  }
 
  shouldShowReadMoreContent(post: Post): boolean {
    if (!post.content) return false;
    return post.content.length > 100; 
-}
+  }
 
  shuffleArray<T>(array: T[]): T[] {
    for (let i = array.length - 1; i > 0; i--) {
@@ -381,6 +363,5 @@ export class HomeComponent implements OnInit, AfterViewInit {
      [array[i], array[j]] = [array[j], array[i]];
    }
    return array;
-}
-
+  }
 }
