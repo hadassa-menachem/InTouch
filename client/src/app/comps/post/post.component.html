@@ -88,7 +88,8 @@
           <lucide-icon name="smile"></lucide-icon>
         </button>
         <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-          <emoji-mart (emojiSelect)="addEmoji($event)" [style]="{ width: '300px', height: '350px' }"></emoji-mart>
+          <emoji-mart (emojiSelect)="addEmoji($event)" [style]="{ width: '300px', height: '350px' }"
+          [showPreview]="false"></emoji-mart>
         </div>
       </div>
       <input

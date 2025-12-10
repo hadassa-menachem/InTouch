@@ -35,10 +35,9 @@ export class StoryComponent implements OnInit, OnDestroy {
     if (!userId) return;
     this.user = this.userService.getCurrentUser()!;
 
- this.userService.getStoryByUserId(userId).subscribe({
-  next: (stories: Story[]) => {
+    this.userService.getStoryByUserId(userId).subscribe({
+    next: (stories: Story[]) => {
 
-    // מוודא שכל השדות קיימים
     const validStories = stories.map(s => {
       s.likes = s.likes || [];
       s.comments = s.comments || [];
@@ -47,14 +46,13 @@ export class StoryComponent implements OnInit, OnDestroy {
       return s;
     });
 
-    // מיון לפי תאריך מהחדש לישן
     validStories.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
-      return dateB - dateA; // b לפני a => מהחדש לישן
+      return dateB - dateA; 
     });
 
-    this.userService.GetUserById(userId).subscribe(user => {
+      this.userService.GetUserById(userId).subscribe(user => {
       validStories.forEach(s => (s.user = user));
 
       this.storiesByUser = [{
@@ -66,14 +64,13 @@ export class StoryComponent implements OnInit, OnDestroy {
       this.currentUserStoryIndex = 0;
 
       if (validStories.length > 0) {
-        this.markStoryAsViewed(validStories[0]);
-        this.startProgress();
-      }
-    });
-  },
-  error: err => console.error(err)
-});
-
+          this.markStoryAsViewed(validStories[0]);
+          this.startProgress();
+        }
+      });
+    },
+    error: err => console.error(err)
+   });
   }
 
   ngOnDestroy(): void {

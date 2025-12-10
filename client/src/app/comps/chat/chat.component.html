@@ -120,7 +120,7 @@
     </button>
     
     <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-      <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+      <emoji-mart (emojiSelect)="addEmoji($event)"[showPreview]="false"></emoji-mart>
     </div>
   </div>
 

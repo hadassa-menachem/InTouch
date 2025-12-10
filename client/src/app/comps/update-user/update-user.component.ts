@@ -1,27 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { User } from '../../classes/User';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../ser/user.service';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { LucideIconsModule } from '../../lucide.module';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 
 @Component({
   selector: 'app-update-user',
   standalone: true,
   templateUrl: './update-user.component.html',
   styleUrl: './update-user.component.css',
-  imports: [ReactiveFormsModule, CommonModule]
-})
+  imports: [CommonModule, 
+    ReactiveFormsModule,
+    FormsModule,
+    DragDropModule,
+    LucideIconsModule,
+    PickerModule,
+    EmojiModule
+  ],})
 export class UpdateUserComponent implements OnInit {
-  registerForm: FormGroup;
+  updateForm: FormGroup;
   submitted = false;
   user: User = new User();
   selectedFile: File | null = null;
-
   showMessage = false;
   messageText = '';
   isSuccess = true;
+  showEmojiPicker = false;
+
+  @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
+  @ViewChild('messageInputRef') messageInputRef!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -29,7 +42,7 @@ export class UpdateUserComponent implements OnInit {
     private http: HttpClient,
     public router: Router
   ) {
-    this.registerForm = this.fb.group({
+    this.updateForm = this.fb.group({
       userName: ['', Validators.required],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
@@ -49,7 +62,7 @@ export class UpdateUserComponent implements OnInit {
     const currentUser = this.usersService.getCurrentUser();
     if (currentUser) {
       this.user = currentUser;
-      this.registerForm.patchValue({
+      this.updateForm.patchValue({
         userName: this.user.userName,
         firstName: this.user.firstName,
         lastName: this.user.lastName,
@@ -71,12 +84,12 @@ export class UpdateUserComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
+    if (this.updateForm.invalid) {
+      this.updateForm.markAllAsTouched();
       return;
     }
 
-    const updatedUser = { ...this.user, ...this.registerForm.value };
+    const updatedUser = { ...this.user, ...this.updateForm.value };
     const formData = new FormData();
 
     for (const key in updatedUser) {
@@ -120,5 +133,27 @@ export class UpdateUserComponent implements OnInit {
     setTimeout(() => {
       this.showMessage = false;
     }, 5000);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target) ?? false;
+    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    if (!clickedInside && !clickedButton) {
+      this.showEmojiPicker = false;
+    }
+  }
+
+  toggleEmojiPicker(): void {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any): void {
+    const emoji = event?.emoji?.native || event?.native;
+    if (emoji) {
+      const current = this.updateForm.get('bio')?.value || '';
+      this.updateForm.get('bio')?.setValue(current + emoji);
+      setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
+    }
   }
 }

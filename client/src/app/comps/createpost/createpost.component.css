@@ -20,8 +20,6 @@ form p {
 
 form input[type="text"],
 form input[type="file"],
-form input[type="color"],
-form input[type="range"],
 form select,
 form input[type="number"],
 form textarea {
@@ -32,14 +30,8 @@ form textarea {
   background-color: #fff;
   color: #4A3F35;
   font-size: 16px;
-  font-family: inherit;
   box-sizing: border-box;
   margin-top: 4px;
-}
-
-form textarea {
-  resize: vertical;
-  min-height: 80px;
 }
 
 .input-row {
@@ -74,13 +66,12 @@ form textarea {
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  font-family: inherit;
   box-shadow: 0 2px 8px rgba(241, 59, 135, 0.541);
   margin-top: 10px;
 }
 
 .submit-btn:hover {
-  background-color: #ffffff;
+  background-color: #f1feff;
   box-shadow: 0 0 12px rgba(25, 118, 210, 0.3);
   border: 1.5px solid #0ab8ce;
   color: #1976D2;
@@ -94,9 +85,10 @@ form textarea {
 
 .post-preview {
   position: relative;
-  width: 70%;
-  max-width: 350px;
-  min-height: 300px;
+  width: fit-content;
+  height: fit-content;
+  max-height: 300px;
+  max-width: 300px;
   border: 2px solid #ccc;
   border-radius: 10px;
   overflow: hidden;
@@ -117,8 +109,54 @@ form textarea {
   color: #4A3F35;
   font-size: 16px;
   line-height: 1.5;
-  word-wrap: break-word;
   white-space: pre-wrap;
+}
+
+.text-with-emoji {
+  position: relative;
+}
+
+.text-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.text-input-wrapper input {
+  flex: 1;
+  padding-left: 40px; 
+}
+
+.text-input-wrapper .icon-btn {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.emoji-picker-popover {
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  z-index: 1000;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 22px;
+  color: #0ab8ce;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  color: #0ab8ce;
+  transform: scale(1.1);
 }
 
 .floating-message {
@@ -150,27 +188,40 @@ form textarea {
   100% { opacity: 0; }
 }
 
-.emoji-picker-popover {
+.emoji-button-wrapper {
   position: absolute;
-  bottom: 40px;
-  right: 0;
-  z-index: 1000;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;              
+  pointer-events: auto;     
 }
 
-.icon-btn {
+.emoji-button-wrapper .icon-btn {
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
   font-size: 22px;
-  color: #ff347d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+  color: #0ab8ce;
 }
 
-.icon-btn:hover {
-  color: #0ab8ce;
-  transform: scale(1.1);
+.emoji-picker-popover {
+  position: absolute;
+  bottom: 55px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.text-input-wrapper {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 20px;
+}
+
+.text-input-wrapper input {
+  width: 100%;
+  padding-left: 56px;
+  box-sizing: border-box;
+  z-index: 1;
 }

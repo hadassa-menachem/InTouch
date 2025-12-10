@@ -52,11 +52,9 @@ export class ProfileComponent implements OnInit {
     userPosts: Post[] = [];
     imagePosts: Post[] = [];
     videoPosts: Post[] = [];
-
     showMessage = false;
     messageText = '';
     isSuccess = true;
-
     showDeleteModal = false;
     postToDelete: Post | null = null;
 
