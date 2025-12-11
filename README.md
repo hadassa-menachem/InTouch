@@ -145,7 +145,7 @@ Upload posts with text and image/video
 
 Preview post before uploading
 
-<img src="https://github.com/user-attachments/assets/1f0f0483-1d82-49eb-92d2-a805533f3e73" width="320" />
+<img src="https://github.com/user-attachments/assets/047a4a83-5b11-4cbb-8517-d19be6184906" width="320" alt="תיאור התמונה">
 
 📸 Create Story
 Description: Upload new stories with text and display duration.
