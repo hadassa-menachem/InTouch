@@ -145,7 +145,7 @@ Upload posts with text and image/video
 
 Preview post before uploading
 
-<img src="https://github.com/user-attachments/assets/1f0f0483-1d82-49eb-92d2-a805533f3e73" width="320" />
+<img src="https://github.com/user-attachments/assets/18292956-045a-41af-8c5c-4689fe3c7276" width="320" />
 
 📸 Create Story
 Description: Upload new stories with text and display duration.
@@ -158,7 +158,8 @@ Select how long the story is displayed
 
 Preview story before uploading, including text
 
-<img src="https://github.com/user-attachments/assets/19c45005-4b8b-4d3b-90d4-461ff881239f" width="320" />
+<img src="https://github.com/user-attachments/assets/ac3ec7a4-8f7a-43bd-bb95-8eebf52b6024" width="320" />
+
 
 🗄️ Database Structure – MongoDB
 Description: Flexible, well-connected collections between entities.
