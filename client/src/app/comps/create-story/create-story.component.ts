@@ -15,30 +15,34 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
   templateUrl: './create-story.component.html',
   styleUrls: ['./create-story.component.css'],
   standalone: true,
-  imports: [CommonModule, 
+  imports: [
+    CommonModule, 
     ReactiveFormsModule,
     FormsModule,
     DragDropModule,
     LucideIconsModule,
     PickerModule,
     EmojiModule
-  ],})
+  ],
+})
 export class CreateStoryComponent implements OnInit {
   createStoryForm: FormGroup;
   selectedFile: File | null = null;
   imagePreviewUrl: string | null = null;
   textSize = 24;
   user: User = new User();
-  errImage:boolean=false;
-  errVideo:boolean=false;
+  errImage: boolean = false;
+  errVideo: boolean = false;
   showMessage = false;
   messageText = '';
   isSuccess = true;
   showEmojiPicker = false;
-  dragPosition = { x: 50, y: 50 };
+  dragPosition = { x: 100, y: 100 };
 
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
+  @ViewChild('emojiButtonRef') emojiButtonRef!: ElementRef;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -65,6 +69,15 @@ export class CreateStoryComponent implements OnInit {
         this.imagePreviewUrl = url || null;
       }
     });
+    
+    setTimeout(() => {
+      const previewElement = document.querySelector('.story-preview') as HTMLElement;
+      if (previewElement) {
+        const centerX = (previewElement.offsetWidth / 2) - 80;
+        const centerY = (previewElement.offsetHeight / 3);
+        this.dragPosition = { x: centerX, y: centerY };
+      }
+    }, 100);
   }
 
   onImageSourceChange() {
@@ -81,7 +94,6 @@ export class CreateStoryComponent implements OnInit {
 
   onStoryTypeChange() {
     const storyType = this.createStoryForm.value.storyType;
-
     this.createStoryForm.patchValue({ durationHours: 24 });
   }
 
@@ -94,25 +106,32 @@ export class CreateStoryComponent implements OnInit {
     this.selectedFile = null;
   }
 
+  removeMedia() {
+    this.clearPreviewAndFile();
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const mediaType = this.createStoryForm.get('mediaType')?.value;
 
-      if (mediaType === 'image' && !file.type.startsWith('image/')) {
-        this.errImage = true;
-        this.showFloatingMessage('Please select an image file only', false);
+      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+        this.showFloatingMessage('Please select an image or video file', false);
         return;
       }
-      if (mediaType === 'video' && !file.type.startsWith('video/')) {
-        this.errVideo = true;
-        this.showFloatingMessage('Please select an video file only', false);
-        return;
-      }
-      this.errImage = false;
-      this.errVideo = false;
+
       this.selectedFile = file;
+      
+      if (file.type.startsWith('image/')) {
+        this.createStoryForm.patchValue({ mediaType: 'image' });
+      } else if (file.type.startsWith('video/')) {
+        this.createStoryForm.patchValue({ mediaType: 'video' });
+      }
+      
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreviewUrl = reader.result as string;
@@ -133,28 +152,26 @@ export class CreateStoryComponent implements OnInit {
   }
   
   private async composeImageWithText(
-   baseImageSrc: string,
-   text: string,
-   textColor: string,
-   textSize: number,
-   posX: number,
-   posY: number
-   ): Promise<File> {
+    baseImageSrc: string,
+    text: string,
+    textColor: string,
+    textSize: number,
+    posX: number,
+    posY: number
+  ): Promise<File> {
 
     const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const im = new Image();
-    im.crossOrigin = 'anonymous';
-    im.onload = () => resolve(im);
-    im.onerror = reject;
-    im.src = baseImageSrc;
-  });
-
+      const im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = () => resolve(im);
+      im.onerror = reject;
+      im.src = baseImageSrc;
+    });
 
     const previewElement = document.querySelector('.story-preview') as HTMLElement;
     const previewWidth = previewElement.offsetWidth;
     const previewHeight = previewElement.offsetHeight;
 
-  
     const scaleX = img.naturalWidth / previewWidth;
     const scaleY = img.naturalHeight / previewHeight;
 
@@ -168,15 +185,20 @@ export class CreateStoryComponent implements OnInit {
 
     ctx.drawImage(img, 0, 0);
 
-    ctx.font = `${textSize * scaleX}px Calibri`;
+    ctx.font = `bold ${textSize * scaleX}px Arial`;
     ctx.fillStyle = textColor;
     ctx.textBaseline = 'top';
+
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
 
     ctx.fillText(text, realX, realY);
 
     const blob: Blob = await new Promise(resolve =>
-    canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
-  );
+      canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
+    );
 
     return new File([blob], 'story.jpg', { type: 'image/jpeg' });
   }
@@ -200,19 +222,18 @@ export class CreateStoryComponent implements OnInit {
     let fileToSend: File | null = null;
 
     if (formValues.mediaType === 'image' && this.selectedFile) {
+      const baseImageSrc = URL.createObjectURL(this.selectedFile);
 
-    const baseImageSrc = URL.createObjectURL(this.selectedFile);
+      fileToSend = await this.composeImageWithText(
+        baseImageSrc,
+        formValues.customText || '',
+        formValues.textColor,
+        this.textSize,
+        this.dragPosition.x,
+        this.dragPosition.y
+      );
 
-    fileToSend = await this.composeImageWithText(
-      baseImageSrc,
-      formValues.customText || '',
-      formValues.textColor,
-      this.textSize,
-      this.dragPosition.x,
-      this.dragPosition.y
-    );
-
-    URL.revokeObjectURL(baseImageSrc);
+      URL.revokeObjectURL(baseImageSrc);
 
     } else if (formValues.mediaType === 'video' && this.selectedFile) {
       fileToSend = this.selectedFile;
@@ -223,9 +244,6 @@ export class CreateStoryComponent implements OnInit {
     } else if (formValues.imageSource === 'url' && formValues.imageUrl) {
       formData.append('ImageUrl', formValues.imageUrl);
     }
-
-    formData.forEach((value, key) => {
-    });
 
     this.userSer.addStory(formData).subscribe({
       next: (res) => {
@@ -238,7 +256,6 @@ export class CreateStoryComponent implements OnInit {
         this.showFloatingMessage('Error uploading story', false);
       }
     });
-    console.log("fileToSend:", fileToSend);
   }
 
   showFloatingMessage(text: string, success: boolean = true) {
@@ -254,13 +271,15 @@ export class CreateStoryComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target) ?? false;
-    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    const clickedButton = this.emojiButtonRef?.nativeElement?.contains(event.target) ?? false;
+    
     if (!clickedInside && !clickedButton) {
       this.showEmojiPicker = false;
     }
   }
 
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: Event): void {
+    event.stopPropagation();
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 
@@ -271,5 +290,39 @@ export class CreateStoryComponent implements OnInit {
       this.createStoryForm.get('customText')?.setValue(current + emoji);
       setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
     }
+  }
+
+  showTextInput = false;
+  showColorPicker = false;
+  showSettings = false;
+
+  colorOptions = [
+    '#FFFFFF', '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00',
+    '#FF00FF', '#00FFFF', '#FFA500', '#800080', '#FFC0CB', '#A52A2A'
+  ];
+
+  toggleTextInput(): void {
+    this.showTextInput = !this.showTextInput;
+    this.showColorPicker = false;
+    this.showEmojiPicker = false;
+    this.showSettings = false;
+  }
+
+  toggleColorPicker(): void {
+    this.showColorPicker = !this.showColorPicker;
+    this.showTextInput = false;
+    this.showEmojiPicker = false;
+    this.showSettings = false;
+  }
+
+  toggleSettings(): void {
+    this.showSettings = !this.showSettings;
+    this.showTextInput = false;
+    this.showColorPicker = false;
+    this.showEmojiPicker = false;
+  }
+
+  selectColor(color: string): void {
+    this.createStoryForm.patchValue({ textColor: color });
   }
 }

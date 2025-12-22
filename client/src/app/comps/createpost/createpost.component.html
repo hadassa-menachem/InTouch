@@ -1,88 +1,89 @@
 <div class="create-post-container">
   <form [formGroup]="createPostForm" (ngSubmit)="onSubmit()">
-    <p>Create a post</p>
+    
+    <div class="post-preview-box">
+      <div class="post-preview" [class.has-media]="imagePreviewUrl">
+        
+        <button 
+          *ngIf="imagePreviewUrl" 
+          type="button" 
+          class="remove-media-btn"
+          (click)="removeMedia()">
+          <lucide-icon name="X" [size]="20"></lucide-icon>
+        </button>
 
-    <div class="input-row">
-      <div class="input-group">
-        <label>Media Type:</label>
-        <select formControlName="mediaType" (change)="onMediaTypeChange()">
-          <option value="image">Image</option>
-          <option value="video">Video</option>
-        </select>
+        <div class="upload-overlay-corner" *ngIf="!imagePreviewUrl">
+          <input 
+            type="file" 
+            id="fileInput"
+            (change)="onFileSelected($event)" 
+            accept="image/*,video/*"
+            style="display: none"/>
+          <label for="fileInput" class="upload-btn-corner">
+            <lucide-icon name="Plus" [size]="32"></lucide-icon>
+          </label>
+        </div>
+
+        <ng-container *ngIf="imagePreviewUrl">
+          <img
+            *ngIf="createPostForm.value.mediaType === 'image'"
+            [src]="imagePreviewUrl"
+            class="preview-image"/>
+
+          <video
+            *ngIf="createPostForm.value.mediaType === 'video'"
+            [src]="imagePreviewUrl"
+            class="preview-video"
+            autoplay
+            muted
+            loop>
+          </video>
+        </ng-container>
+
+        <div class="no-media-message" *ngIf="!imagePreviewUrl">
+          <lucide-icon name="image" [size]="64"></lucide-icon>
+          <p>Upload photo or video</p>
+        </div>
+
+        <div class="icons-toolbar">
+          <button type="submit" class="icon-btn" [disabled]="!imagePreviewUrl">
+            <lucide-icon name="send"></lucide-icon>
+            <span>Publish</span>
+          </button>
+        </div>
       </div>
-
-      <div class="input-group">
-        <label>Media source:</label>
-        <select formControlName="imageSource" (change)="onImageSourceChange()">
-          <option value="upload">Upload from computer</option>
-          <option value="url">Link</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="input-row single">
-      <div class="input-group" *ngIf="createPostForm.value.imageSource === 'upload'">
-        <label>Upload a file:</label>
-        <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*" />
-      </div>
-
-      <div 
-      *ngIf="errImage" 
-      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
-      class="floating-message">
     </div>
 
     <div 
-      *ngIf="errVideo" 
+      *ngIf="showMessage" 
       [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
       class="floating-message">
-    </div>
-
-      <div class="input-group" *ngIf="createPostForm.value.imageSource === 'url'">
-        <label>Link to image or video:</label>
-        <input type="text" formControlName="imageUrl" placeholder="Insert link" />
-      </div>
-    </div>
-
-<div class="input-group text-with-emoji">
-  <label>Text:</label>
-
-  <div class="text-input-wrapper">
-
-    <div class="emoji-button-wrapper">
-      <button type="button" class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
-        <lucide-icon name="smile"></lucide-icon>
-      </button>
-    </div>
-    <input
-      formControlName="customText"
-      #messageInputRef
-      type="text"
-      placeholder="Type text..." />
-    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-      <emoji-mart (emojiSelect)="addEmoji($event)"
-                  [style]="{ width: '300px', height: '350px' }"
-                  [showPreview]="false"></emoji-mart>
-    </div>
-  </div>
-</div>
-
-
-    <div *ngIf="showMessage" [ngClass]="{'success': isSuccess, 'error': !isSuccess}" class="floating-message">
       {{ messageText }}
     </div>
-
-    <button type="submit" class="submit-btn">Publish a post</button>
   </form>
-
-  <div class="preview-container" *ngIf="imagePreviewUrl">
-    <div class="post-preview">
-      <img *ngIf="createPostForm.value.mediaType === 'image'" [src]="imagePreviewUrl" class="preview-image" />
-      <video *ngIf="createPostForm.value.mediaType === 'video'" [src]="imagePreviewUrl" class="preview-video" controls></video>
-
-      <div class="post-text" *ngIf="createPostForm.value.customText">
-        {{ createPostForm.value.customText }}
-      </div>
-    </div>
-  </div>
+        <div class="popup-box text-popup">
+          <div class="text-with-emoji-inline">
+            <input
+              formControlName="customText"
+              #messageInputRef
+              type="text"
+              placeholder="Type text..." />
+            <button 
+              type="button" 
+              class="emoji-btn-inline"
+              #emojiButtonRef
+              [class.active]="showEmojiPicker"
+              (click)="toggleEmojiPicker($event)">
+              <lucide-icon name="smile"></lucide-icon>
+            </button>
+          </div>
+          
+          <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
+            <emoji-mart 
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '100%', maxWidth: '320px' }"
+              [showPreview]="false">
+            </emoji-mart>
+          </div>
+        </div>
 </div>

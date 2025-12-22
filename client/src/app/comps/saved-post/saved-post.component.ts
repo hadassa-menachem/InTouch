@@ -4,6 +4,7 @@ import { UserService } from '../../ser/user.service';
 import { Post } from '../../classes/Post';
 import { User } from '../../classes/User';
 import { Router } from '@angular/router';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-saved-post',
@@ -16,7 +17,11 @@ export class SavedPostComponent implements OnInit {
   user: User | null = null;
   savedPosts: Post[] = [];
 
-  constructor(private userSer: UserService, private router: Router) {}
+  constructor(
+    private userSer: UserService, 
+    private router: Router,
+    private viewportScroller: ViewportScroller
+  ) {}
 
   ngOnInit(): void {
     this.user = this.userSer.getCurrentUser();
@@ -36,6 +41,10 @@ export class SavedPostComponent implements OnInit {
   }
 
   goToPostPage(postId: string) {
-    this.router.navigate(['/post', postId]);
+    this.router.navigate(['/post', postId]).then(() => {
+      setTimeout(() => {
+        this.viewportScroller.scrollToAnchor(postId);
+      }, 100);
+    });
   }
 }

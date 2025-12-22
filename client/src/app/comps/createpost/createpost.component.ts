@@ -13,7 +13,8 @@ import { EmojiModule } from '@ctrl/ngx-emoji-mart/ngx-emoji';
 @Component({
   selector: 'app-createpost',
   standalone: true,
-  imports: [CommonModule, 
+  imports: [
+    CommonModule, 
     ReactiveFormsModule,
     FormsModule,
     DragDropModule,
@@ -30,14 +31,17 @@ export class CreatePostComponent implements OnInit {
   imagePreviewUrl: string | null = null;
   user: User = new User();
   showEmojiPicker = false;
-  errImage:boolean=false;
-  errVideo:boolean=false;
+  errImage: boolean = false;
+  errVideo: boolean = false;
   showMessage = false;
   messageText = '';
   isSuccess = true;
 
+  showTextInput = false;
+
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
+  @ViewChild('emojiButtonRef') emojiButtonRef!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
@@ -50,31 +54,17 @@ export class CreatePostComponent implements OnInit {
       mediaType: ['image', Validators.required],
       imageSource: ['upload', Validators.required],
       imageUrl: [''],
-      textColor: ['#ffffff'],
-      backgroundColor: ['#0f1b4c'],
       customText: ['']
     });
   }
 
   ngOnInit(): void {
     this.user = this.userSer.getCurrentUser()!;
-    console.log(this.user);
   }
 
-  onMediaTypeChange() {
-    this.clearPreviewAndFile();
-  }
-
-  onImageSourceChange() {
-    const source = this.createPostForm.get('imageSource')?.value;
-    if (source === 'upload') {
-      this.createPostForm.get('imageUrl')?.setValue('');
-      this.clearPreviewAndFile();
-    } else if (source === 'url') {
-      const url = this.createPostForm.get('imageUrl')?.value;
-      this.imagePreviewUrl = url || null;
-      this.selectedFile = null;
-    }
+  toggleTextInput(): void {
+    this.showTextInput = !this.showTextInput;
+    this.showEmojiPicker = false;
   }
 
   clearPreviewAndFile() {
@@ -82,26 +72,32 @@ export class CreatePostComponent implements OnInit {
     this.selectedFile = null;
   }
 
+  removeMedia() {
+    this.clearPreviewAndFile();
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const mediaType = this.createPostForm.get('mediaType')?.value;
 
-      if (mediaType === 'image' && !file.type.startsWith('image/')) {
-        this.errImage = true;
-        this.showFloatingMessage('Please select an image file only', false);
+      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+        this.showFloatingMessage('Please select an image or video file', false);
         return;
       }
-      if (mediaType === 'video' && !file.type.startsWith('video/')) {
-        this.errVideo = true;
-        this.showFloatingMessage('Please select an video file only', false);
-        return;
-      }
-      this.errImage = false;
-      this.errVideo = false;
+
       this.selectedFile = file;
-
+      
+      if (file.type.startsWith('image/')) {
+        this.createPostForm.patchValue({ mediaType: 'image' });
+      } else if (file.type.startsWith('video/')) {
+        this.createPostForm.patchValue({ mediaType: 'video' });
+      }
+      
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreviewUrl = reader.result as string;
@@ -149,13 +145,15 @@ export class CreatePostComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const clickedInside = this.emojiPickerRef?.nativeElement?.contains(event.target) ?? false;
-    const clickedButton = (event.target as HTMLElement)?.closest('.emoji-button-wrapper');
+    const clickedButton = this.emojiButtonRef?.nativeElement?.contains(event.target) ?? false;
+    
     if (!clickedInside && !clickedButton) {
       this.showEmojiPicker = false;
     }
   }
 
-  toggleEmojiPicker(): void {
+  toggleEmojiPicker(event: Event): void {
+    event.stopPropagation();
     this.showEmojiPicker = !this.showEmojiPicker;
   }
 

@@ -1,12 +1,10 @@
-<div class="search-container">
-  <input 
-    type="text" 
-    placeholder="Search for users" 
-    (input)="onSearch($event)"/>
-
-  <button class="search-icon">
-    <lucide-icon class="material-icons" name="search"></lucide-icon>
-  </button>
+ <div class="follwings-page">
+ <div class="search-container">
+    <input type="text" placeholder="Search for users" (input)="onSearch($event)" />
+    <button class="search-icon">
+      <lucide-icon class="material-icons" name="search"></lucide-icon>
+    </button>
+  </div>
 
   <div class="search-list">
     <ng-container *ngIf="filteredFollowings.length > 0; else noResults">

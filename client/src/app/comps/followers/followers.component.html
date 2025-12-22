@@ -1,12 +1,11 @@
+ <div class="follwings-page">
+ <div class="search-container">
+    <input type="text" placeholder="Search for users" (input)="onSearch($event)" />
+    <button class="search-icon">
+      <lucide-icon class="material-icons" name="search"></lucide-icon>
+    </button>
+  </div>
 <div class="search-container">
-  <input
-    type="text"
-    placeholder="Search for users"
-    (input)="onSearch($event)"/>
-
-  <button class="search-icon">
-    <lucide-icon class="material-icons" name="search"></lucide-icon>
-  </button>
 
   <div class="search-list">
     <ng-container *ngIf="filteredFollowers.length > 0; else noResults">
@@ -33,4 +32,5 @@
       <div class="no-results">No results found for'{{searchTerm}}'</div>
     </ng-template>
   </div>
+</div>
 </div>

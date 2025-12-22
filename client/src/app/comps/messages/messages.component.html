@@ -26,12 +26,13 @@
       </div>
 
       <div class="message-info">
-        <span class="username">{{ chat.username }}</span>
-        <span class="last-message">
-          <span *ngIf="chat.isSentByCurrentUser" class="under">You:</span>
-          {{ chat.lastMessage?.content || 'No messages yet' }}
-        </span>
-      </div>
+  <span class="username">{{ chat.username }}</span>
+  <span class="last-message">
+    <span *ngIf="chat.isSentByCurrentUser" class="under">You:</span>
+    {{ chat.lastMessage?.content || 'No messages yet' }}
+  </span>
+</div>
+
 
       <div class="status-checks" *ngIf="chat.isSentByCurrentUser && chat.lastMessage">
         <ng-container *ngIf="!chat.lastMessage.isDelivered && !chat.lastMessage.isRead">

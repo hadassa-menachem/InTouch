@@ -1,49 +1,66 @@
-<div class="context">
-  <div class="top-bar">
-     <div class="logo-wrapper">
-    <img class="logo-img" src="assets/images/logo.png"/>
-    <div class="logo">InTouch</div>
-  </div>
-    <div class="icons">
-      <lucide-icon name="bell" *ngIf="!ifUser()" (click)="navigate('/notification')"></lucide-icon>
-      <lucide-icon name="message-square" *ngIf="!ifUser()" (click)="navigate('/messages')"></lucide-icon>
-      <lucide-icon name="log-in"  *ngIf="isProfilePage()" (click)="logout()"></lucide-icon>
+<div class="app-shell">
+  
+  <header class="top-bar">
+    <div class="logo-wrapper">
+      <img class="logo-img" src="assets/images/logo.png" alt="InTouch logo" />
+      <div class="logo">InTouch</div>
     </div>
-  </div>
 
-  <div class="feed">
+    <div class="icons">
+      <lucide-icon
+        name="bell"
+        *ngIf="!ifUser()"
+        (click)="navigate('/notification')">
+      </lucide-icon>
+
+      <lucide-icon
+        name="message-square"
+        *ngIf="!ifUser()"
+        (click)="navigate('/messages')">
+      </lucide-icon>
+
+      <lucide-icon
+        name="log-in"
+        *ngIf="isProfilePage()"
+        (click)="logout()">
+      </lucide-icon>
+    </div>
+  </header>
+
+  <main class="feed">
     <router-outlet></router-outlet>
-  </div>
+  </main>
 
-  <div class="bottom-nav">
-    <lucide-icon 
-      name="home" 
+  <nav class="bottom-nav">
+    <lucide-icon
+      name="home"
       (click)="navigate('/home')"
       [class.active]="isActiveRoute('/home')">
     </lucide-icon>
-    
-    <lucide-icon 
-      name="search" 
+
+    <lucide-icon
+      name="search"
       (click)="navigate('/search')"
       [class.active]="isActiveRoute('/search')">
     </lucide-icon>
-    
-    <lucide-icon 
-      name="plus-square" 
+
+    <lucide-icon
+      name="plus-square"
       (click)="navigate('/createpost')"
       [class.active]="isActiveRoute('/createpost')">
     </lucide-icon>
-    
-    <lucide-icon 
-      name="heart" 
+
+    <lucide-icon
+      name="heart"
       (click)="navigate('/saved-post')"
       [class.active]="isActiveRoute('/saved-post')">
     </lucide-icon>
-    
-    <lucide-icon 
-      name="user" 
+
+    <lucide-icon
+      name="user"
       (click)="navigate('/profile')"
       [class.active]="isActiveRoute('/profile')">
     </lucide-icon>
-  </div>
+  </nav>
+
 </div>

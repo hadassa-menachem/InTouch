@@ -1,107 +1,161 @@
 <div class="create-story-container">
   <form [formGroup]="createStoryForm" (ngSubmit)="onSubmit()">
-    <p>Create a story</p>
+    
+    <div class="story-preview-box">
+      <div class="story-preview" [class.has-media]="imagePreviewUrl">
+        
+        <button 
+          *ngIf="imagePreviewUrl" 
+          type="button" 
+          class="remove-media-btn"
+          (click)="removeMedia()">
+          <lucide-icon name="X" [size]="20"></lucide-icon>
+        </button>
 
-    <div class="input-row">
-      <div class="input-group">
-        <label>Media Type:</label>
-        <select formControlName="mediaType" (change)="onMediaTypeChange()">
-          <option value="image">Image</option>
-          <option value="video">Video</option>
-        </select>
-      </div>
+        <div class="upload-overlay-corner" *ngIf="!imagePreviewUrl">
+          <input 
+            type="file" 
+            id="fileInput"
+            (change)="onFileSelected($event)" 
+            accept="image/*,video/*"
+            style="display: none"/>
+          <label for="fileInput" class="upload-btn-corner">
+            <lucide-icon name="Plus" [size]="32"></lucide-icon>
+          </label>
+        </div>
 
-      <div class="input-group">
-        <label>Media source:</label>
-        <select formControlName="imageSource" (change)="onImageSourceChange()">
-          <option value="upload">Upload from computer</option>
-          <option value="url">Link</option>
-        </select>
+        <ng-container *ngIf="imagePreviewUrl">
+          <img
+            *ngIf="createStoryForm.value.mediaType === 'image'"
+            [src]="imagePreviewUrl"
+            class="preview-image"/>
+
+          <video
+            *ngIf="createStoryForm.value.mediaType === 'video'"
+            [src]="imagePreviewUrl"
+            class="preview-video"
+            autoplay
+            muted
+            loop>
+          </video>
+        </ng-container>
+
+        <div class="no-media-message" *ngIf="!imagePreviewUrl">
+          <lucide-icon name="image" [size]="64"></lucide-icon>
+          <p>Upload photo or video</p>
+        </div>
+
+        <div
+          *ngIf="createStoryForm.value.customText"
+          class="draggable-text"
+          cdkDrag
+          cdkDragBoundary=".story-preview"
+          [cdkDragFreeDragPosition]="dragPosition"
+          [style.color]="createStoryForm.value.textColor"
+          [style.font-size.px]="textSize"
+          (cdkDragEnded)="onDragEnded($event)">
+          {{ createStoryForm.value.customText }}
+        </div>
+
+        <div class="icons-toolbar">
+          <button 
+            type="button" 
+            class="icon-btn" 
+            [class.active]="showTextInput"
+            (click)="toggleTextInput()">
+            <lucide-icon name="type"></lucide-icon>
+            <span>Text</span>
+          </button>
+          
+          <button 
+            type="button" 
+            class="icon-btn"
+            [class.active]="showColorPicker"
+            (click)="toggleColorPicker()">
+            <lucide-icon name="palette"></lucide-icon>
+            <span>Color</span>
+          </button>
+          
+          <button 
+            type="button" 
+            class="icon-btn"
+            [class.active]="showSettings"
+            (click)="toggleSettings()">
+            <lucide-icon name="settings"></lucide-icon>
+            <span>Size</span>
+          </button>
+          
+          <button type="submit" class="icon-btn" [disabled]="!imagePreviewUrl">
+            <lucide-icon name="send"></lucide-icon>
+            <span>Publish</span>
+          </button>
+        </div>
+        
+        <div class="popup-box text-popup" *ngIf="showTextInput">
+          <div class="text-with-emoji-inline">
+            <input
+              formControlName="customText"
+              #messageInputRef
+              type="text"
+              placeholder="Type text..." />
+            <button 
+              type="button" 
+              class="emoji-btn-inline"
+              #emojiButtonRef
+              [class.active]="showEmojiPicker"
+              (click)="toggleEmojiPicker($event)">
+              <lucide-icon name="smile" [size]="18"></lucide-icon>
+            </button>
+          </div>
+          
+          <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
+            <emoji-mart 
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '100%', maxWidth: '320px' }"
+              [showPreview]="false">
+            </emoji-mart>
+          </div>
+                      
+          <div class="setting-item">
+            <label>Text Size: {{textSize}}px</label>
+            <input
+              type="range"
+              min="12"
+              max="60"
+              [(ngModel)]="textSize"
+              [ngModelOptions]="{ standalone: true }"/>
+          </div>
+        </div>
+
+        <div class="popup-box color-popup" *ngIf="showColorPicker">
+          <div class="color-row">
+            <button 
+              type="button" 
+              *ngFor="let color of colorOptions" 
+              class="color-dot"
+              [style.background]="color"
+              [class.selected]="createStoryForm.value.textColor === color"
+              (click)="selectColor(color)">
+            </button>
+          </div>
+          <input type="color" formControlName="textColor" class="color-input-custom"/>
+        </div>
+
+        <div class="popup-box settings-popup" *ngIf="showSettings">
+          <div class="settings-row">
+            <div class="setting-item">
+              <label>Duration (hours)</label>
+              <input
+                type="number"
+                formControlName="durationHours"
+                min="1"
+                max="24"
+                placeholder="24"/>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="input-row">
-      <div class="input-group" *ngIf="createStoryForm.value.imageSource === 'upload'">
-        <label>Upload a file:</label>
-        <input 
-          type="file" 
-          (change)="onFileSelected($event)" 
-          accept="image/*,video/*"/>
-      </div>
-
-    <div 
-      *ngIf="errImage" 
-      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
-      class="floating-message">
-    </div>
-
-    <div 
-      *ngIf="errVideo" 
-      [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
-      class="floating-message">
-    </div>
-
-      <div class="input-group" *ngIf="createStoryForm.value.imageSource === 'url'">
-        <label>Link to image or video:</label>
-        <input 
-          type="text" 
-          formControlName="imageUrl" 
-          placeholder="Insert link"/>
-      </div>
-
-      <div class="input-group">
-        <label>Story activity duration (in hours):</label>
-        <input
-          type="number"
-          formControlName="durationHours"
-          min="1"
-          max="24"
-          placeholder="24 hours default"/>
-      </div>
-    </div>
-
-   <div class="input-group text-with-emoji">
-  <label>Text:</label>
-
-  <div class="text-input-wrapper">
-
-    <div class="emoji-button-wrapper">
-      <button type="button" class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
-        <lucide-icon name="smile"></lucide-icon>
-      </button>
-    </div>
-    <input
-      formControlName="customText"
-      #messageInputRef
-      type="text"
-      placeholder="Type text..." />
-    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-      <emoji-mart (emojiSelect)="addEmoji($event)"
-                  [style]="{ width: '300px', height: '350px' }"
-                  [showPreview]="false"></emoji-mart>
-    </div>
-  </div>
-</div>
-
-    <div class="input-row">
-      <div class="input-group">
-        <label>Text color:</label>
-        <input type="color" formControlName="textColor"/>
-      </div>
-
-      <div class="input-group">
-        <label>Text size:</label>
-        <input
-          type="range"
-          min="12"
-          max="60"
-          [(ngModel)]="textSize"
-          [ngModelOptions]="{ standalone: true }"
-          name="textSize"/>
-      </div>
-    </div>
-
-    <button type="submit" class="submit-btn">Publish a story</button>
 
     <div 
       *ngIf="showMessage" 
@@ -110,34 +164,4 @@
       {{ messageText }}
     </div>
   </form>
-
-  <div class="preview-container">
-    <div class="story-preview">
-
-      <ng-container *ngIf="imagePreviewUrl">
-        <img
-          *ngIf="createStoryForm.value.mediaType === 'image'"
-          [src]="imagePreviewUrl"
-          class="preview-image"/>
-
-        <video
-          *ngIf="createStoryForm.value.mediaType === 'video'"
-          [src]="imagePreviewUrl"
-          class="preview-video"
-          controls>
-        </video>
-      </ng-container>
-      <div
-       class="draggable-text"
-       cdkDrag
-       cdkDragBoundary=".story-preview"
-       [cdkDragFreeDragPosition]="dragPosition"
-       [ngStyle]="{
-       color: createStoryForm.value.textColor,
-       'font-size.px': textSize}"
-       (cdkDragEnded)="onDragEnded($event)">
-      {{ createStoryForm.value.customText }}
-      </div>
-    </div>
-  </div>
 </div>

@@ -32,18 +32,26 @@
             alt="Picture in message"/>
 
           <div *ngIf="message.imageUrl && message.fileType === 'pdf'" class="pdf-message">
-            <lucide-icon name="file-text" [size]="32"></lucide-icon>
-            <span class="pdf-name">PDF File</span>
+            <div class="pdf-icon-wrapper">
+              <lucide-icon name="file-text" [size]="48"></lucide-icon>
+            </div>
+            <div class="pdf-info">
+              <span class="pdf-name">{{ message.fileName || 'Document.pdf' }}</span>
+              <button 
+                (click)="downloadFile(message.imageUrl, message.fileName || 'document.pdf')"
+                class="download-btn">
+                <lucide-icon name="download" [size]="16"></lucide-icon>
+                <span>הורד</span>
+              </button>
+            </div>
           </div>
 
-         <a 
-            *ngIf="message.imageUrl"
-            [href]="message.imageUrl"
-            target="_blank"
+          <button 
+            *ngIf="message.imageUrl && message.fileType === 'image'"
+            (click)="downloadFile(message.imageUrl, message.fileName || 'image.jpg')"
             class="download-link">
-
             <lucide-icon name="download" [size]="15"></lucide-icon>
-          </a>
+          </button>
         </div>
 
         <div class="message-footer">
@@ -112,24 +120,26 @@
     </ng-container>
   </div>
 
- <div class="chat-input">
-
-  <div class="emoji-button-wrapper" style="position: relative;">
-    <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+<div class="chat-input">
+ <div class="attached-file" *ngIf="selectedFile">
+      <img *ngIf="selectedFileType === 'image'" [src]="selectedFilePreview" alt="Preview"/>
+      <div *ngIf="selectedFileType === 'pdf'" class="pdf-preview">
+        <lucide-icon name="file-text" [size]="48"></lucide-icon>
+        <span>{{ selectedFile.name }}</span>
+      </div>
+      <button class="remove-btn" (click)="removeSelectedFile()">×</button>
+    </div>
+  <div class="input-wrapper">
+    
+      <button class="icon-btn" (click)="toggleEmojiPicker()">
       <lucide-icon name="smile"></lucide-icon>
     </button>
-    
-    <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
-      <emoji-mart (emojiSelect)="addEmoji($event)"[showPreview]="false"></emoji-mart>
-    </div>
-  </div>
 
-  <button class="icon-btn" (click)="fileInput.click()" aria-label="Attach a file">
-    <lucide-icon name="paperclip"></lucide-icon>
-  </button>
-  <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" hidden />
+    <button class="icon-btn" (click)="fileInput.click()">
+      <lucide-icon name="paperclip"></lucide-icon>
+    </button>
+    <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" hidden />
 
-  <div class="input-wrapper">
     <input
       #messageInputRef
       type="text"
@@ -137,30 +147,11 @@
       placeholder="Type a message..."
       [(ngModel)]="newMessage"
       (keydown)="handleKeyDown($event)"/>
-  </div>
 
-  <button class="icon-btn" (click)="sendMessage()" 
-          [disabled]="!newMessage.trim() && !selectedFile"
-          aria-label="Send a message">
-    <lucide-icon name="send"></lucide-icon>
-  </button>
-
-  <div *ngIf="selectedFile" class="file-preview">
-    <div class="preview-wrapper">
-      
-      <img *ngIf="selectedFileType === 'image'" 
-           [src]="selectedFilePreview" 
-           alt="Preview"/>
-      
-      <div *ngIf="selectedFileType === 'pdf'" class="pdf-preview">
-        <lucide-icon name="file-text" [size]="48"></lucide-icon>
-        <span>{{ selectedFile.name }}</span>
-      </div>
-      
-      <button class="remove-btn" (click)="removeSelectedFile()" aria-label="Remove file">
-        <lucide-icon name="x" [size]="16"></lucide-icon>
-      </button>
-    </div>
+    <button class="icon-btn" (click)="sendMessage()" [disabled]="!newMessage.trim() && !selectedFile">
+      <lucide-icon name="send"></lucide-icon>
+    </button>
   </div>
 </div>
+
 </div>

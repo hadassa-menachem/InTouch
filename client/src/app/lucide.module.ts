@@ -22,7 +22,10 @@ import {
   Bookmark,
   ZoomIn,
   Eye,
-  Trash2
+  Trash2,
+  Type,
+  Palette,
+  Settings
 } from 'lucide';
 
 @NgModule({
@@ -49,7 +52,10 @@ import {
       Bookmark,
       ZoomIn,
       Eye,
-      Trash2
+      Trash2,
+      Type,
+      Palette,
+      Settings
     })
   ],
   exports: [LucideAngularModule]
