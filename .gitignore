@@ -9,7 +9,7 @@
 /server/.vs/
 /server/wwwroot/lib/
 /server/Properties/PublishProfiles/
-
+/appsettings.json
 # === Common ===
 .env
 *.log

@@ -77,14 +77,31 @@
         </div>
       </div>
 
-      <div class="post-description">
-        <strong>{{ post.user?.firstName }} {{ post.user?.lastName }}</strong>
+     <div class="post-description">
+        <div class="description-header">
+          <strong>{{ post.user?.firstName }} {{ post.user?.lastName }}</strong>
+          <button 
+            class="ai-sparkle-btn" 
+            (click)="summarize(post.id, post.content)"
+            [disabled]="loadingSummaries[post.id]"
+            [class.loading]="loadingSummaries[post.id]">
+              <span class="ai-icon">✨</span>
+              <span class="sum">AI Summary</span>
+          </button>
+        </div>
         <span
           [ngClass]="{collapsed: !expandedPostIds.includes(post.id),
             expanded: expandedPostIds.includes(post.id)}"
           (click)="toggleReadMore(post.id)">
           {{ post.content }}
         </span>
+        
+        <div class="ai-summary-popup" *ngIf="hasSummary(post.id)">
+            <button class="close-btn" (click)="closeSummary(post.id)">×</button>
+          <div class="summary-content">
+            {{ getSummary(post.id) }}
+          </div>
+        </div>
       </div>
 
       <div class="view-comments">

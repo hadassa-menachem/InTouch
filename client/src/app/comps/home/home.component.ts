@@ -34,6 +34,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   messageText = '';
   isSuccess = true;
 
+  postSummaries: { [postId: string]: string } = {};
+  loadingSummaries: { [postId: string]: boolean } = {};
+  openSummaries: { [postId: string]: boolean } = {};
+
   @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
@@ -122,7 +126,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-  this.startAutoScroll();
+    this.startAutoScroll();
   }
 
   @HostListener('document:click', ['$event'])
@@ -134,11 +138,13 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  
   getAllPosts() {
     this.userService.getAllPosts().subscribe({
       next: posts => {
-      this.allPosts = this.shuffleArray(posts); 
-      console.log(this.allPosts);
+        this.allPosts = posts;
+
+        console.log(this.allPosts);
       },
       error: err => console.error('Error loading posts:', err)
     });
@@ -246,7 +252,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.showFloatingMessage('The comment was added successfully.', true);
       },
       error: err => {
-      this.showFloatingMessage('Error adding comment', false);
+        this.showFloatingMessage('Error adding comment', false);
         if (err.error && err.error.errors) {
           Object.keys(err.error.errors).forEach(key => {
             console.error(`   - ${key}:`, err.error.errors[key]);
@@ -325,11 +331,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   startAutoScroll() {
     this.autoScrollInterval = setInterval(() => {
-    if (!this.isPaused) {
-      const el = this.storyContainer.nativeElement;
-      el.scrollLeft += 1; 
-    }
-   }, 30);
+      if (!this.isPaused) {
+        const el = this.storyContainer.nativeElement;
+        el.scrollLeft += 1; 
+      }
+    }, 30);
   }
 
   pauseAutoScroll() {
@@ -338,8 +344,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   resumeAutoScroll() {
     setTimeout(() => {
-    this.isPaused = false;
-   }, 2000); 
+      this.isPaused = false;
+    }, 2000); 
   }
 
   showFloatingMessage(text: string, success: boolean = true) {
@@ -348,20 +354,50 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.showMessage = true;
 
     setTimeout(() => {
-    this.showMessage = false;
-   }, 2000); 
+      this.showMessage = false;
+    }, 2000); 
   }
 
- shouldShowReadMoreContent(post: Post): boolean {
-   if (!post.content) return false;
-   return post.content.length > 100; 
+  shouldShowReadMoreContent(post: Post): boolean {
+    if (!post.content) return false;
+    return post.content.length > 100; 
   }
 
- shuffleArray<T>(array: T[]): T[] {
-   for (let i = array.length - 1; i > 0; i--) {
-     const j = Math.floor(Math.random() * (i + 1));
-     [array[i], array[j]] = [array[j], array[i]];
-   }
-   return array;
+  shuffleArray<T>(array: T[]): T[] {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  summarize(postId: string, content: string) {
+    if (this.loadingSummaries[postId]) return; 
+    
+    this.loadingSummaries[postId] = true;
+    
+    this.userService.summarize(content).subscribe({
+      next: (res) => {
+        this.postSummaries[postId] = res;
+        this.loadingSummaries[postId] = false;
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.loadingSummaries[postId] = false;
+        this.showFloatingMessage('Error creating summary', false);
+      }
+    });
+  }
+
+  hasSummary(postId: string): boolean {
+    return !!this.postSummaries[postId];
+  }
+
+  getSummary(postId: string): string {
+    return this.postSummaries[postId] || '';
+  }
+
+  closeSummary(postId: string): void {
+    delete this.postSummaries[postId];
   }
 }

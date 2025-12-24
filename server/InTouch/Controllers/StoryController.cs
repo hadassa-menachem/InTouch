@@ -13,14 +13,14 @@ namespace InTouch.Controllers
     public class StoryController : ControllerBase
     {
         private readonly IStoryBll _storyBll;
-        private readonly IUserBll _userBll;
+        //private readonly IUserBll _userBll;
         private readonly IWebHostEnvironment _env;
         private readonly IMongoCollection<User> _userCollection;
 
-        public StoryController(IStoryBll storyBll, IUserBll userBll, IWebHostEnvironment env, IMongoDatabase database)
+        public StoryController(IStoryBll storyBll, IWebHostEnvironment env, IMongoDatabase database)
         {
             _storyBll = storyBll;
-            _userBll = userBll;
+            //_userBll = userBll;
             _env = env;
             _userCollection = database.GetCollection<User>("User");
         }
@@ -83,7 +83,7 @@ namespace InTouch.Controllers
             }
         }
 
-        private string GetMediaTypeFromFile(string fileName)
+        public static string GetMediaTypeFromFile(string fileName)
         {
             var extension = Path.GetExtension(fileName).ToLower();
             return extension switch

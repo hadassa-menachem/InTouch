@@ -25,6 +25,8 @@ export class UserService implements OnInit {
   private messageApi = 'https://localhost:7058/api/Message';
   private storyApi = 'https://localhost:7058/api/Story';
   private savedApi = 'https://localhost:7058/api/SavedPost';
+  private aiApi = 'https://localhost:7058/AiService';
+
   
   constructor(private http: HttpClient) {
     const userFromStorage = localStorage.getItem('currentUser');
@@ -90,6 +92,12 @@ export class UserService implements OnInit {
 
   deletePost(id: string): Observable<any> {
     return this.http.delete(`${this.postApi}/${id}`);
+  }
+
+  summarize(text: string): Observable<string> {
+    // שולחים את הטקסט בפורמט JSON
+    const body = { text: text };
+    return this.http.post(this.aiApi, body, { responseType: 'text' });
   }
 
   // Likes

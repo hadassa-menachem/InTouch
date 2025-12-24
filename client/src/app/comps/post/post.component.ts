@@ -33,7 +33,15 @@ export class PostComponent implements OnInit, AfterViewInit {
   commentsListPostId: string | null = null;
   expandedPostIds: string[] = [];
   showEmojiPicker: boolean = false;
-
+  showMessage = false;
+  messageText = '';
+  isSuccess = true;
+   // מילון שמחזיק תקציר לכל פוסט לפי ה-ID שלו
+  postSummaries: { [postId: string]: string } = {};
+  // מילון שמציין אם התקציר בטעינה
+  loadingSummaries: { [postId: string]: boolean } = {};
+  // מילון שמציין אם הפופאפ פתוח
+  openSummaries: { [postId: string]: boolean } = {};
   @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
@@ -297,5 +305,49 @@ export class PostComponent implements OnInit, AfterViewInit {
         error: () => this.savedPosts = this.savedPosts.filter(id => id !== postId)
       });
     }
+  }
+ 
+  // פונקציה מעודכנת שמקבלת את ה-postId
+  summarize(postId: string, content: string) {
+    if (this.loadingSummaries[postId]) return; // אם כבר בטעינה, לא עושים כלום
+    
+    this.loadingSummaries[postId] = true;
+    
+    this.userService.summarize(content).subscribe({
+      next: (res) => {
+        this.postSummaries[postId] = res;
+        this.loadingSummaries[postId] = false;
+      },
+      error: (err) => {
+        console.error('Error:', err);
+        this.loadingSummaries[postId] = false;
+        this.showFloatingMessage('שגיאה ביצירת תקציר', false);
+      }
+    });
+  }
+
+  showFloatingMessage(text: string, success: boolean = true) {
+    this.messageText = text;
+    this.isSuccess = success;
+    this.showMessage = true;
+
+    setTimeout(() => {
+      this.showMessage = false;
+    }, 2000); 
+  }
+
+  // פונקציה לבדוק אם יש תקציר לפוסט
+  hasSummary(postId: string): boolean {
+    return !!this.postSummaries[postId];
+  }
+
+  // פונקציה לקבל את התקציר של פוסט
+  getSummary(postId: string): string {
+    return this.postSummaries[postId] || '';
+  }
+
+  // פונקציה לסגור תקציר
+  closeSummary(postId: string): void {
+    delete this.postSummaries[postId];
   }
 }

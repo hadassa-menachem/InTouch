@@ -112,7 +112,7 @@ export class CreatePostComponent implements OnInit {
     const formValues = this.createPostForm.value;
     const formData = new FormData();
 
-    formData.append('content', formValues.customText || '');
+    formData.append('customText', formValues.customText || '');
     formData.append('userId', this.user.userId);
 
     if (this.selectedFile) {

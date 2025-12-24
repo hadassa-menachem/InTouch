@@ -25,7 +25,9 @@ import {
   Trash2,
   Type,
   Palette,
-  Settings
+  Settings,
+  Sparkles,
+  Cpu
 } from 'lucide';
 
 @NgModule({
@@ -55,7 +57,9 @@ import {
       Trash2,
       Type,
       Palette,
-      Settings
+      Settings,
+      Sparkles,
+      Cpu
     })
   ],
   exports: [LucideAngularModule]
