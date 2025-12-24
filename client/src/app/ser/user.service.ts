@@ -95,7 +95,6 @@ export class UserService implements OnInit {
   }
 
   summarize(text: string): Observable<string> {
-    // שולחים את הטקסט בפורמט JSON
     const body = { text: text };
     return this.http.post(this.aiApi, body, { responseType: 'text' });
   }
