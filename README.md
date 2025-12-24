@@ -158,7 +158,7 @@ Select how long the story is displayed
 
 Preview story before uploading, including text
 
-<img src="https://github.com/user-attachments/assets/ac3ec7a4-8f7a-43bd-bb95-8eebf52b6024" width="320" />
+<img src="https://github.com/user-attachments/assets/f62b3869-828c-4808-894e-6459e3621a41" width="320" />
 
 
 🗄️ Database Structure – MongoDB
