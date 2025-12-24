@@ -60,7 +60,7 @@ Display messages with exact timestamp
 
 Auto-scroll to latest message
 
-<img src="https://github.com/user-attachments/assets/d04f841c-7f39-4eea-87d9-3cd36aa22a49" width="320" />
+<img src="https://github.com/user-attachments/assets/42644765-f93d-4015-952f-d333a849b87e" width="320" />
 
 
 👤 Personal Profile
