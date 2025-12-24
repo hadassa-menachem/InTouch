@@ -22,9 +22,7 @@ Save posts
 
 Navigate to users’ profiles
 
-<img src="https://github.com/user-attachments/assets/86cee2bb-94df-424e-a904-33423988042d" width="320" />
-
-
+<img src="https://github.com/user-attachments/assets/345b6a0b-9168-430d-a99c-4ee9c156b01f" width="320">
 
 👤 Other User Profile
 
