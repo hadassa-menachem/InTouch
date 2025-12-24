@@ -14,11 +14,13 @@ Description: Displays posts from users alongside random story circles representi
 
 Capabilities:
 
-Like posts
+Like post
 
-Add comments (including emojis)
+Add comment (including emojis)
 
-Save posts
+Save post
+
+View post summary - User can view a short summary of the post content automatically generated using artificial intelligence.
 
 Navigate to users’ profiles
 
@@ -89,10 +91,10 @@ Capabilities:
 
 View full post
 
-Like, comment (including emojis), and save post
+Like, comment (including emojis), save post, view post summary.
 
-<img src="https://github.com/user-attachments/assets/d6d3adb8-8904-4746-86a2-7af5c052cabf" width="320" />
 
+<img src="https://github.com/user-attachments/assets/5ed9afa7-2306-442c-b4cf-223c9df203ab" width="320" />
 
 🔍 Search Page
 Description: Search for users and navigate to their profiles.
