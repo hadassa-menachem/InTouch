@@ -123,7 +123,7 @@ Preview last message with status: sent / delivered / read (if sent by me)
 
 Search chat by username → direct navigation to chat
 
-<img src="https://github.com/user-attachments/assets/84158f01-97ac-4a47-9509-b2528d447c56" width="320" />
+<img src="https://github.com/user-attachments/assets/bde90a5e-cde4-4ac5-98b0-a14eaddc15de" width="320" />
 
 💾 Saved Posts
 Description: View all posts saved by the user.
