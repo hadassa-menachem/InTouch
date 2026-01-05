@@ -18,11 +18,11 @@ namespace BLL.Repositories
             _dal = dal;
             this.imapper = mapper;
         }
-
-        public async Task AddMessage(MessageDTO dto)
+        public async Task<MessageDTO> AddMessage(MessageDTO dto)
         {
-            var message = imapper.Map<Message>(dto);
-            await _dal.AddMessage(message);
+            var messageEntity = imapper.Map<Message>(dto);
+            var savedMessage = await _dal.AddMessage(messageEntity);
+            return imapper.Map<MessageDTO>(savedMessage);
         }
 
         public async Task UpdateMessage(MessageDTO dto)

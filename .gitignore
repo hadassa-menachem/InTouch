@@ -1,19 +1,18 @@
-# === Angular (client) ===
-/client/node_modules/
-/client/dist/
-/client/.angular/cache/
+# Build
+bin/
+obj/
 
-# === .NET (server) ===
-/server/bin/
-/server/obj/
-/server/.vs/
-/server/wwwroot/lib/
-/server/Properties/PublishProfiles/
-server/InTouch/appsettings.json
-# === Common ===
-.env
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Logs
 *.log
-*.zip
-*.exe
-.DS_Store
-Thumbs.db
+
+# App settings
+**/appsettings.json
+**/appsettings.Development.json
+
+# Uploads
+wwwroot/uploads/

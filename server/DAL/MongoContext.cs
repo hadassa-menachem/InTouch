@@ -20,4 +20,6 @@ public class MongoContext
     public IMongoCollection<MediaFile> MediaFiles => _database.GetCollection<MediaFile>("MediaFile");
     public IMongoCollection<Follow> Follows => _database.GetCollection<Follow>("Follow");
     public IMongoCollection<Story> Stories => _database.GetCollection<Story>("Story");
+    public IMongoCollection<Message> Messages => _database.GetCollection<Message>("Message");
+
 }

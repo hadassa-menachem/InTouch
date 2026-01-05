@@ -40,6 +40,7 @@ namespace BLL.Mappings
             CreateMap<Message, MessageDTO>()
                 .ForMember(dest => dest.SentAt, opt => opt.MapFrom(src => src.SentAt != null ? src.SentAt : DateTime.MinValue))
                 .ReverseMap();
+            CreateMap<Message, MessageDTO>().ReverseMap();
 
             CreateMap<Follow, FollowDTO>().ReverseMap();
 

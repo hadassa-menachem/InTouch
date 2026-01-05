@@ -1,31 +1,43 @@
-﻿using BLL;
-using BLL.Functions;
+﻿using BLL.Functions;
 using BLL.Interfaces;
 using BLL.Repositories;
 using DAL;
 using DAL.Interfaces;
 using DAL.Repositories;
+using InTouch.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-});
-
+// Add services to the container.
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// AutoMapper
-builder.Services.AddAutoMapper(typeof(BLL.Mappings.AutoMappingProfile));
+// ============= MongoDB Settings - קרא מה-appsettings.json =============
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
 
-// Mongo settings
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-builder.Services.AddSingleton<MongoContext>();
+// ============= MongoDB Client & Database =============
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var settings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
+    return new MongoClient(settings!.ConnectionString);
+});
 
-// DAL registrations
+// רישום IMongoDatabase - זה מה שה-DAL שלך צריך!
+builder.Services.AddScoped<IMongoDatabase>(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    var settings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
+    return client.GetDatabase(settings!.DatabaseName);
+});
+
+// MongoContext - אם אתה משתמש בו במקומות אחרים
+builder.Services.AddScoped<MongoContext>();
+
+// ============= DAL & BLL =============
 builder.Services.AddScoped<IUserDal, UserDal>();
 builder.Services.AddScoped<IPostDal, PostDal>();
 builder.Services.AddScoped<IMediaFileDal, MediaFileDal>();
@@ -48,49 +60,46 @@ builder.Services.AddScoped<IMessageBll, MessageBll>();
 builder.Services.AddScoped<IStoryBll, StoryBll>();
 builder.Services.AddScoped<ISavedPostBll, SavedPostBll>();
 builder.Services.AddScoped<IAiServiceBll, AiServiceBll>();
+
+// HttpClient for AI Service
 builder.Services.AddHttpClient<IAiServiceDal, AiServiceDal>();
-builder.Services.AddScoped<IAiServiceBll, AiServiceBll>();
 
+// AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-// Mongo database instance
-var mongoSettings = builder.Configuration.GetSection("MongoDbSettings").Get<MongoDbSettings>();
-var mongoClient = new MongoClient(mongoSettings.ConnectionString);
-var mongoDatabase = mongoClient.GetDatabase(mongoSettings.DatabaseName);
-builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
-builder.Services.AddAutoMapper(typeof(BLL.Mappings.AutoMappingProfile));
+// SignalR
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
-
-// CORS policy - מאפשר גישה מהשרת של Angular בlocalhost
-// CORS policy - מאפשר גישה מכל מקור (לא רק localhost)
+// CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowAngular", policy =>
     {
-        policy
-            .AllowAnyOrigin()    // מאפשר כל מקור (HTTP, HTTPS, פורטים שונים)
-            .AllowAnyHeader()    // מאפשר כל כותרת
-            .AllowAnyMethod();   // מאפשר כל סוג בקשה (GET, POST, PUT, DELETE וכו')
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
-
 var app = builder.Build();
 
-// Swagger - רק בסביבת פיתוח
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseStaticFiles(); // לאפשר גישה לקבצים סטטיים (כמו תמונות)
-
-app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<MessageHub>("/messageHub");
 
 app.Run();

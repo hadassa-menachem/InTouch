@@ -1,22 +1,18 @@
-# Build results
+# Build
 bin/
 obj/
 
-# User-specific files
+# Visual Studio
+.vs/
 *.user
 *.suo
 
 # Logs
 *.log
 
-# Uploads / media
-wwwroot/uploads/
-# Build folders
-server/InTouch/bin/
-server/InTouch/obj/
-
-# User-specific files
-server/InTouch/*.csproj.user
+# App settings (DO NOT COMMIT)
+**/appsettings.json
+**/appsettings.Development.json
 
 # Uploads
-server/InTouch/wwwroot/uploads/
+wwwroot/uploads/

@@ -74,7 +74,6 @@ namespace DAL.Repositories
             }
             catch (HttpRequestException ex)
             {
-                // אפשר לוג או להחזיר הודעת שגיאה מותאמת
                 return $"Error contacting AI service: {ex.Message}";
             }
         }

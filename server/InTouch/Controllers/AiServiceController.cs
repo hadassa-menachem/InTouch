@@ -33,7 +33,6 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                // מחזיר שגיאה מפורטת במקרה של בעיה עם ה-AI
                 return StatusCode(500, $"Error contacting AI service: {ex.Message}");
             }
         }

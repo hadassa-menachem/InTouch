@@ -17,10 +17,10 @@ namespace DAL.Repositories
         {
             _messages = db.GetCollection<Message>("Messages");
         }
-
-        public async Task AddMessage(Message message)
+        public async Task<Message> AddMessage(Message message)
         {
             await _messages.InsertOneAsync(message);
+            return message;
         }
 
         public async Task<List<Message>> GetMessagesBetweenUsers(string user1Id, string user2Id)
@@ -35,7 +35,6 @@ namespace DAL.Repositories
                     Builders<Message>.Filter.Eq(m => m.ReceiverId, user1Id)
                 )
             );
-
             return await _messages.Find(filter)
                 .SortBy(m => m.SentAt)
                 .ToListAsync();
@@ -47,51 +46,46 @@ namespace DAL.Repositories
                 Builders<Message>.Filter.Eq(m => m.SenderId, userId),
                 Builders<Message>.Filter.Eq(m => m.ReceiverId, userId)
             );
-
             return await _messages.Find(filter).ToListAsync();
         }
+
         public async Task UpdateMessage(Message message)
         {
             var filter = Builders<Message>.Filter.Eq(m => m.Id, message.Id);
             await _messages.ReplaceOneAsync(filter, message);
         }
 
-
         public async Task MarkMessagesAsRead(string messageId)
         {
             var filter = Builders<Message>.Filter.And(
-                Builders<Message>.Filter.Eq(m => m.Id,messageId),
+                Builders<Message>.Filter.Eq(m => m.Id, messageId),
                 Builders<Message>.Filter.Eq(m => m.IsRead, false)
             );
-
             var update = Builders<Message>.Update.Set(m => m.IsRead, true);
-
             await _messages.UpdateManyAsync(filter, update);
         }
 
         public async Task MarkMessagesAsDelivered(string senderId, string receiverId)
         {
             var filter = Builders<Message>.Filter.And(
-                Builders<Message>.Filter.Eq(m => m.ReceiverId, receiverId),
-                Builders<Message>.Filter.Eq(m => m.SenderId, senderId),
+                Builders<Message>.Filter.Eq(m => m.SenderId, senderId),      
+                Builders<Message>.Filter.Eq(m => m.ReceiverId, receiverId), 
                 Builders<Message>.Filter.Eq(m => m.IsDelivered, false)
             );
-
             var update = Builders<Message>.Update.Set(m => m.IsDelivered, true);
 
-            await _messages.UpdateManyAsync(filter, update);
+            var result = await _messages.UpdateManyAsync(filter, update);
         }
 
         public async Task MarkAllMessagesAsDelivered(string receiverId)
         {
             var filter = Builders<Message>.Filter.And(
-                Builders<Message>.Filter.Eq(m => m.ReceiverId, receiverId),
+                Builders<Message>.Filter.Eq(m => m.ReceiverId, receiverId),  
                 Builders<Message>.Filter.Eq(m => m.IsDelivered, false)
             );
-
             var update = Builders<Message>.Update.Set(m => m.IsDelivered, true);
 
-            await _messages.UpdateManyAsync(filter, update);
+            var result = await _messages.UpdateManyAsync(filter, update);
         }
     }
 }

@@ -6,7 +6,7 @@ namespace BLL.Interfaces
 {
     public interface IMessageBll
     {
-        Task AddMessage(MessageDTO messageDto);
+        Task<MessageDTO> AddMessage(MessageDTO messageDto);
         Task UpdateMessage(MessageDTO messageDto);
         Task<List<MessageDTO>> GetMessagesBetweenUsers(string user1Id, string user2Id);
         Task<List<MessageDTO>> GetMessagesForUser(string userId);
