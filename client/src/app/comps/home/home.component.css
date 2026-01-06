@@ -261,8 +261,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   color: #003066;
-  font-weight: 450;
+  font-weight: 500;
   margin-bottom: 0;
+
 }
 
 .post-card {
@@ -880,10 +881,11 @@ html {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.3rem;
+      overflow: visible;
 }
 
 .ai-sparkle-btn {
-  background: linear-gradient(135deg, #0ab8ce 0%, #1976D2 100%);
+background: linear-gradient(135deg, #ff347d 0%, #9c27b0 100%);
   border: none;
   border-radius: 1.25rem;
   padding: 0.2rem 0.6rem;
@@ -894,8 +896,9 @@ html {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 0.125rem 0.5rem rgba(10, 184, 206, 0.3);
   outline: none;
-  position: relative;
   overflow: hidden;
+  position: relative;
+  z-index: 5;
 }
 
 .ai-sparkle-btn:hover:not(.loading) {

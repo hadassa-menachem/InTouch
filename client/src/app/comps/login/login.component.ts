@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule
+} from '@angular/forms';
 import { CommonModule, NgIf } from '@angular/common';
 import { UserService } from '../../ser/user.service';
 import { Router } from '@angular/router';
@@ -9,9 +14,14 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgIf]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    NgIf
+  ]
 })
 export class LoginComponent implements OnInit {
+
   loginForm: FormGroup;
   showMessage = false;
   messageText = '';
@@ -19,7 +29,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private usersSer: UserService,
+    private userSer: UserService,
     private router: Router
   ) {
     this.loginForm = this.fb.group({
@@ -28,11 +38,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const userFromStorage = localStorage.getItem('currentUser');
-    if (userFromStorage) {
-      const parsedUser = JSON.parse(userFromStorage);
-      this.usersSer.currentUser = parsedUser;
-      this.router.navigate(['/profile']);
+    const user = this.userSer.currentUser;
+    if (user) {
+      this.router.navigate(['/home']);
     }
   }
 
@@ -42,20 +50,47 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     const codeUserValue = this.codeUser?.value;
-    this.usersSer.GetUserById(codeUserValue).subscribe({
+
+    this.userSer.GetUserById(codeUserValue).subscribe({
       next: (userFromServer) => {
-        this.usersSer.currentUser = userFromServer;
+        this.userSer.currentUser = userFromServer;
+        localStorage.setItem(
+          'currentUser',
+          JSON.stringify(userFromServer)
+        );
 
-        localStorage.setItem('currentUser', JSON.stringify(userFromServer));
-        this.usersSer.markAllMessagesAsDelivered(userFromServer.userId).subscribe({
-          next: () => {
-            this.showFloatingMessage('Error marking messages as delivered', false);
-          },
-        });
+        this.userSer
+          .startSignalRConnection(userFromServer.userId)
+          .then(() => {
 
-        this.router.navigate(['/home']);
+            this.userSer
+              .markAllMessagesAsDelivered(userFromServer.userId)
+              .subscribe({
+                next: () => {
+                  console.log('All messages marked as delivered');
+                  this.showFloatingMessage('Login successful!', true);
+
+                  setTimeout(() => {
+                    this.router.navigate(['/home']);
+                  }, 1000);
+                },
+                error: (err) => {
+                  console.error(
+                    'Error marking all messages as delivered:',
+                    err
+                  );
+                  this.router.navigate(['/home']);
+                }
+              });
+
+          })
+          .catch(err => {
+            console.error('SignalR connection failed:', err);
+            this.router.navigate(['/home']);
+          });
       },
-      error: () => {
+      error: (err) => {
+        console.error('Login failed:', err);
         this.showFloatingMessage('User code does not exist', false);
       }
     });
@@ -65,7 +100,10 @@ export class LoginComponent implements OnInit {
     this.router.navigate([route]);
   }
 
-  showFloatingMessage(text: string, success: boolean = true) {
+  showFloatingMessage(
+    text: string,
+    success: boolean = true
+  ) {
     this.messageText = text;
     this.isSuccess = success;
     this.showMessage = true;

@@ -111,17 +111,27 @@
   cursor: pointer;
 }
 
+.message-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
 .username {
   font-weight: 550;
   font-size: 0.82rem;
   color: #252734;
-  flex-grow: 1;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.message-info {
+.last-message-wrapper {
   display: flex;
-  flex-direction: column;
-  flex: 1;
+  align-items: center;
+  gap: 0.25rem;
   min-width: 0;
 }
 
@@ -131,6 +141,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 .no-results {
@@ -172,6 +184,8 @@
 .status-checks {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+  margin-left: 0.25rem;
 }
 
 .check-icon {

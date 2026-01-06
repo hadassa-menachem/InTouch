@@ -27,7 +27,8 @@ import {
   Palette,
   Settings,
   Sparkles,
-  Cpu
+  Cpu,
+  Clock
 } from 'lucide';
 
 @NgModule({
@@ -59,7 +60,8 @@ import {
       Palette,
       Settings,
       Sparkles,
-      Cpu
+      Cpu,
+      Clock
     })
   ],
   exports: [LucideAngularModule]

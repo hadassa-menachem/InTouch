@@ -30,8 +30,8 @@
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0.25rem 0.6rem rgba(238, 13, 107, 0.35);
-  border: 2px solid #fff;
+ box-shadow: 0 0 0.5rem rgba(238, 13, 107, 0.808);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;  border: 2px solid #fff;
 }
 
 .username {
