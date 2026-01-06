@@ -35,7 +35,6 @@ export class UserService {
   }
 
 // SignalR Section
-
 private hubConnection?: signalR.HubConnection;
 private isConnected = false;
 private connectionPromise?: Promise<void>;
@@ -54,7 +53,7 @@ startSignalRConnection(userId: string): Promise<void> {
 
   this.hubConnection = new signalR.HubConnectionBuilder()
     .withUrl(`https://localhost:7058/messageHub?userId=${userId}`)
-    .withAutomaticReconnect([0, 2000, 5000, 10000]) // ניסיונות חיבור מחדש
+    .withAutomaticReconnect([0, 2000, 5000, 10000])
     .configureLogging(signalR.LogLevel.Information)
     .build();
 
