@@ -23,7 +23,7 @@ View post summary – automatically generated using AI
 
 Navigate to users’ profiles
 
-<img src="https://github.com/user-attachments/assets/345b6a0b-9168-430d-a99c-4ee9c156b01f" width="320">
+<img src="https://github.com/user-attachments/assets/8677a25f-46e2-4888-b132-0420d0084b35" width="320">
 
 
 👤**Other User Profile**
