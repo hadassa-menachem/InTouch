@@ -619,7 +619,7 @@ html {
 }
 
 .ai-sparkle-btn {
-  background: linear-gradient(135deg, #0ab8ce 0%, #1976D2 100%);
+  background: linear-gradient(135deg, #ff347d 0%, #9c27b0 100%);
   border: none;
   border-radius: 1.25rem;
   padding: 0.2rem 0.6rem;
@@ -763,7 +763,6 @@ html {
   justify-content: center;
   transition: all 0.3s ease;
   outline: none;
-  /* line-height: 1; */
   position: absolute;
   top: -0.4rem;
   left: -0.1rem;

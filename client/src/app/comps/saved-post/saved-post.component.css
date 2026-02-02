@@ -92,7 +92,6 @@
   padding: 1.25rem;
 }
 
-/* Media Queries לרספונסיביות */
 @media (max-width: 1024px) {
   .profile-posts-grid {
     grid-template-columns: repeat(3, 1fr);

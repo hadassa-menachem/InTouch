@@ -13,11 +13,18 @@
         (click)="navigate('/notification')">
       </lucide-icon>
 
-      <lucide-icon
-        name="message-square"
-        *ngIf="!ifUser()"
-        (click)="navigate('/messages')">
-      </lucide-icon>
+      <div class="icon-wrapper">
+  <lucide-icon
+    name="message-square"
+    *ngIf="!ifUser()"
+    (click)="navigate('/messages')">
+  </lucide-icon>
+
+  <span class="badge" *ngIf="unreadChatsCount > 0">
+    {{ unreadChatsCount }}
+  </span>
+</div>
+
 
       <lucide-icon
         name="log-in"

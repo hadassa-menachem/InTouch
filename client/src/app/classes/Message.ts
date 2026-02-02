@@ -4,6 +4,7 @@ export class Message {
   content!: string;
   sentAt!: Date;
   imageUrl?: string;
+  fileName?: string;
   sent?: boolean;
   isRead?: boolean = false;
   isDelivered?: boolean = false;

@@ -157,7 +157,8 @@
 }
 
 .profile-tabs button.active {
-  border-bottom: 0.1875rem solid #000;
+  border-bottom: 0.1575rem solid #000;
+  background-color: #f4dee7;
 }
 
 .no-posts-message {

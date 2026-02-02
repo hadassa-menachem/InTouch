@@ -1,3 +1,14 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow-y: auto;
+  overscroll-behavior: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 :root {
   font-size: 16px;
 }
@@ -561,29 +572,25 @@ strong {
 
 .comments-list {
   overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.comments-list.open {
-  max-height: 31.25rem; 
 }
 
 .comment-line {
-  padding: 0 0.875rem;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  max-height: 9.375rem;
   opacity: 0;
-  animation: fadeInSlideLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  transform: translateX(-1.875rem);
+  transform: translateY(-10px);
+  animation: fadeSlideIn 0.8s forwards;
 }
 
-@keyframes fadeInSlideLeft {
-  to {
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
+
 
 .comment-line strong{
   font-size: 0.875rem;
@@ -881,11 +888,15 @@ html {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.3rem;
-      overflow: visible;
+  overflow: visible;
+}
+
+.comment-line strong {
+  margin-left: 0.8rem;
 }
 
 .ai-sparkle-btn {
-background: linear-gradient(135deg, #ff347d 0%, #9c27b0 100%);
+  background: linear-gradient(135deg, #ff347d 0%, #9c27b0 100%);
   border: none;
   border-radius: 1.25rem;
   padding: 0.2rem 0.6rem;

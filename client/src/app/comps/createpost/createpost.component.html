@@ -1,5 +1,5 @@
 <div class="create-post-container">
-  <form [formGroup]="createPostForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="createPostForm">
     
     <div class="post-preview-box">
       <div class="post-preview" [class.has-media]="imagePreviewUrl">
@@ -41,30 +41,28 @@
         </ng-container>
 
         <div class="no-media-message" *ngIf="!imagePreviewUrl">
-          <lucide-icon name="image" [size]="64"></lucide-icon>
           <p>Upload photo or video</p>
         </div>
 
-        <div class="icons-toolbar">
-          <button type="submit" class="icon-btn" [disabled]="!imagePreviewUrl">
-            <lucide-icon name="send"></lucide-icon>
-            <span>Publish</span>
-          </button>
-        </div>
       </div>
     </div>
-
+ <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
+            <emoji-mart 
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '100%', maxWidth: '320px' }"
+              [showPreview]="false">
+            </emoji-mart>
+          </div>
     <div 
       *ngIf="showMessage" 
       [ngClass]="{ 'success': isSuccess, 'error': !isSuccess }" 
       class="floating-message">
       {{ messageText }}
     </div>
-  </form>
         <div class="popup-box text-popup">
           <div class="text-with-emoji-inline">
             <input
-              formControlName="customText"
+              formControlName="content"
               #messageInputRef
               type="text"
               placeholder="Type text..." />
@@ -77,13 +75,13 @@
               <lucide-icon name="smile"></lucide-icon>
             </button>
           </div>
-          
-          <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
-            <emoji-mart 
-              (emojiSelect)="addEmoji($event)"
-              [style]="{ width: '100%', maxWidth: '320px' }"
-              [showPreview]="false">
-            </emoji-mart>
-          </div>
+
         </div>
-</div>
+          </form>
+
+<button
+    (click)="addPost()"
+    class="submit-btn"
+    [disabled]="!imagePreviewUrl">
+    Publish a Post
+  </button></div>

@@ -36,11 +36,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   showMessage = false;
   messageText = '';
   isSuccess = true;
-   // מילון שמחזיק תקציר לכל פוסט לפי ה-ID שלו
+
   postSummaries: { [postId: string]: string } = {};
-  // מילון שמציין אם התקציר בטעינה
   loadingSummaries: { [postId: string]: boolean } = {};
-  // מילון שמציין אם הפופאפ פתוח
   openSummaries: { [postId: string]: boolean } = {};
   @ViewChildren('postElement') postElements!: QueryList<ElementRef>;
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
@@ -307,9 +305,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
  
-  // פונקציה מעודכנת שמקבלת את ה-postId
   summarize(postId: string, content: string) {
-    if (this.loadingSummaries[postId]) return; // אם כבר בטעינה, לא עושים כלום
+    if (this.loadingSummaries[postId]) return; 
     
     this.loadingSummaries[postId] = true;
     
@@ -336,17 +333,14 @@ export class PostComponent implements OnInit, AfterViewInit {
     }, 2000); 
   }
 
-  // פונקציה לבדוק אם יש תקציר לפוסט
   hasSummary(postId: string): boolean {
     return !!this.postSummaries[postId];
   }
 
-  // פונקציה לקבל את התקציר של פוסט
   getSummary(postId: string): string {
     return this.postSummaries[postId] || '';
   }
 
-  // פונקציה לסגור תקציר
   closeSummary(postId: string): void {
     delete this.postSummaries[postId];
   }

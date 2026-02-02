@@ -85,6 +85,7 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   border-radius: 0.375rem;
+  align-items: center;
 }
 
 .message-item:hover {
@@ -158,9 +159,6 @@
 }
 
 .unread-bubble {
-  position: absolute;
-  top: -0.125rem;   
-  right: 0.125rem;  
   background-color: #0ab8ce;
   width: 0.75rem;
   height: 0.75rem;
@@ -168,6 +166,7 @@
   border: 0.125rem solid #fff;
   box-shadow: 0 0.125rem 0.375rem rgba(10, 184, 206, 0.5);
   animation: pulse 2s ease-in-out infinite;
+  margin-right: 0;
 }
 
 @keyframes pulse {
@@ -247,4 +246,22 @@
     padding: 0.5rem 2rem 0.5rem 0.625rem;
     font-size: 0.8125rem;
   }
+}
+
+.profile-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.online-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0.25rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: #4CAF50;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0.3rem rgba(76, 175, 80, 0.5);
+  z-index: 1;
 }

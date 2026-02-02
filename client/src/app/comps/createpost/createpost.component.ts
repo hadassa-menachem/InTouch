@@ -54,7 +54,6 @@ export class CreatePostComponent implements OnInit {
       mediaType: ['image', Validators.required],
       imageSource: ['upload', Validators.required],
       imageUrl: [''],
-      customText: ['']
     });
   }
 
@@ -106,13 +105,13 @@ export class CreatePostComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  addPost() {
     if (this.createPostForm.invalid) return;
 
     const formValues = this.createPostForm.value;
     const formData = new FormData();
 
-    formData.append('customText', formValues.customText || '');
+    formData.append('content', formValues.content || '');
     formData.append('userId', this.user.userId);
 
     if (this.selectedFile) {
@@ -160,8 +159,8 @@ export class CreatePostComponent implements OnInit {
   addEmoji(event: any): void {
     const emoji = event?.emoji?.native || event?.native;
     if (emoji) {
-      const current = this.createPostForm.get('customText')?.value || '';
-      this.createPostForm.get('customText')?.setValue(current + emoji);
+      const current = this.createPostForm.get('content')?.value || '';
+      this.createPostForm.get('content')?.setValue(current + emoji);
       setTimeout(() => this.messageInputRef?.nativeElement?.focus(), 0);
     }
   }

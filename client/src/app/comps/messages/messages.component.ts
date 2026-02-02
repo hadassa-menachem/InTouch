@@ -30,7 +30,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   searchTerm: string = '';
   private subscriptions: Subscription[] = [];
 
-  constructor(private router: Router, private userSer: UserService) {}
+  constructor(public router: Router, public userSer: UserService) {}
 
   ngOnInit(): void {
     const currentUserId = this.userSer.currentUser?.userId;
@@ -47,11 +47,15 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
 
     this.getConversations(currentUserId);
+
+    const connectedUsersSub = this.userSer.connectedUsers$.subscribe(users => {
+      console.log('Connected users updated in messages page:', Array.from(users));
+    });
+    this.subscriptions.push(connectedUsersSub);
   }
 
   private setupSignalRListeners(currentUserId: string): void {
     this.userSer.onReceiveMessage((message: Message) => {
-      
       this.updateChatWithMessage(message, currentUserId);
     });
 
@@ -166,5 +170,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   navigateToChat(userId: string) {
     this.router.navigate(['/chat', userId]);
+  }
+
+  isUserOnline(userId: string): boolean {
+    return this.userSer.isUserOnline(userId);
   }
 }

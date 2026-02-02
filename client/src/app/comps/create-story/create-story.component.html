@@ -41,7 +41,6 @@
         </ng-container>
 
         <div class="no-media-message" *ngIf="!imagePreviewUrl">
-          <lucide-icon name="image" [size]="64"></lucide-icon>
           <p>Upload photo or video</p>
         </div>
 
@@ -84,14 +83,17 @@
             <lucide-icon name="Clock"></lucide-icon>
             <span>Time</span>
           </button>
-          
-          <button type="submit" class="icon-btn" [disabled]="!imagePreviewUrl">
-            <lucide-icon name="send"></lucide-icon>
-            <span>Publish</span>
-          </button>
+      
         </div>
-        
+        <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
+            <emoji-mart 
+              (emojiSelect)="addEmoji($event)"
+              [style]="{ width: '100%', maxWidth: '320px' }"
+              [showPreview]="false">
+            </emoji-mart>
+          </div>
         <div class="popup-box text-popup" *ngIf="showTextInput">
+          
           <div class="text-with-emoji-inline">
             <input
               formControlName="customText"
@@ -107,15 +109,7 @@
               <lucide-icon name="smile" [size]="18"></lucide-icon>
             </button>
           </div>
-          
-          <div class="emoji-dropdown" *ngIf="showEmojiPicker" #emojiPickerRef>
-            <emoji-mart 
-              (emojiSelect)="addEmoji($event)"
-              [style]="{ width: '100%', maxWidth: '320px' }"
-              [showPreview]="false">
-            </emoji-mart>
-          </div>
-                      
+             
           <div class="setting-item">
             <label>Text Size: {{textSize}}px</label>
             <input
@@ -163,5 +157,12 @@
       class="floating-message">
       {{ messageText }}
     </div>
-  </form>
+<button
+    type="submit"
+    class="submit-btn"
+    [disabled]="!imagePreviewUrl">
+    Publish a Story
+  </button>
+    </form>
+
 </div>

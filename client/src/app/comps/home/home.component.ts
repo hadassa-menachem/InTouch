@@ -33,17 +33,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
   showMessage = false;
   messageText = '';
   isSuccess = true;
-  fixedPostIds: string[] = [
-  "6925ad495300f3f37defa7dc",
-  "69255de05300f3f37defa7bd",
-  "6925b2e25300f3f37defa7e2",
-  "69246fe65300f3f37defa7a9",
-  "6925856f5300f3f37defa7cd",
-  "692de946487b774c66e67d74",
-  "6925b1a75300f3f37defa7e0",
-  "6925e36c5300f3f37defa7e5",
-  "69255fb25300f3f37defa7bf"
-];
 
   postSummaries: { [postId: string]: string } = {};
   loadingSummaries: { [postId: string]: boolean } = {};
@@ -149,20 +138,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  
   getAllPosts() {
     this.userService.getAllPosts().subscribe({
       next: posts => {
-        const fixedPosts = this.fixedPostIds
-          .map(id => posts.find(p => p.id === id))
-          .filter(p => p !== undefined) as Post[];
-
-        const otherPosts = posts
-          .filter(p => !this.fixedPostIds.includes(p.id!));
-
-        const shuffledOtherPosts = this.shuffleArray(otherPosts);
-
-        this.allPosts = [...fixedPosts, ...shuffledOtherPosts];
+        this.allPosts = [...posts];
 
         console.log(this.allPosts);
       },
@@ -198,7 +177,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         const post = this.allPosts.find(p => p.id === postId);
         if (post) {
           post.likes = likes;
-          console.log(`✅ Refreshed: ${likes.length} likes`);
+          console.log(`Refreshed: ${likes.length} likes`);
           this.allPosts = [...this.allPosts];
         }
       },
@@ -267,9 +246,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
         this.newCommentContent = '';
         this.commentBoxPostId = null;
-        this.commentsListPostId = null;
         this.showEmojiPicker = false;
-        this.showFloatingMessage('The comment was added successfully.', true);
+        this.toggleCommentBox(postId);
+        this.toggleCommentBox(postId); 
+       this.commentsListPostId = postId; 
+
       },
       error: err => {
         this.showFloatingMessage('Error adding comment', false);
@@ -324,7 +305,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.savedPosts = [...this.savedPosts];
       this.userService.unsavePost(this.user.userId, postId).subscribe({
         next: () => 
-          this.showFloatingMessage('Post unsaved successfully.', true),
+        console.log('Post unsaved successfully.'),
         error: () => {
           this.savedPosts = [...this.savedPosts, postId];
         }
@@ -333,7 +314,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.savedPosts = [...this.savedPosts, postId];
       this.userService.savePost(this.user.userId, postId).subscribe({
         next: () =>         
-          this.showFloatingMessage('Post saved successfully.', true),
+        console.log('Post saved successfully.'),
         error: () => {
           this.savedPosts = this.savedPosts.filter(id => id !== postId);
           this.savedPosts = [...this.savedPosts];

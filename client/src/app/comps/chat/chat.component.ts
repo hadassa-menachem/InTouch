@@ -38,9 +38,12 @@ export class ChatComponent implements OnInit, OnDestroy {
   shouldAutoScroll: boolean = true;
   selectedFileType: 'image' | 'pdf' | null = null;
   private signalRReady: boolean = false;
+  private signalRReadyPromise: Promise<void> = Promise.resolve();
+  private readonly mediaBaseUrl = 'https://localhost:7058';
 
   @ViewChild('emojiPickerRef') emojiPickerRef!: ElementRef;
   @ViewChild('messageInputRef') messageInputRef!: ElementRef;
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLElement>;
 
   constructor(
     private router: Router,
@@ -49,29 +52,33 @@ export class ChatComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.currentUserId = this.userSer.currentUser?.userId!;
+  this.currentUserId = this.userSer.currentUser?.userId!;
 
-    if (!this.currentUserId) {
-      console.error('No current user!');
-      this.router.navigate(['/login']);
-      return;
-    }
+  if (!this.currentUserId) {
+    console.error('No current user!');
+    this.router.navigate(['/login']);
+    return;
+  }
 
-    this.userSer.startSignalRConnection(this.currentUserId).then(() => {
+  this.signalRReadyPromise = this.userSer.startSignalRConnection(this.currentUserId)
+    .then(() => {
       this.signalRReady = true;
       this.setupSignalRListeners();
-    }).catch(err => {
+    })
+    .catch(err => {
       console.error('SignalR failed:', err);
     });
 
-    this.route.params.subscribe(params => {
-      this.targetUserId = params['id'];
+  this.route.params.subscribe(params => {
+    this.targetUserId = params['id'];
 
-      this.loadTargetUser();
-      this.loadMessages();
-      this.markAsDelivered();
-    });
-  }
+    this.loadTargetUser();
+    this.loadMessages();
+    this.markAsDelivered();
+    
+    this.markChatAsRead(this.targetUserId);
+  });
+}
 
   ngOnDestroy(): void {
     console.log('Chat component destroyed');
@@ -84,14 +91,11 @@ export class ChatComponent implements OnInit, OnDestroy {
         id: message.id,
         from: message.senderId,
         to: message.receiverId,
-        content: message.content?.substring(0, 20)
+        content: message.content?.substring(0, 20),
+        isDelivered: message.isDelivered 
       });
 
-      const isRelevant = 
-        (message.senderId === this.targetUserId && message.receiverId === this.currentUserId) ||
-        (message.senderId === this.currentUserId && message.receiverId === this.targetUserId);
-
-      if (!isRelevant) {
+      if (!this.isRelevant(message)) {
         console.log('Message not relevant to this chat');
         return;
       }
@@ -101,18 +105,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       if (existingIndex !== -1) {
         this.messages[existingIndex] = {
           ...this.messages[existingIndex],
-          ...message,
-          imageUrl: this.fixImageUrl(message.imageUrl),
-          sent: message.senderId === this.currentUserId,
-          fileType: this.getFileType(message.imageUrl)
+          ...this.normalizeMessage(message)
         };
       } else {
-        this.messages.push({
-          ...message,
-          imageUrl: this.fixImageUrl(message.imageUrl),
-          sent: message.senderId === this.currentUserId,
-          fileType: this.getFileType(message.imageUrl)
-        });
+        this.messages.push(this.normalizeMessage(message));
       }
 
       this.scrollToBottom();
@@ -123,7 +119,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
 
     this.userSer.onMessageRead((data: any) => {
-      
+      console.log('[MessageRead]', data);
       const msg = this.messages.find(m => m.id === data.messageId);
       if (msg) {
         msg.isRead = true;
@@ -150,7 +146,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
 
     this.userSer.onAllMessagesDelivered((data: any) => {
-      
+      console.log('[AllMessagesDelivered]', data);
       let updatedCount = 0;
       this.messages.forEach(m => {
         if (m.receiverId === data.receiverId && !m.isDelivered) {
@@ -165,7 +161,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   private fixImageUrl(url: string | undefined): string | undefined {
     if (!url) return undefined;
     if (url.startsWith('http')) return url;
-    return 'https://localhost:7058' + url;
+    return this.mediaBaseUrl + url;
   }
 
   private getFileType(url: string | undefined): 'image' | 'pdf' | undefined {
@@ -173,25 +169,43 @@ export class ChatComponent implements OnInit, OnDestroy {
     return url.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image';
   }
 
-  private markMessageAsRead(message: Message): void {
-    this.userSer.markMessagesAsRead(message).subscribe({
-      next: () => {
-        const msg = this.messages.find(m => m.id === message.id);
-        if (msg) msg.isRead = true;
-      },
-      error: (err) => console.error('Error marking as read:', err)
-    });
+  private normalizeMessage(message: Message): Message {
+    return {
+      ...message,
+      imageUrl: this.fixImageUrl(message.imageUrl),
+      sent: message.senderId === this.currentUserId,
+      fileType: this.getFileType(message.imageUrl)
+    };
   }
 
-  private markAsDelivered(): void {
+  private isRelevant(message: Message): boolean {
+    return (
+      (message.senderId === this.targetUserId && message.receiverId === this.currentUserId) ||
+      (message.senderId === this.currentUserId && message.receiverId === this.targetUserId)
+    );
+  }
 
-  console.log(`Marking messages from ${this.targetUserId} to ${this.currentUserId} as delivered`);
-  
-  this.userSer.markMessagesAsDelivered(this.targetUserId, this.currentUserId).subscribe({
-    next: () => console.log('Messages from this user marked as delivered'),
-    error: (err) => console.error('Error marking messages as delivered:', err)
+  private markMessageAsRead(message: Message): void {
+  this.userSer.markMessagesAsRead(message).subscribe({
+    next: () => {
+      console.log(`Message ${message.id} marked as read`);
+      const msg = this.messages.find(m => m.id === message.id);
+      if (msg) msg.isRead = true;
+      
+      this.markChatAsRead(this.targetUserId);
+    },
+    error: (err) => console.error('Error marking as read:', err)
   });
 }
+
+  private markAsDelivered(): void {
+    console.log(`Marking messages from ${this.targetUserId} to ${this.currentUserId} as delivered`);
+    
+    this.userSer.markMessagesAsDelivered(this.targetUserId, this.currentUserId).subscribe({
+      next: () => console.log('Messages from this user marked as delivered'),
+      error: (err) => console.error('Error marking messages as delivered:', err)
+    });
+  }
 
   loadTargetUser(): void {
     this.userSer.GetUserById(this.targetUserId).subscribe({
@@ -205,14 +219,9 @@ export class ChatComponent implements OnInit, OnDestroy {
   loadMessages(): void {    
     this.userSer.getConversation(this.currentUserId, this.targetUserId).subscribe({
       next: msgs => {
-        console.log(`✅ Loaded ${msgs.length} messages`);
+        console.log(`Loaded ${msgs.length} messages`);
         
-        this.messages = msgs.map(m => ({
-          ...m,
-          imageUrl: this.fixImageUrl(m.imageUrl),
-          sent: m.senderId === this.currentUserId,
-          fileType: this.getFileType(m.imageUrl)
-        }));
+        this.messages = msgs.map(m => this.normalizeMessage(m));
 
         this.scrollToBottom();
 
@@ -226,15 +235,12 @@ export class ChatComponent implements OnInit, OnDestroy {
     });
   }
 
-  sendMessage(): void {
+  async sendMessage(): Promise<void> {
     if (!this.newMessage.trim() && !this.selectedFile) {
       return;
     }
 
-    if (!this.signalRReady) {
-      setTimeout(() => this.sendMessage(), 500);
-      return;
-    }
+    await this.waitForSignalRReady();
 
     if (this.selectedFile) {
       const formData = new FormData();
@@ -242,6 +248,7 @@ export class ChatComponent implements OnInit, OnDestroy {
       formData.append('ReceiverId', this.targetUserId);
       formData.append('Content', this.newMessage.trim());
       formData.append('image', this.selectedFile);
+      formData.append('FileName', this.selectedFile.name);
 
       this.userSer.sendMessageWithFile(formData).subscribe({
         next: (msg) => console.log('File message sent:', msg.id),
@@ -266,12 +273,25 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.selectedFileType = null;
   }
 
+  downloadFile(url: string, fileName: string) {
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      })
+      .catch(err => console.error('Error downloading file', err));
+  }
+
   scrollToBottom(): void {
     if (!this.shouldAutoScroll) return;
-    setTimeout(() => {
-      const element = document.querySelector('.chat-messages');
+    requestAnimationFrame(() => {
+      const element = this.messagesContainer?.nativeElement;
       if (element) element.scrollTop = element.scrollHeight;
-    }, 100);
+    });
   }
 
   onUserScroll(event: Event): void {
@@ -329,6 +349,10 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.selectedFileType = null; 
   }
 
+  trackByMessageId(index: number, message: Message): string | undefined {
+    return message.id;
+  }
+
   isNewDay(index: number): boolean {
     if (!this.messages || !this.messages[index]) return false;
     const currentDate = new Date(this.messages[index].sentAt);
@@ -353,5 +377,35 @@ export class ChatComponent implements OnInit, OnDestroy {
   
   GoToUser(): void { 
     this.router.navigate(['/user-profile', this.targetUserId]); 
+  }
+
+  waitForSignalRReady(): Promise<void> {
+    if (this.signalRReady) return Promise.resolve();
+    return this.signalRReadyPromise;
+  }
+  
+  shouldShowOneTick(message: Message): boolean {
+  return message.senderId === this.currentUserId && 
+         !message.isDelivered && 
+         !message.isRead;
+  }
+  
+  shouldShowTwoTicksGray(message: Message): boolean {
+  return message.senderId === this.currentUserId && 
+         !!message.isDelivered && 
+         !message.isRead;
+  }
+  
+  shouldShowTwoTicksBlue(message: Message): boolean {
+  return message.senderId === this.currentUserId && 
+         !!message.isRead;  
+  } 
+  
+  isTargetUserOnline(): boolean {
+  return this.userSer.isUserOnline(this.targetUserId);
+  }
+  
+  markChatAsRead(senderId: string) {
+  this.userSer.markSenderAsRead(senderId);
   }
 }

@@ -1,5 +1,5 @@
 .form {
-  max-width: 600px;
+  max-width: 95%;
   margin: 10px auto;
   padding: 25px;
   border: 1px solid #c4c4c4;
@@ -23,8 +23,7 @@ input:focus {
   box-shadow: 0 0 8px rgba(10, 184, 206, 0.3);
 }
 
-.input-row {
-  display: flex;
+.input-row {display: flex;
   gap: 20px;
   margin-bottom: 20px;
   flex-wrap: nowrap;

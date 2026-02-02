@@ -1,16 +1,20 @@
 <div class="chat-page">
   <div class="chat-header">
     <a (click)="GoToUser()">
-      <img class="profile-pic" [src]="targetUser?.profilePicUrl" />
+      <div class="profile-pic-wrapper">
+        <img class="profile-pic" [src]="targetUser?.profilePicUrl" />
+        <span *ngIf="isTargetUserOnline()" class="online-indicator"></span>
+      </div>
       <span class="username">{{ targetUser?.firstName }} {{ targetUser?.lastName }}</span>
     </a>
   </div>
 
-  <div class="chat-messages" (scroll)="onUserScroll($event)">
-      <div *ngIf="this.messages.length==0" class="day-separator">
-          No messages yet 
-      </div>
-    <ng-container *ngFor="let message of messages; let i = index">
+  <div class="chat-messages" #messagesContainer (scroll)="onUserScroll($event)">
+    <div *ngIf="this.messages.length==0" class="day-separator">
+      No messages yet 
+    </div>
+    
+    <ng-container *ngFor="let message of messages; let i = index; trackBy: trackByMessageId">
       <div *ngIf="isNewDay(i)" class="day-separator">
         {{ formatDay(message.sentAt) }}
       </div>
@@ -38,10 +42,11 @@
             <div class="pdf-info">
               <span class="pdf-name">{{ message.fileName || 'Document.pdf' }}</span>
               <button 
-                (click)="downloadFile(message.imageUrl, message.fileName || 'document.pdf')"
+                *ngIf="message.imageUrl && message.fileType === 'pdf'" 
+                (click)="downloadFile(message.imageUrl, message.fileName || 'Document.pdf')"
                 class="download-btn">
                 <lucide-icon name="download" [size]="16"></lucide-icon>
-                <span>download</span>
+                <span>Download</span>
               </button>
             </div>
           </div>
@@ -62,7 +67,7 @@
           <div *ngIf="message.senderId === currentUserId" class="status-checks">
 
             <!-- One gray V — sent but not delivered -->  
-            <ng-container *ngIf="!message.isDelivered && !message.isRead">
+            <ng-container *ngIf="shouldShowOneTick(message)">
               <svg
                 class="check-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -78,8 +83,8 @@
               </svg>
             </ng-container>
 
-            <!-- Two Grey Seas — Delivered but not read -->
-             <ng-container *ngIf="message.isDelivered && !message.isRead">
+            <!-- Two gray Vs — Delivered but not read -->
+            <ng-container *ngIf="shouldShowTwoTicksGray(message)">
               <svg
                 class="check-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -96,8 +101,8 @@
               </svg>
             </ng-container>
 
-            <!-- Two Blue Days - Reading -->
-            <ng-container *ngIf="message.isRead">
+            <!-- Two blue Vs — Read -->
+            <ng-container *ngIf="shouldShowTwoTicksBlue(message)">
               <svg
                 class="check-icon"
                 xmlns="http://www.w3.org/2000/svg"
@@ -120,8 +125,8 @@
     </ng-container>
   </div>
 
-<div class="chat-input">
- <div class="attached-file" *ngIf="selectedFile">
+  <div class="chat-input">
+    <div class="attached-file" *ngIf="selectedFile">
       <img *ngIf="selectedFileType === 'image'" [src]="selectedFilePreview" alt="Preview"/>
       <div *ngIf="selectedFileType === 'pdf'" class="pdf-preview">
         <lucide-icon name="file-text" [size]="48"></lucide-icon>
@@ -129,29 +134,38 @@
       </div>
       <button class="remove-btn" (click)="removeSelectedFile()">×</button>
     </div>
-  <div class="input-wrapper">
     
-      <button class="icon-btn" (click)="toggleEmojiPicker()">
-      <lucide-icon name="smile"></lucide-icon>
-    </button>
+    <div class="input-wrapper">
+      <div class="emoji-button-wrapper" style="position: relative;">
+        <button class="icon-btn" (click)="toggleEmojiPicker()" aria-label="emoji">
+          <lucide-icon name="smile"></lucide-icon>
+        </button>
+        <div *ngIf="showEmojiPicker" class="emoji-picker-popover" #emojiPickerRef>
+          <emoji-mart
+            (emojiSelect)="addEmoji($event)"
+            [style]="{ width: '300px', height: '350px' }"
+            [showPreview]="false">
+          </emoji-mart>
+        </div>
+      </div>
 
-    <button class="icon-btn" (click)="fileInput.click()">
-      <lucide-icon name="paperclip"></lucide-icon>
-    </button>
-    <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" hidden />
+      <button class="icon-btn" (click)="fileInput.click()">
+        <lucide-icon name="paperclip"></lucide-icon>
+      </button>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" hidden />
 
-    <input
-      #messageInputRef
-      type="text"
-      class="message-input"
-      placeholder="Type a message..."
-      [(ngModel)]="newMessage"
-      (keydown)="handleKeyDown($event)"/>
+      <input
+        #messageInputRef
+        type="text"
+        class="message-input"
+        placeholder="Type a message..."
+        [(ngModel)]="newMessage"
+        (keydown)="handleKeyDown($event)"/>
 
-    <button class="icon-btn" (click)="sendMessage()" [disabled]="!newMessage.trim() && !selectedFile">
-      <lucide-icon name="send"></lucide-icon>
-    </button>
+      <button class="icon-btn" (click)="sendMessage()" [disabled]="!newMessage.trim() && !selectedFile">
+        <lucide-icon name="send"></lucide-icon>
+      </button>
+    </div>
   </div>
-</div>
 
 </div>

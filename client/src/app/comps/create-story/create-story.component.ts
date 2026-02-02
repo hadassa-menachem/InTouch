@@ -152,112 +152,155 @@ export class CreateStoryComponent implements OnInit {
   }
   
   private async composeImageWithText(
-    baseImageSrc: string,
-    text: string,
-    textColor: string,
-    textSize: number,
-    posX: number,
-    posY: number
-  ): Promise<File> {
+  baseImageSrc: string,
+  text: string,
+  textColor: string,
+  textSize: number,
+  posX: number,
+  posY: number
+): Promise<File> {
 
-    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const im = new Image();
-      im.crossOrigin = 'anonymous';
-      im.onload = () => resolve(im);
-      im.onerror = reject;
-      im.src = baseImageSrc;
-    });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const im = new Image();
+    im.crossOrigin = 'anonymous';
+    im.onload = () => resolve(im);
+    im.onerror = reject;
+    im.src = baseImageSrc;
+  });
 
-    const previewElement = document.querySelector('.story-preview') as HTMLElement;
-    const previewWidth = previewElement.offsetWidth;
-    const previewHeight = previewElement.offsetHeight;
+  const previewElement = document.querySelector('.story-preview') as HTMLElement;
+  const previewWidth = previewElement.offsetWidth;
+  const previewHeight = previewElement.offsetHeight;
 
-    const scaleX = img.naturalWidth / previewWidth;
-    const scaleY = img.naturalHeight / previewHeight;
+  const scaleX = img.naturalWidth / previewWidth;
+  const scaleY = img.naturalHeight / previewHeight;
 
-    const realX = posX * scaleX;
-    const realY = posY * scaleY;
+  const realX = posX * scaleX;
+  const realY = posY * scaleY;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext('2d')!;
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext('2d')!;
 
-    ctx.drawImage(img, 0, 0);
+  ctx.drawImage(img, 0, 0);
 
-    ctx.font = `bold ${textSize * scaleX}px Arial`;
-    ctx.fillStyle = textColor;
-    ctx.textBaseline = 'top';
+  const scaledTextSize = textSize * scaleX;
+  ctx.font = `bold ${scaledTextSize}px Arial`;
+  ctx.textBaseline = 'top';
 
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
+  const textMetrics = ctx.measureText(text);
+  const textWidth = textMetrics.width;
+  const textHeight = scaledTextSize * 1.2;
+  const padding = 16 * scaleX; 
 
-    ctx.fillText(text, realX, realY);
+  const bgX = realX - padding / 2;
+  const bgY = realY - padding / 2;
+  const bgWidth = textWidth + padding;
+  const bgHeight = textHeight + padding / 2;
 
-    const blob: Blob = await new Promise(resolve =>
-      canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
-    );
+  const backgroundSection = ctx.getImageData(bgX, bgY, bgWidth, bgHeight);
+  
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = bgWidth;
+  tempCanvas.height = bgHeight;
+  const tempCtx = tempCanvas.getContext('2d')!;
+  tempCtx.putImageData(backgroundSection, 0, 0);
 
-    return new File([blob], 'story.jpg', { type: 'image/jpeg' });
-  }
+  ctx.filter = 'blur(8px)';
+  ctx.drawImage(tempCanvas, bgX, bgY);
+  ctx.filter = 'none';
+
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+  ctx.fillRect(bgX, bgY, bgWidth, bgHeight);
+
+  ctx.beginPath();
+  const radius = 8 * scaleX;
+  ctx.roundRect(bgX, bgY, bgWidth, bgHeight, radius);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+  ctx.fill();
+
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+  ctx.shadowBlur = 8 * scaleX;
+  ctx.shadowOffsetX = 2 * scaleX;
+  ctx.shadowOffsetY = 2 * scaleY;
+
+  ctx.fillStyle = textColor;
+  ctx.fillText(text, realX, realY);
+
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+  ctx.fillText(text, realX, realY);
+
+  const blob: Blob = await new Promise(resolve =>
+    canvas.toBlob(b => resolve(b!), 'image/jpeg', 0.9)
+  );
+
+  return new File([blob], 'story.jpg', { type: 'image/jpeg' });
+}
 
   async onSubmit() {
-    if (this.createStoryForm.invalid) return;
+  if (this.createStoryForm.invalid) return;
 
-    const formValues = this.createStoryForm.value;
-    const formData = new FormData();
+  const formValues = this.createStoryForm.value;
+  const formData = new FormData();
 
-    formData.append('UserId', this.user.userId!);
+  formData.append('UserId', this.user.userId!);
 
-    let duration = formValues.durationHours || 24;
-    if (duration > 24) duration = 24;
-    formData.append('DurationInHours', duration.toString());
+  let duration = formValues.durationHours || 24;
+  if (duration > 24) duration = 24;
+  formData.append('DurationInHours', duration.toString());
 
-    if (formValues.customText) {
-      formData.append('Content', formValues.customText);
-    }
-
-    let fileToSend: File | null = null;
-
-    if (formValues.mediaType === 'image' && this.selectedFile) {
-      const baseImageSrc = URL.createObjectURL(this.selectedFile);
-
-      fileToSend = await this.composeImageWithText(
-        baseImageSrc,
-        formValues.customText || '',
-        formValues.textColor,
-        this.textSize,
-        this.dragPosition.x,
-        this.dragPosition.y
-      );
-
-      URL.revokeObjectURL(baseImageSrc);
-
-    } else if (formValues.mediaType === 'video' && this.selectedFile) {
-      fileToSend = this.selectedFile;
-    }
-
-    if (fileToSend) {
-      formData.append('file', fileToSend, fileToSend.name);
-    } else if (formValues.imageSource === 'url' && formValues.imageUrl) {
-      formData.append('ImageUrl', formValues.imageUrl);
-    }
-
-    this.userSer.addStory(formData).subscribe({
-      next: (res) => {
-        this.showFloatingMessage('The story was successfully published!', true);
-        setTimeout(() => {
-          this.router.navigate(['/profile']);
-        }, 1000);
-      },
-      error: (err) => {
-        this.showFloatingMessage('Error uploading story', false);
-      }
-    });
+  if (formValues.customText && formValues.customText.trim()) {
+    formData.append('Content', formValues.customText);
   }
 
+  let fileToSend: File | null = null;
+
+  if (formValues.mediaType === 'image' && this.selectedFile && formValues.customText && formValues.customText.trim()) {
+    const baseImageSrc = URL.createObjectURL(this.selectedFile);
+
+    fileToSend = await this.composeImageWithText(
+      baseImageSrc,
+      formValues.customText,
+      formValues.textColor,
+      this.textSize,
+      this.dragPosition.x,
+      this.dragPosition.y
+    );
+
+    URL.revokeObjectURL(baseImageSrc);
+
+  } 
+
+  else if (formValues.mediaType === 'image' && this.selectedFile) {
+    fileToSend = this.selectedFile;
+  }
+
+  else if (formValues.mediaType === 'video' && this.selectedFile) {
+    fileToSend = this.selectedFile;
+  }
+
+  if (fileToSend) {
+    formData.append('file', fileToSend, fileToSend.name);
+  } else if (formValues.imageSource === 'url' && formValues.imageUrl) {
+    formData.append('ImageUrl', formValues.imageUrl);
+  }
+
+  this.userSer.addStory(formData).subscribe({
+    next: (res) => {
+      this.showFloatingMessage('The story was successfully published!', true);
+      setTimeout(() => {
+        this.router.navigate(['/profile']);
+      }, 1000);
+    },
+    error: (err) => {
+      this.showFloatingMessage('Error uploading story', false);
+    }
+  });
+}
   showFloatingMessage(text: string, success: boolean = true) {
     this.messageText = text;
     this.isSuccess = success;

@@ -1,5 +1,4 @@
 .create-story-container {
-  max-width: 500px;
   margin: 0 auto;
   padding: 1.5rem;
   height: 85vh;
@@ -95,6 +94,7 @@
   color: rgb(0, 0, 0);
   opacity: 0.8;
   z-index: 2;
+  margin-top: 2rem;
 }
 
 .no-media-message p {
@@ -117,15 +117,17 @@
   position: absolute;
   cursor: move;
   font-weight: bold;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   padding: 0.5rem 1rem;
   backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.2); 
   border-radius: 0.5rem;
   user-select: none;
-  white-space: nowrap;
   max-width: 90%;
   z-index: 100;
   pointer-events: auto;
+  white-space: pre-line;  
+  word-break: break-word;
 }
 
 .icons-toolbar {
@@ -223,6 +225,8 @@
   border-radius: 0.5rem;
   font-size: 0.9rem;
   outline: none;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .text-with-emoji-inline input[type="text"]:focus {
@@ -259,9 +263,14 @@
 }
 
 .emoji-dropdown {
-  margin-top: 0.5rem;
+  position: absolute;
+  top: 3rem; 
+  margin: auto;
+  left: 2rem;
+  z-index: 9999;
+  background-color: white;
   border-radius: 0.5rem;
-  overflow: hidden;
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.15);
 }
 
 .color-popup {
@@ -480,4 +489,24 @@
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #ffeef4;
+  color: #ff347d;
+  font-weight: bold;
+  font-size: 18px;
+  border: 1.5px solid #ff347d;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(241, 59, 135, 0.541);
+  /* margin-top: 5px; */
+}
+
+.submit-btn:hover {
+  background-color: #ffffff;
 }

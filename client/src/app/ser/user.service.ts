@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { User } from '../classes/User';
@@ -10,6 +10,7 @@ import { Like } from '../classes/Like';
 import { Story } from '../classes/Story';
 import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } from '@microsoft/signalr';
 import * as signalR from '@microsoft/signalr';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,11 @@ export class UserService {
   private savedApi = 'https://localhost:7058/api/SavedPost';
   private aiApi = 'https://localhost:7058/AiService';
 
+  private connectedUsers = new Set<string>();
+  public connectedUsers$ = new BehaviorSubject<Set<string>>(new Set());
+  private unreadSenders = new Set<string>();
+  public unreadChatsCount$ = new BehaviorSubject<number>(0);
+
   constructor(private http: HttpClient) {
     const userFromStorage = localStorage.getItem('currentUser');
     if (userFromStorage) {
@@ -34,13 +40,11 @@ export class UserService {
     }
   }
 
-// SignalR Section
-private hubConnection?: signalR.HubConnection;
-private isConnected = false;
-private connectionPromise?: Promise<void>;
+  private hubConnection?: signalR.HubConnection;
+  private isConnected = false;
+  private connectionPromise?: Promise<void>;
 
-startSignalRConnection(userId: string): Promise<void> {
-
+  startSignalRConnection(userId: string): Promise<void> {
   if (this.isConnected && this.hubConnection) {
     console.log('SignalR already connected');
     return Promise.resolve();
@@ -50,12 +54,29 @@ startSignalRConnection(userId: string): Promise<void> {
     return this.connectionPromise;
   }
 
-
   this.hubConnection = new signalR.HubConnectionBuilder()
     .withUrl(`https://localhost:7058/messageHub?userId=${userId}`)
     .withAutomaticReconnect([0, 2000, 5000, 10000])
     .configureLogging(signalR.LogLevel.Information)
     .build();
+
+  this.hubConnection.on('InitialConnectedUsers', (userIds: string[]) => {
+    this.connectedUsers.clear();
+    userIds.forEach(id => this.connectedUsers.add(id));
+    this.connectedUsers$.next(new Set(this.connectedUsers));
+  });
+
+  this.hubConnection.on('UserConnected', (connectedUserId: string) => {
+    console.log(`User ${connectedUserId} is now online`);
+    this.connectedUsers.add(connectedUserId);
+    this.connectedUsers$.next(new Set(this.connectedUsers));
+  });
+
+  this.hubConnection.on('UserDisconnected', (disconnectedUserId: string) => {
+    console.log(`User ${disconnectedUserId} is now offline`);
+    this.connectedUsers.delete(disconnectedUserId);
+    this.connectedUsers$.next(new Set(this.connectedUsers));
+  });
 
   this.hubConnection.onclose((error) => {
     this.isConnected = false;
@@ -73,6 +94,7 @@ startSignalRConnection(userId: string): Promise<void> {
   this.connectionPromise = this.hubConnection.start()
     .then(() => {
       this.isConnected = true;
+      console.log('SignalR Connected');
     })
     .catch((err) => {
       console.error('SignalR connection failed:', err);
@@ -83,55 +105,89 @@ startSignalRConnection(userId: string): Promise<void> {
 
   return this.connectionPromise;
 }
+  calculateUnreadChats(messages: Message[], currentUserId: string) {
+  this.unreadSenders.clear();
 
-onReceiveMessage(callback: (msg: any) => void) {
-  if (!this.hubConnection) {
-    console.warn('Hub connection not initialized');
-    return;
+  messages.forEach(msg => {
+    if (
+      msg.receiverId === currentUserId &&
+      msg.isRead === false
+    ) {
+      this.unreadSenders.add(msg.senderId);
+      }
+});
+
+   this.unreadChatsCount$.next(this.unreadSenders.size);
   }
-  
+
+  isUserOnline(userId: string): boolean {
+    return this.connectedUsers.has(userId);
+  }
+
+  getConnectedUsers(): Set<string> {
+    return this.connectedUsers;
+  }
+
+  onReceiveMessage(callback: (msg: any) => void) {
+  if (!this.hubConnection) return;
+
   this.hubConnection.off('ReceiveMessage');
   this.hubConnection.on('ReceiveMessage', (msg) => {
     callback(msg);
+
+    const senderId = msg.senderId;
+    const currentUserId = this.currentUser?.userId;
+
+    if (senderId !== currentUserId && !this.unreadSenders.has(senderId)) {
+      this.unreadSenders.add(senderId);
+      this.unreadChatsCount$.next(this.unreadSenders.size);
+      console.log(`New unread from ${senderId}, total: ${this.unreadSenders.size}`);
+    }
   });
 }
 
-onMessageRead(callback: (data: any) => void) {
-  if (!this.hubConnection) {
-    console.warn('Hub connection not initialized');
-    return;
+markSenderAsRead(senderId: string) {
+  if (this.unreadSenders.has(senderId)) {
+    this.unreadSenders.delete(senderId);
+    this.unreadChatsCount$.next(this.unreadSenders.size);
   }
-  
-  this.hubConnection.off('MessageRead');
-  this.hubConnection.on('MessageRead', (data) => {
-    callback(data);
-  });
 }
 
-onMessagesDelivered(callback: (data: any) => void) {
-  if (!this.hubConnection) {
-    console.warn('Hub connection not initialized');
-    return;
+  onMessageRead(callback: (data: any) => void) {
+    if (!this.hubConnection) {
+      console.warn('Hub connection not initialized');
+      return;
+    }
+    
+    this.hubConnection.off('MessageRead');
+    this.hubConnection.on('MessageRead', (data) => {
+      callback(data);
+    });
   }
-  
-  this.hubConnection.off('MessagesDelivered');
-  this.hubConnection.on('MessagesDelivered', (data) => {
-    callback(data);
-  });
-}
 
-onAllMessagesDelivered(callback: (data: any) => void) {
-  if (!this.hubConnection) {
-    console.warn('Hub connection not initialized');
-    return;
+  onMessagesDelivered(callback: (data: any) => void) {
+    if (!this.hubConnection) {
+      console.warn('Hub connection not initialized');
+      return;
+    }
+    
+    this.hubConnection.off('MessagesDelivered');
+    this.hubConnection.on('MessagesDelivered', (data) => {
+      callback(data);
+    });
   }
-  
-  this.hubConnection.off('AllMessagesDelivered');
-  this.hubConnection.on('AllMessagesDelivered', (data) => {
-    callback(data);
-  });
-}
 
+  onAllMessagesDelivered(callback: (data: any) => void) {
+    if (!this.hubConnection) {
+      console.warn('Hub connection not initialized');
+      return;
+    }
+    
+    this.hubConnection.off('AllMessagesDelivered');
+    this.hubConnection.on('AllMessagesDelivered', (data) => {
+      callback(data);
+    });
+  }
 
   public sendMessage(message: { senderId: string, receiverId: string, content: string }): Observable<Message> {
     return this.http.post<Message>(`${this.messageApi}`, message);
@@ -169,6 +225,8 @@ onAllMessagesDelivered(callback: (data: any) => void) {
     }
     this.currentUser = null;
     localStorage.removeItem('currentUser');
+    this.connectedUsers.clear();
+    this.connectedUsers$.next(new Set());
   }
 
   GetAllUsers(): Observable<User[]> {
@@ -271,11 +329,11 @@ onAllMessagesDelivered(callback: (data: any) => void) {
 
   markMessagesAsDelivered(senderId: string, receiverId: string): Observable<any> {
     return this.http.post(`${this.messageApi}/mark-as-delivered`, { senderId, receiverId });
-}
+  }
 
-markAllMessagesAsDelivered(receiverId: string): Observable<any> {
-  return this.http.post(`${this.messageApi}/mark-all-delivered`, { receiverId });
-}
+  markAllMessagesAsDelivered(receiverId: string): Observable<any> {
+    return this.http.post(`${this.messageApi}/mark-all-delivered`, { receiverId });
+  }
 
   // Stories
   addStory(formData: FormData): Observable<any> {

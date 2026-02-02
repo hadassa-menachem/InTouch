@@ -123,31 +123,6 @@ export class StoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleLike() {
-    if (!this.currentStory) return;
-
-    this.showLikeAnimation = true;
-    setTimeout(() => (this.showLikeAnimation = false), 800);
-
-    if (this.currentStory.likes!.includes(this.user.userId)) {
-      this.currentStory.likes = this.currentStory.likes!.filter(uid => uid !== this.user.userId);
-    } else {
-      this.currentStory.likes!.push(this.user.userId);
-    }
-  }
-
-  toggleCommentBox(id: string) {
-    this.commentBoxOpenFor = this.commentBoxOpenFor === id ? null : id;
-  }
-
-  sendComment() {
-    if (this.newComment.trim() && this.currentStory) {
-      this.currentStory.comments!.push({ userName: this.user.userName || '', content: this.newComment });
-      this.newComment = '';
-      this.commentBoxOpenFor = null;
-    }
-  }
-
   markStoryAsViewed(story: Story) {
     if (!story.viewedByCurrentUser) {
       story.viewedByCurrentUser = true;
