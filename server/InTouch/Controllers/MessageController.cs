@@ -24,8 +24,11 @@ namespace InTouch.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] CreateMessageDTO dto)
+        public async Task<IActionResult> SendMessage([FromBody] MessageDTO dto)
         {
+            // בדיקה אם הנמען מחובר
+            bool isReceiverOnline = MessageHub.IsUserConnected(dto.ReceiverId);
+
             var messageDto = new MessageDTO
             {
                 SenderId = dto.SenderId,
@@ -33,14 +36,16 @@ namespace InTouch.Controllers
                 Content = dto.Content ?? "",
                 SentAt = DateTime.Now,
                 IsRead = false,
-                IsDelivered = false
+                IsDelivered = isReceiverOnline  // ✅ אם מחובר - delivered מיד
             };
 
             var savedMessage = await _messageBLL.AddMessage(messageDto);
 
+            // שליחה למקבל
             await _hubContext.Clients.User(dto.ReceiverId)
                 .SendAsync("ReceiveMessage", savedMessage);
 
+            // שליחה לשולח
             await _hubContext.Clients.User(dto.SenderId)
                 .SendAsync("ReceiveMessage", savedMessage);
 
@@ -48,13 +53,13 @@ namespace InTouch.Controllers
         }
 
         [HttpPost("send-with-file")]
-        public async Task<IActionResult> SendMessageWithFile(
-            [FromForm] CreateMessageWithFileDTO dto,
-            IFormFile? image)
+        public async Task<IActionResult> SendMessageWithFile([FromForm] MessageWithFileDTO dto, IFormFile? image)
         {
             if (image != null && image.Length > 0)
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                var originalFileName = image.FileName;
+                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+
                 var uploadPath = Path.Combine(
                     Directory.GetCurrentDirectory(),
                     "wwwroot/uploads/messages");
@@ -62,12 +67,16 @@ namespace InTouch.Controllers
                 if (!Directory.Exists(uploadPath))
                     Directory.CreateDirectory(uploadPath);
 
-                var filePath = Path.Combine(uploadPath, fileName);
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await image.CopyToAsync(stream);
 
-                dto.ImageUrl = $"/uploads/messages/{fileName}";
+                dto.ImageUrl = $"/uploads/messages/{uniqueFileName}";
+                dto.FileName = originalFileName;
             }
+
+            // בדיקה אם הנמען מחובר
+            bool isReceiverOnline = MessageHub.IsUserConnected(dto.ReceiverId);
 
             var messageDto = new MessageDTO
             {
@@ -75,9 +84,10 @@ namespace InTouch.Controllers
                 ReceiverId = dto.ReceiverId,
                 Content = dto.Content ?? "",
                 ImageUrl = dto.ImageUrl,
+                FileName = dto.FileName,
                 SentAt = DateTime.Now,
                 IsRead = false,
-                IsDelivered = false
+                IsDelivered = isReceiverOnline  // ✅ אם מחובר - delivered מיד
             };
 
             var savedMessage = await _messageBLL.AddMessage(messageDto);

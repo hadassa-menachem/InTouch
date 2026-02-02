@@ -31,7 +31,7 @@ namespace BLL.Repositories
             return imapper.Map<MediaFileDTO>(mediaFile);
         }
 
-        public async Task AddMediaFile(CreateMediaFileDTO dto)
+        public async Task AddMediaFile(MediaFileDTO dto)
         {
             var mediaFile = imapper.Map<MediaFile>(dto);
             await _idal.AddMediaFile(mediaFile);

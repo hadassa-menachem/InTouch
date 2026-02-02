@@ -26,7 +26,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     return new MongoClient(settings!.ConnectionString);
 });
 
-// רישום IMongoDatabase - זה מה שה-DAL שלך צריך!
+// רישום IMongoDatabase - מה שה-DAL צריך!
 builder.Services.AddScoped<IMongoDatabase>(sp =>
 {
     var client = sp.GetRequiredService<IMongoClient>();
@@ -84,7 +84,7 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-
+app.UseCors("AllowAngularDev");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -8,7 +8,7 @@ namespace BLL.Interfaces
     {
         Task<List<MediaFileDTO>> GetAllMediaFiles();
         Task<MediaFileDTO> GetMediaFileById(string id);
-        Task AddMediaFile(CreateMediaFileDTO dto);
+        Task AddMediaFile(MediaFileDTO dto);
         Task UpdateMediaFile(string id, MediaFileDTO dto);
         Task DeleteMediaFile(string id);
     }

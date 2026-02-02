@@ -44,7 +44,7 @@ namespace InTouch.Controllers
         [HttpPost]
         public async Task<ActionResult> AddMediaFile(MediaFile mediaFile)
         {
-            var dto = _mapper.Map<CreateMediaFileDTO>(mediaFile);
+            var dto = _mapper.Map<MediaFileDTO>(mediaFile);
             await _mediaFileBll.AddMediaFile(dto);
 
             return CreatedAtAction(nameof(GetMediaFileById), new { id = mediaFile.Id }, mediaFile);

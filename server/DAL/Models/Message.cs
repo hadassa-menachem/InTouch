@@ -19,6 +19,7 @@ namespace DAL.Models
         public DateTime SentAt { get; set; } = DateTime.UtcNow; 
         public bool IsRead { get; set; } = false; 
         public bool IsDelivered { get; set; } = false; 
-        public string? ImageUrl { get; set; } 
+        public string? ImageUrl { get; set; }
+        public string? FileName { get; set; }
     }
 }
